@@ -1,8 +1,8 @@
-*/Images
+*/UI/Images
 *.qrc
 
 *__pycache__
 *.ui
 */QtDesignerUI
 
-*/drawProject.egg-info
+*drawProject.egg-info
