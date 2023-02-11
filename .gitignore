@@ -2,5 +2,7 @@
 *.qrc
 
 *__pycache__
+*.ui
+*/QtDesignerUI
 
 */drawProject.egg-info
