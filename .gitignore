@@ -1,8 +1,16 @@
-*/UI/Images
-*.qrc
+#Kayitlar
+*.dxf
+
+*.pyc
+.idea
 
 *__pycache__
+
+*.qrc
+
 *.ui
 */QtDesignerUI
 
-*drawProject.egg-info
+
+*/Images
+
