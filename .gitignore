@@ -1,4 +1,6 @@
-UI/Images/
-UI/ImagesSrc.qrc
+*/Images
+*.qrc
+
+*__pycache__
 
 drawProject.egg-info/
