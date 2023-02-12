@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPainter,QPen,QColor
 from PyQt5.QtCore import Qt,QPointF,pyqtSignal
 
 from Model import Element
-from Helpers import Handle,HandleTypes
+from Helpers.Handles import Handle,HandleTypes
 from Elements.BuilderContext import BuilderContext
 
 class ElementObject(QGraphicsObject):

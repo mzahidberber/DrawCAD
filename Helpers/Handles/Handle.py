@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QGraphicsObject
 from PyQt5.QtCore import QPointF,QRectF,Qt,pyqtSignal
 from PyQt5.QtGui import QPen,QColor
+from Helpers.Handles import HandleTypes
 
-from Helpers.HandleTypes import HandleTypes
 class Handle(QGraphicsObject):
     moveSignal=pyqtSignal(object,object)
     __id:int
