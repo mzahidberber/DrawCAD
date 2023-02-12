@@ -13,6 +13,7 @@ class PointGeo(BaseModel):
             self.X=x
             self.Y=y
             self.Z=z
+
         
     def to_dict(self) -> dict:
         return {

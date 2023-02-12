@@ -32,6 +32,10 @@ class DrawScene(QGraphicsScene):
           # print("sceneUpdate")
           self.update()
 
+     def mouseMoveEvent(self, event) -> None:
+          QGraphicsScene.mouseMoveEvent(self,event)
+          self.MovedMouse.emit(event.scenePos())
+
      def mousePressEvent(self, event):
           QGraphicsScene.mousePressEvent(self,event)
           # print("mousepreesDrawScenee")
