@@ -2,6 +2,7 @@ from PyQt5.QtGui import QPainterPathStroker,QPainterPath
 from PyQt5.QtCore import QRectF
 from abc import ABC,abstractmethod
 from Model import Element
+from Helpers.Settings import Setting
 
 class ElementBuilder(ABC):
     __element:Element
@@ -15,7 +16,7 @@ class ElementBuilder(ABC):
         
     def drawPath(self):
         painterStrock=QPainterPathStroker()
-        painterStrock.setWidth(5)
+        painterStrock.setWidth(Setting.lineBoundDistance)
         p=QPainterPath()
         
         self.shape(p)

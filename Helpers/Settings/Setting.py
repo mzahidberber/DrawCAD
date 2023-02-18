@@ -1,6 +1,8 @@
 from Helpers.Pen import CreatePen
 
 class Setting:
+    #pixelSize info
+    pixelSize:float
     # Handle Setting
     handlePen=CreatePen.createPen(99,184,255,1,1)
     handleHatch=CreatePen.createHatch(153,153,153,1)

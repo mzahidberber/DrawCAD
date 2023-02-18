@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QGraphicsScene
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PyQt5.QtGui import QPainter
+from PyQt5.QtCore import Qt,pyqtSignal,QLineF,QPointF
 
 from Elements import ElementObject
-
+from Helpers.Settings import Setting
 
 import math
 
@@ -16,9 +16,11 @@ class DrawScene(QGraphicsScene):
           super().__init__(*args, **kwargs)
           self.__view=view
           self.setSceneRect(-10000,-10000,20000,20000)
-          self.xykalem=QPen(QColor(255,127,0),0.5, Qt.SolidLine) 
-          self.gridkalem=QPen(QColor(153,153,153),0.8,Qt.SolidLine)
-          self.gridtarama=QBrush(QColor(0,0,0),Qt.SolidPattern)
+          
+          self.xykalem=Setting.XYAxlePen
+          self.gridkalem=Setting.gridPen
+          self.gridtarama=Setting.gridHatch
+
 
      def keyPressEvent(self, event) -> None:
           if event.key()==Qt.Key_Escape:
@@ -100,4 +102,15 @@ class DrawScene(QGraphicsScene):
           painter.drawLine(0,int(y1),0,int(y2))
           painter.drawLine(int(x1),0,int(x2),0)
 
+     def wheelEvent(self, event) -> None:
+          QGraphicsScene.wheelEvent(self,event)
+          zoomInFactor = 1.05
+          zoomOutFactor = 0.95
+          if event.angleDelta().y() > 0:
+              zoomFactor = zoomInFactor
+              pixelboyut=self.pixelBoyutBul()
+          else:
+              zoomFactor = zoomOutFactor
+              pixelboyut=self.pixelBoyutBul()
+          self.scale(zoomFactor, zoomFactor)
       

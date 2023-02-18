@@ -2,7 +2,8 @@ import requests
 from enum import Enum
 from Service.UrlBuilder import UrlBuilder
 from Model import PointGeo,Point,DrawEnums
-
+from multipledispatch import dispatch
+from datetime import datetime
 class GeoService(object):
     __url="http://localhost:5001/geo"
 
@@ -16,11 +17,30 @@ class GeoService(object):
             cls.instance = super(GeoService, cls).__new__(cls)
         return cls.instance
     
+    @dispatch(Point, Point)
     def findTwoPointsLength(self,p1:Point,p2:Point) -> float:
         conString=UrlBuilder().urlBuild(self.__url).urlBuild(GeoEnum.findTwoPointsLength.value+"/").build()
         body=[p1.to_dict_geo(),p2.to_dict_geo()]
         result=requests.post(conString,json=body)
         length=result.json()["length"]
+        return length
+    
+    @dispatch(float,float,float,float,float,float)
+    def findTwoPointsLength(self,x1:float,y1:float,z1:float,x2:float,y2:float,z2:float) -> float:
+        # print("istek gitti1")
+        # print(datetime.now())
+        conString=UrlBuilder().urlBuild(self.__url).urlBuild(GeoEnum.findTwoPointsLength.value+"/").build()
+        # print("istek gitti2")
+        # print(datetime.now())
+        body=[{"X":x1,"Y":y1,"Z":z1},{"X":x2,"Y":y2,"Z":z2}]
+        # print("istek gitti3")
+        # print(datetime.now())
+        result=requests.post("http://localhost:5001/geo/findTwoPointsLength/",json=body)
+        # print("istek gitti4")
+        # print(datetime.now())
+        length=result.json()["length"]
+        # print("istek gitti5")
+        # print(datetime.now())
         return length
     
     def findCenterAndRadius(self,p1:Point,p2:Point,p3:Point) -> tuple[float,PointGeo]:
