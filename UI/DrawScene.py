@@ -10,7 +10,7 @@ import math
 class DrawScene(QGraphicsScene):
      
      ClickedMouse = pyqtSignal(object,object)
-     MovedMouse = pyqtSignal(object,object)
+     MovedMouse = pyqtSignal(object)
 
      def __init__(self,view,*args, **kwargs):
           super().__init__(*args, **kwargs)

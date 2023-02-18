@@ -1,7 +1,7 @@
-from Preview.BasePreview import BasePreview
+from Helpers.Preview.BasePreview import BasePreview
 from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import QRectF,QPointF
-from Settings import Setting
+from Helpers.Settings import Setting
 
 class LinePreview(BasePreview):
     __p1:QPointF

@@ -1,10 +1,10 @@
-from Preview.BasePreview import BasePreview
-from Preview.LinePreview import LinePreview
-from Preview.CirclePreview import CirclePreview
-from Preview.RectanglePreview import RectanglePreview
-from Preview.ArcPreview import ArcPreview
-from Preview.EllipsPreview import EllipsPreview
-from Preview.SplinePreview import SplinePreview
+from Helpers.Preview.BasePreview import BasePreview
+from Helpers.Preview.LinePreview import LinePreview
+from Helpers.Preview.CirclePreview import CirclePreview
+from Helpers.Preview.RectanglePreview import RectanglePreview
+from Helpers.Preview.ArcPreview import ArcPreview
+from Helpers.Preview.EllipsPreview import EllipsPreview
+from Helpers.Preview.SplinePreview import SplinePreview
 
 
 class PreviewContext:

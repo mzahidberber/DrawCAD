@@ -1,1 +1,1 @@
-from Settings.Setting import Setting
+from .Setting import Setting

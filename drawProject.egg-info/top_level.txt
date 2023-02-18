@@ -1,6 +1,0 @@
-Commands
-Elements
-Helpers
-Model
-Service
-UI

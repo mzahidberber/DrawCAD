@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGraphicsObject
-from Preview.PreviewContext import PreviewContext
+from Helpers.Preview.PreviewContext import PreviewContext
 from Model import PointGeo
 
 class PreviewObject(QGraphicsObject):
