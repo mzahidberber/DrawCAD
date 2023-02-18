@@ -3,13 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from Helpers.Settings import Setting
 from Service.GeoService import GeoService
-from Model import Point
-
-import asyncio
-
 import threading
-
-import math
 
 class GraphicsView(QGraphicsView):
     def __init__(self,*args,**kwargs):
@@ -23,10 +17,7 @@ class GraphicsView(QGraphicsView):
         self.panX:float
         self.panY:float
         self.pan:bool=False
-
-        
-        
-
+    
     def setSettinInfo(self,pixelSize:float):
         Setting.pixelSize=pixelSize
         Setting.lineBoundDistance=int(pixelSize*Setting.lineBoundDistanceSetting)
