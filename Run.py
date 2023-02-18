@@ -6,3 +6,5 @@ app=QApplication(sys.argv)
 window=LoginView()
 window.show()
 sys.exit(app.exec_())
+
+""
