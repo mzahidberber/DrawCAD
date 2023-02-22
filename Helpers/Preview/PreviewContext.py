@@ -22,7 +22,8 @@ class PreviewContext:
         4: CircleTreePointPreivew,
         5: RectanglePreview,
         6: ArcPreview,
-        7: SplinePreview
+        7: SplinePreview,
+        8: EllipsPreview
     }
 
     def __new__(self):

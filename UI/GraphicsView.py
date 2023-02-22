@@ -31,9 +31,7 @@ class GraphicsView(QGraphicsView):
         pos2 = QPoint(1, 0)
         p1 = self.mapToScene(pos1)
         p2 = self.mapToScene(pos2)
-        pixelSize = GeoService().findTwoPointsLength(
-            p1.x(), p1.y(), 1.0, p2.x(), p2.y(), 1.0
-        )
+        pixelSize = GeoService().findTwoPointsLength(p1.x(), p1.y(), 1.0, p2.x(), p2.y(), 1.0)
         self.setSettinInfo(pixelSize)
 
     def wheelEvent(self, event):

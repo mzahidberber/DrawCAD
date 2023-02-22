@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtGui import QPainter
-from PyQt5.QtCore import Qt, pyqtSignal, QLineF, QPointF
+from PyQt5.QtCore import Qt, pyqtSignal, QLineF, QPointF,QRectF
 
 from Elements import ElementObject
 from Helpers.Settings import Setting
@@ -12,8 +12,8 @@ class DrawScene(QGraphicsScene):
     ClickedMouse = pyqtSignal(object, object)
     MovedMouse = pyqtSignal(object)
 
-    def __init__(self, view, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, view):
+        super().__init__()
         self.__view = view
         self.setSceneRect(-10000, -10000, 20000, 20000)
 
@@ -21,7 +21,8 @@ class DrawScene(QGraphicsScene):
         self.gridkalem = Setting.gridPen
         self.gridtarama = Setting.gridHatch
 
-        
+    
+    def scanFieldObjects(self,field:QRectF) -> list[ElementObject]:return self.items(field)
 
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_Escape:

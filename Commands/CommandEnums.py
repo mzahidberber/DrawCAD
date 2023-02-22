@@ -10,6 +10,7 @@ class CommandEnums(Enum):
     rectangle = 5
     arc = 6
     spline = 7
+    ellipse=8
     move = 8
     copy = 9
 

@@ -80,6 +80,7 @@ class DrawView(QMainWindow):
         self.ui.actionCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterPoint))
         self.ui.actionTreePointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleTreePoint))
         self.ui.actionRectangle.triggered.connect(lambda: self.startCommand(CommandEnums.rectangle))
+        self.ui.actionEllipse.triggered.connect(lambda: self.startCommand(CommandEnums.ellipse))
 
     def setButtonsDisable(self, isDisable: bool):
         self.ui.actionLine.setDisabled(isDisable)
