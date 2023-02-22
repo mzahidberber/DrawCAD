@@ -73,18 +73,11 @@ class DrawView(QMainWindow):
         result = DrawService().logout()
 
     def connectButtons(self):
-        self.ui.actionLine.triggered.connect(
-            lambda: self.startCommand(CommandEnums.line)
-        )
-        self.ui.actionTwoPointsCircle.triggered.connect(
-            lambda: self.startCommand(CommandEnums.circleTwoPoint)
-        )
-        self.ui.actionCenterRadiusCircle.triggered.connect(
-            lambda: self.startCommand(CommandEnums.circleCenterRadius)
-        )
-        self.ui.actionCircle.triggered.connect(
-            lambda: self.startCommand(CommandEnums.circleCenterPoint)
-        )
+        self.ui.actionLine.triggered.connect(lambda: self.startCommand(CommandEnums.line))
+        self.ui.actionTwoPointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleTwoPoint))
+        self.ui.actionCenterRadiusCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterRadius))
+        self.ui.actionCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterPoint))
+        self.ui.actionTreePointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleTreePoint))
 
     def setButtonsDisable(self, isDisable: bool):
         self.ui.actionLine.setDisabled(isDisable)

@@ -3,6 +3,7 @@ from enum import Enum
 from Service.UrlBuilder import UrlBuilder
 from Model import PointGeo, Point, DrawEnums
 from multipledispatch import dispatch
+from PyQt5.QtCore import QPointF
 
 
 class GeoService(object):
@@ -33,6 +34,19 @@ class GeoService(object):
         result = requests.post(conString, json=body)
         length = result.json()["length"]
         return length
+    
+    @dispatch(QPointF,QPointF)
+    def findTwoPointsLength(self, p1:QPointF,p2:QPointF) -> float:
+        conString = (
+            UrlBuilder()
+            .urlBuild(self.__url)
+            .urlBuild(GeoEnum.findTwoPointsLength.value + "/")
+            .build()
+        )
+        body = [{"X": p1.x(), "Y": p1.y(), "Z": 1}, {"X": p2.x(), "Y": p2.y(), "Z": 1}]
+        result = requests.post(conString, json=body)
+        length = result.json()["length"]
+        return length
 
     @dispatch(float, float, float, float, float, float)
     def findTwoPointsLength(
@@ -49,6 +63,7 @@ class GeoService(object):
         length = result.json()["length"]
         return length
 
+    @dispatch(Point,Point,Point)
     def findCenterAndRadius(
         self, p1: Point, p2: Point, p3: Point
     ) -> tuple[float, PointGeo]:
@@ -63,6 +78,20 @@ class GeoService(object):
         radius = result.json()["radius"]
         centerPoint = result.json()["centerPoint"]
         return radius, PointGeo(pInfo=centerPoint)
+    
+    @dispatch(QPointF,QPointF,QPointF)
+    def findCenterAndRadius(self, p1: QPointF, p2: QPointF, p3: QPointF) -> tuple[float, QPointF]:
+        conString = (
+            UrlBuilder()
+            .urlBuild(self.__url)
+            .urlBuild(GeoEnum.findCenterAndRadius.value + "/")
+            .build()
+        )
+        body = [{"X":p1.x(),"Y":p1.y(),"Z":1}, {"X":p2.x(),"Y":p2.y(),"Z":1}, {"X":p3.x(),"Y":p3.y(),"Z":1}]
+        result = requests.post(conString, json=body)
+        radius = result.json()["radius"]
+        centerPoint = result.json()["centerPoint"]
+        return radius, QPointF(centerPoint["X"],centerPoint["Y"])
 
     def findToSlopeLine(self, p1: Point, p2: Point) -> float:
         conString = (
@@ -130,6 +159,7 @@ class GeoService(object):
         result = requests.post(conString, json=body)
         return result.json()["radians"]
 
+    @dispatch(Point,Point)
     def findCenterPointToLine(self, p1: Point, p2: Point) -> PointGeo:
         conString = (
             UrlBuilder()
@@ -141,6 +171,19 @@ class GeoService(object):
         result = requests.post(conString, json=body)
         point = result.json()
         return PointGeo(pInfo=point)
+    
+    @dispatch(QPointF,QPointF)
+    def findCenterPointToLine(self, p1: QPointF, p2: QPointF) -> QPointF:
+        conString = (
+            UrlBuilder()
+            .urlBuild(self.__url)
+            .urlBuild(GeoEnum.findCenterPointToLine.value + "/")
+            .build()
+        )
+        body = [{"X": p1.x(), "Y": p1.y(), "Z": 1}, {"X": p2.x(), "Y": p2.y(), "Z": 1}]
+        result = requests.post(conString, json=body)
+        point = result.json()
+        return QPointF(point["X"],point["Y"])
 
     def findDegreeToBetweenTwoLines(self, slope1: float, slope2: float) -> float:
         conString = (

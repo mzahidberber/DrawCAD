@@ -1,21 +1,27 @@
 from Helpers.Preview.BasePreview import BasePreview
 from Helpers.Preview.LinePreview import LinePreview
-from Helpers.Preview.CirclePreview import CirclePreview
 from Helpers.Preview.RectanglePreview import RectanglePreview
 from Helpers.Preview.ArcPreview import ArcPreview
 from Helpers.Preview.EllipsPreview import EllipsPreview
 from Helpers.Preview.SplinePreview import SplinePreview
+from Helpers.Preview.CircleTwoPointPreview import CircleTwoPointPreview
+from Helpers.Preview.CircleCenterPointPreview import CircleCenterPointPreview
+from Helpers.Preview.CircleCenterRadiusPreview import CircleCenterRadiusPreview
+from Helpers.Preview.CircleTreePointPreivew import CircleTreePointPreivew
+
 
 
 class PreviewContext:
     __preview: BasePreview
     __preivewTypes: dict = {
         0: LinePreview,
-        1: CirclePreview,
-        2: RectanglePreview,
-        3: ArcPreview,
-        4: EllipsPreview,
-        5: SplinePreview,
+        1: CircleTwoPointPreview,
+        2: CircleCenterPointPreview,
+        3: CircleCenterRadiusPreview,
+        4: CircleTreePointPreivew,
+        5: RectanglePreview,
+        6: ArcPreview,
+        7: SplinePreview
     }
 
     def __new__(self):

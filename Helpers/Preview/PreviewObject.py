@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsObject
-from PyQt5.QtCore import QPointF
+from PyQt5.QtCore import QPointF,QRectF
 from Helpers.Preview.PreviewContext import PreviewContext
-from Model import PointGeo
 from Helpers.Preview.BasePreview import BasePreview
 
 
@@ -9,21 +8,23 @@ class PreviewObject(QGraphicsObject):
     def __init__(self, parent=None):
         QGraphicsObject.__init__(self, parent)
 
-        self.elementType: int
         self.preview: BasePreview
         self._previewContext = PreviewContext()
 
-    def setPoints(self, points: list[QPointF]):
-        self._preivew.setPoints(points)
-
     def setElementType(self, elementType: int):
-        self.elementType = elementType
-        self._preivew = self._previewContext.setPreviewBuilder(self.elementType)
+        self._preivew = self._previewContext.setPreviewBuilder(elementType)
 
-    def setMousePosition(self,point:QPointF):self._preivew.setMousePosition(point)
+    def stop(self):self._preivew.stop()
 
-    def addPoint(self,point:QPointF):self._preivew.addPoint(point)
+    def setMousePosition(self,point:QPointF):
+        if (hasattr(self,"_preivew")):self._preivew.setMousePosition(point)
 
-    def boundingRect(self):return self._preivew.boundaryBuild()
+    def addPoint(self,point:QPointF):
+        if (hasattr(self,"_preivew")):self._preivew.addPoint(point)
 
-    def paint(self, painter, option, widget):self._preivew.paint(painter=painter)
+    def boundingRect(self):
+        if (hasattr(self,"_preivew")):return self._preivew.boundaryBuild()
+        else:return QRectF()
+
+    def paint(self, painter, option, widget):
+        if (hasattr(self,"_preivew")):self._preivew.paint(painter=painter)
