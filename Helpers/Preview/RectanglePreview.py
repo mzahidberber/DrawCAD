@@ -11,3 +11,4 @@ class RectanglePreview(BasePreview):
     def paintPreview(self, painter):
         if (self._mousePosition!=None and len(self._pointList)==1):
             painter.drawRect(QRectF(self._pointList[0], self._mousePosition))
+        if (len(self._pointList)==2):self.stop()

@@ -8,6 +8,7 @@ from Helpers.Preview.CircleTwoPointPreview import CircleTwoPointPreview
 from Helpers.Preview.CircleCenterPointPreview import CircleCenterPointPreview
 from Helpers.Preview.CircleCenterRadiusPreview import CircleCenterRadiusPreview
 from Helpers.Preview.CircleTreePointPreivew import CircleTreePointPreivew
+from Helpers.Preview.DefaultPreview import DefaultPreview
 
 
 
@@ -32,3 +33,6 @@ class PreviewContext:
     def setPreviewBuilder(self, previewType: int) -> BasePreview:
         self.__preview = self.__preivewTypes[previewType]
         return self.__preview()
+    
+    
+    def setDefaultPreview(self):return DefaultPreview()

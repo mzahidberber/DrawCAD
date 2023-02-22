@@ -8,8 +8,16 @@ class BasePreview(ABC):
     _pointList:list[QPointF]=[]
     _mousePosition:QPointF or None = None
     _geoService:GeoService=GeoService()
+    _radius:float=10
+    _stopDelegates=[]
 
-    def stop(self)->None:self._pointList.clear()
+    def connectStop(self,func):self._stopDelegates.append(func)
+
+    def setRadius(self,radius:float):self._radius=radius
+
+    def stop(self)->None:
+        for i in self._stopDelegates:i()
+        self._pointList.clear()
     
     def addPoint(self,point:QPointF)-> None :self._pointList.append(point)
 

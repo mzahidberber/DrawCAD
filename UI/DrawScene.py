@@ -21,6 +21,8 @@ class DrawScene(QGraphicsScene):
         self.gridkalem = Setting.gridPen
         self.gridtarama = Setting.gridHatch
 
+        
+
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_Escape:
             print("esc")

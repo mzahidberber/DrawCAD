@@ -20,6 +20,8 @@ class CommandPanel:
 
         drawScene.ClickedMouse.connect(self.addCoordinate)
         drawScene.MovedMouse.connect(self.mouseMove)
+
+        self.radius:float=10
         
         
 
@@ -28,22 +30,22 @@ class CommandPanel:
         self.__drawScene.updateScene()
 
     def startCommand(self, command: CommandEnums, userDrawBoxId: int, userLayerId: int):
-        self.__drawService.startCommand(command, userDrawBoxId, userLayerId)
+        #self.__drawService.startCommand(command, userDrawBoxId, userLayerId)
         self.__preview.setElementType(command.value)
         self.__isStartCommand = True
 
     def addCoordinate(self, coordinate):
         print(coordinate)
         if self.__isStartCommand == True:
-            element = self.__drawService.addCoordinate(coordinate.x(), coordinate.y(), 1, 0)
+            #element = self.__drawService.addCoordinate(coordinate.x(), coordinate.y(), 1, 0)
             self.__preview.addPoint(coordinate)
 
-            if type(element) == Element:
-                self.__elementDraw.drawElement(element)
-                self.__preview.stop()
-                self.__isStartCommand = False
-            else:
-                print(element)
+            # if type(element) == Element:
+            #     self.__elementDraw.drawElement(element)
+            #     self.__preview.stop()
+            #     self.__isStartCommand = False
+            # else:
+            #     print(element)
 
     def getLayers(self, drawBoxId: int):
         return self.__drawService.getLayers(drawBoxId)

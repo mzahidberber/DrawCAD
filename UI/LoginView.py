@@ -3,7 +3,6 @@ from UI.QtUI import Ui_LoginView
 from Service import DrawService
 from UI import DrawView
 
-
 class UserInfo:
     username = "zahid"
     password = "123456"
@@ -11,7 +10,7 @@ class UserInfo:
 
 class LoginView(QMainWindow):
     def __init__(self):
-        super(LoginView, self).__init__()
+        super().__init__()
         self.ui = Ui_LoginView()
         self.ui.setupUi(self)
 
@@ -20,14 +19,15 @@ class LoginView(QMainWindow):
         self.username = ""
         self.password = ""
 
+
         self.drawBoxView = None
         self.drawView = None
 
         self.loggin()
 
     def loggin(self):
-        DrawService().login("zahid", "123456")
         self.close()
+        DrawService().login("zahid", "123456")
         self.showDrawViewWindow()
 
     def connectButtons(self):

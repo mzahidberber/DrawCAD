@@ -27,6 +27,7 @@ class DrawView(QMainWindow):
         self.getDrawBoxItems()
         self.ui.lwDrawBoxes.doubleClicked.connect(self.itemDoubleClicked)
 
+
     def settingsGraphicsView(self):
         self.drawScene = DrawScene(self)
         self.graphicView = self.ui.gvGraphicsView
@@ -78,6 +79,7 @@ class DrawView(QMainWindow):
         self.ui.actionCenterRadiusCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterRadius))
         self.ui.actionCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterPoint))
         self.ui.actionTreePointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleTreePoint))
+        self.ui.actionRectangle.triggered.connect(lambda: self.startCommand(CommandEnums.rectangle))
 
     def setButtonsDisable(self, isDisable: bool):
         self.ui.actionLine.setDisabled(isDisable)

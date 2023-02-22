@@ -4,6 +4,8 @@ from PyQt5.QtCore import QRectF,QPointF
 
 class CircleTreePointPreivew(BasePreview):
 
+    __distance:float
+
     def findRect(self):
         centerAndRadius=self._geoService.findCenterAndRadius(self._pointList[0],self._pointList[1], self._mousePosition)
         return QRectF(
@@ -12,14 +14,14 @@ class CircleTreePointPreivew(BasePreview):
     
     def boundaryBuild(self):
         if (self._mousePosition!=None and len(self._pointList)==2):
-            distance=self._geoService.findTwoPointsLength(self._pointList[1],self._mousePosition)
-            if(distance>5):return self.findRect()
+            self.__distance=self._geoService.findTwoPointsLength(self._pointList[1],self._mousePosition)
+            if(self.__distance>5):return self.findRect()
             else: return QRectF()
         else:
             return QRectF()
 
     def paintPreview(self, painter):
         if (self._mousePosition!=None and len(self._pointList)==2):
-            distance=self._geoService.findTwoPointsLength(self._pointList[1],self._mousePosition)
-            if(distance>5):
+            if(self.__distance>5):
                 painter.drawEllipse(self.findRect())
+        if (len(self._pointList)==3):self.stop()
