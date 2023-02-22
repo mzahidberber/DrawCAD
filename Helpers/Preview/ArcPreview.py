@@ -1,3 +1,2 @@
-
-
-class ArcPreview:pass
+class ArcPreview:
+    pass

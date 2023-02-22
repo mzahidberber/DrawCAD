@@ -1,3 +1,2 @@
-
-
-class EllipsPreview:pass
+class EllipsPreview:
+    pass

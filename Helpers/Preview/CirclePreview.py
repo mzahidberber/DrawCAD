@@ -1,3 +1,2 @@
-
-
-class CirclePreview:pass
+class CirclePreview:
+    pass

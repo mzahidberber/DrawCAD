@@ -1,36 +1,42 @@
-from PyQt5.QtGui import QPainterPathStroker,QPainterPath
+from PyQt5.QtGui import QPainterPathStroker, QPainterPath
 from PyQt5.QtCore import QRectF
-from abc import ABC,abstractmethod
+from abc import ABC, abstractmethod
 from Model import Element
 from Helpers.Settings import Setting
 
+
 class ElementBuilder(ABC):
-    __element:Element
-    
+    __element: Element
+
     @property
-    def element(self):return self.__element
+    def element(self):
+        return self.__element
 
-    def setElementInformation(self,element:Element):
-        self.__element=element
+    def setElementInformation(self, element: Element):
+        self.__element = element
         self.setPointsInformation()
-        
+
     def drawPath(self):
-        painterStrock=QPainterPathStroker()
+        painterStrock = QPainterPathStroker()
         painterStrock.setWidth(Setting.lineBoundDistance)
-        p=QPainterPath()
-        
+        p = QPainterPath()
+
         self.shape(p)
-        
-        path1=painterStrock.createStroke(p)
-        return path1 
-    
-    def boundaryBuild(self) -> QRectF:return self.drawPath().boundingRect()
+
+        path1 = painterStrock.createStroke(p)
+        return path1
+
+    def boundaryBuild(self) -> QRectF:
+        return self.drawPath().boundingRect()
 
     @abstractmethod
-    def setPointsInformation(self):pass
+    def setPointsInformation(self):
+        pass
 
     @abstractmethod
-    def paint(self,painter):pass
-    
+    def paint(self, painter):
+        pass
+
     @abstractmethod
-    def shape(self,painterPath:QPainterPath):pass
+    def shape(self, painterPath: QPainterPath):
+        pass

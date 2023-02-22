@@ -8,15 +8,21 @@ from Helpers.Preview.SplinePreview import SplinePreview
 
 
 class PreviewContext:
-
-    __preview:BasePreview
-    __preivewTypes:dict={1:LinePreview,2:CirclePreview,3:RectanglePreview,4:ArcPreview,5:EllipsPreview,6:SplinePreview}
+    __preview: BasePreview
+    __preivewTypes: dict = {
+        0: LinePreview,
+        1: CirclePreview,
+        2: RectanglePreview,
+        3: ArcPreview,
+        4: EllipsPreview,
+        5: SplinePreview,
+    }
 
     def __new__(self):
-        if not hasattr(self, 'instance'):
+        if not hasattr(self, "instance"):
             self.instance = super(PreviewContext, self).__new__(self)
         return self.instance
-    
-    def setPreviewBuilder(self,previewType:int)-> BasePreview:
-        self.__preview=self.__preivewTypes[previewType]
+
+    def setPreviewBuilder(self, previewType: int) -> BasePreview:
+        self.__preview = self.__preivewTypes[previewType]
         return self.__preview()

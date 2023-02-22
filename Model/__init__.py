@@ -10,5 +10,18 @@ from Model.Point import Point
 from Model.Radius import Radius
 from Model.SSAngle import SSAngle
 from Model.User import User
-from Model.DrawEnums import ETypes,DBInfo,LInfo,EInfo,PInfo,RInfo,HInfo,SSAInfo,PenInfo,CInfo,PSInfo,UInfo
+from Model.DrawEnums import (
+    ETypes,
+    DBInfo,
+    LInfo,
+    EInfo,
+    PInfo,
+    RInfo,
+    HInfo,
+    SSAInfo,
+    PenInfo,
+    CInfo,
+    PSInfo,
+    UInfo,
+)
 from Model.PointGeo import PointGeo

@@ -17,9 +17,15 @@ class Ui_DrawView(object):
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
         MainWindow.resize(1202, 781)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Sembol/Semboller/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/Sembol/Semboller/icon.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         MainWindow.setWindowIcon(icon)
-        MainWindow.setLocale(QtCore.QLocale(QtCore.QLocale.Turkish, QtCore.QLocale.Turkey))
+        MainWindow.setLocale(
+            QtCore.QLocale(QtCore.QLocale.Turkish, QtCore.QLocale.Turkey)
+        )
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -27,7 +33,9 @@ class Ui_DrawView(object):
         self.gridLayout.setSpacing(3)
         self.gridLayout.setObjectName("gridLayout")
         self.twDrawTabs = QtWidgets.QTabWidget(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.twDrawTabs.sizePolicy().hasHeightForWidth())
@@ -44,7 +52,9 @@ class Ui_DrawView(object):
         self.verticalLayout.addWidget(self.lwDrawBoxes)
         self.gvGraphicsView = GraphicsView(self.tab)
         self.gvGraphicsView.setMouseTracking(False)
-        self.gvGraphicsView.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
+        self.gvGraphicsView.setViewportUpdateMode(
+            QtWidgets.QGraphicsView.FullViewportUpdate
+        )
         self.gvGraphicsView.setObjectName("gvGraphicsView")
         self.verticalLayout.addWidget(self.gvGraphicsView)
         self.twDrawTabs.addTab(self.tab, "")
@@ -53,7 +63,9 @@ class Ui_DrawView(object):
         self.twDrawTabs.addTab(self.tab_2, "")
         self.gridLayout.addWidget(self.twDrawTabs, 1, 0, 1, 1)
         self.gbxValueBox = QtWidgets.QGroupBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.gbxValueBox.sizePolicy().hasHeightForWidth())
@@ -66,10 +78,14 @@ class Ui_DrawView(object):
         self.horizontalLayout_4.setSpacing(6)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.gbxCoordinates = QtWidgets.QGroupBox(self.gbxValueBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.gbxCoordinates.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.gbxCoordinates.sizePolicy().hasHeightForWidth()
+        )
         self.gbxCoordinates.setSizePolicy(sizePolicy)
         self.gbxCoordinates.setMinimumSize(QtCore.QSize(180, 0))
         self.gbxCoordinates.setMaximumSize(QtCore.QSize(180, 16777215))
@@ -79,16 +95,24 @@ class Ui_DrawView(object):
         self.horizontalLayout.setContentsMargins(3, 0, 3, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.lblXCoordinate = QtWidgets.QLabel(self.gbxCoordinates)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lblXCoordinate.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lblXCoordinate.sizePolicy().hasHeightForWidth()
+        )
         self.lblXCoordinate.setSizePolicy(sizePolicy)
-        self.lblXCoordinate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.lblXCoordinate.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.lblXCoordinate.setObjectName("lblXCoordinate")
         self.horizontalLayout.addWidget(self.lblXCoordinate)
         self.label = QtWidgets.QLabel(self.gbxCoordinates)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
@@ -97,17 +121,25 @@ class Ui_DrawView(object):
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
         self.lblYcoordinate = QtWidgets.QLabel(self.gbxCoordinates)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lblYcoordinate.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lblYcoordinate.sizePolicy().hasHeightForWidth()
+        )
         self.lblYcoordinate.setSizePolicy(sizePolicy)
-        self.lblYcoordinate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.lblYcoordinate.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.lblYcoordinate.setObjectName("lblYcoordinate")
         self.horizontalLayout.addWidget(self.lblYcoordinate)
         self.horizontalLayout_4.addWidget(self.gbxCoordinates)
         self.cbxLayers = QtWidgets.QComboBox(self.gbxValueBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cbxLayers.sizePolicy().hasHeightForWidth())
@@ -119,13 +151,19 @@ class Ui_DrawView(object):
         self.pbLayerButton = QtWidgets.QPushButton(self.gbxValueBox)
         self.pbLayerButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/Sembol/Semboller/katman.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/Sembol/Semboller/katman.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.pbLayerButton.setIcon(icon1)
         self.pbLayerButton.setIconSize(QtCore.QSize(16, 16))
         self.pbLayerButton.setObjectName("pbLayerButton")
         self.horizontalLayout_4.addWidget(self.pbLayerButton)
         self.gbxPainBox = QtWidgets.QGroupBox(self.gbxValueBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.gbxPainBox.sizePolicy().hasHeightForWidth())
@@ -136,7 +174,9 @@ class Ui_DrawView(object):
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.lblPainText = QtWidgets.QLabel(self.gbxPainBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lblPainText.sizePolicy().hasHeightForWidth())
@@ -144,10 +184,14 @@ class Ui_DrawView(object):
         self.lblPainText.setObjectName("lblPainText")
         self.horizontalLayout_2.addWidget(self.lblPainText)
         self.dsbCatchPainDegree = QtWidgets.QDoubleSpinBox(self.gbxPainBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(100)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.dsbCatchPainDegree.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.dsbCatchPainDegree.sizePolicy().hasHeightForWidth()
+        )
         self.dsbCatchPainDegree.setSizePolicy(sizePolicy)
         self.dsbCatchPainDegree.setMaximumSize(QtCore.QSize(100, 16777215))
         self.dsbCatchPainDegree.setProperty("showGroupSeparator", False)
@@ -155,18 +199,26 @@ class Ui_DrawView(object):
         self.dsbCatchPainDegree.setObjectName("dsbCatchPainDegree")
         self.horizontalLayout_2.addWidget(self.dsbCatchPainDegree)
         self.horizontalLayout_4.addWidget(self.gbxPainBox)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_4.addItem(spacerItem)
         self.gridLayout.addWidget(self.gbxValueBox, 11, 0, 1, 2)
         self.gbxCommandLineBox = QtWidgets.QGroupBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.gbxCommandLineBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.gbxCommandLineBox.sizePolicy().hasHeightForWidth()
+        )
         self.gbxCommandLineBox.setSizePolicy(sizePolicy)
         self.gbxCommandLineBox.setMaximumSize(QtCore.QSize(16777215, 65))
         self.gbxCommandLineBox.setTitle("")
-        self.gbxCommandLineBox.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.gbxCommandLineBox.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+        )
         self.gbxCommandLineBox.setObjectName("gbxCommandLineBox")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.gbxCommandLineBox)
         self.verticalLayout_2.setContentsMargins(3, 3, 3, 3)
@@ -181,8 +233,12 @@ class Ui_DrawView(object):
         self.lwCommandText.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.lwCommandText.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.lwCommandText.setTabKeyNavigation(False)
-        self.lwCommandText.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerItem)
-        self.lwCommandText.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerItem)
+        self.lwCommandText.setVerticalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollPerItem
+        )
+        self.lwCommandText.setHorizontalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollPerItem
+        )
         self.lwCommandText.setMovement(QtWidgets.QListView.Static)
         self.lwCommandText.setProperty("isWrapping", False)
         self.lwCommandText.setResizeMode(QtWidgets.QListView.Fixed)
@@ -233,7 +289,9 @@ class Ui_DrawView(object):
         self.toolBar_2 = QtWidgets.QToolBar(MainWindow)
         self.toolBar_2.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.toolBar_2.setMovable(False)
-        self.toolBar_2.setAllowedAreas(QtCore.Qt.BottomToolBarArea|QtCore.Qt.TopToolBarArea)
+        self.toolBar_2.setAllowedAreas(
+            QtCore.Qt.BottomToolBarArea | QtCore.Qt.TopToolBarArea
+        )
         self.toolBar_2.setIconSize(QtCore.QSize(25, 25))
         self.toolBar_2.setObjectName("toolBar_2")
         MainWindow.addToolBar(QtCore.Qt.BottomToolBarArea, self.toolBar_2)
@@ -259,10 +317,14 @@ class Ui_DrawView(object):
         self.toolBar_7.setObjectName("toolBar_7")
         MainWindow.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolBar_7)
         self.ElementsImformation = QtWidgets.QDockWidget(MainWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.ElementsImformation.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.ElementsImformation.sizePolicy().hasHeightForWidth()
+        )
         self.ElementsImformation.setSizePolicy(sizePolicy)
         self.ElementsImformation.setMinimumSize(QtCore.QSize(200, 137))
         self.ElementsImformation.setMaximumSize(QtCore.QSize(200, 524287))
@@ -272,18 +334,26 @@ class Ui_DrawView(object):
         self.ElementsImformation.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.ElementsImformation.setAcceptDrops(False)
         self.ElementsImformation.setFloating(False)
-        self.ElementsImformation.setFeatures(QtWidgets.QDockWidget.AllDockWidgetFeatures)
-        self.ElementsImformation.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
+        self.ElementsImformation.setFeatures(
+            QtWidgets.QDockWidget.AllDockWidgetFeatures
+        )
+        self.ElementsImformation.setAllowedAreas(
+            QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea
+        )
         self.ElementsImformation.setObjectName("ElementsImformation")
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.dockWidgetContents)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.ElementsImformationList = QtWidgets.QListWidget(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.ElementsImformationList.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.ElementsImformationList.sizePolicy().hasHeightForWidth()
+        )
         self.ElementsImformationList.setSizePolicy(sizePolicy)
         self.ElementsImformationList.setMaximumSize(QtCore.QSize(300, 16777215))
         self.ElementsImformationList.setStyleSheet("background:transparent;")
@@ -304,212 +374,412 @@ class Ui_DrawView(object):
         self.actionSaveAs.setObjectName("actionSaveAs")
         self.actionLine = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/Image/Images/Line.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Line.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionLine.setIcon(icon2)
         self.actionLine.setObjectName("actionLine")
         self.actionPolyLine = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/Image/Images/polyline.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(
+            QtGui.QPixmap(":/Image/Images/polyline.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionPolyLine.setIcon(icon3)
         self.actionPolyLine.setObjectName("actionPolyLine")
         self.actionRectangle = QtWidgets.QAction(MainWindow)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/Image/Images/Rectangle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Rectangle.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionRectangle.setIcon(icon4)
         self.actionRectangle.setObjectName("actionRectangle")
         self.actionCircle = QtWidgets.QAction(MainWindow)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/Image/Images/Circle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Circle.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionCircle.setIcon(icon5)
         self.actionCircle.setObjectName("actionCircle")
         self.actionEllipse = QtWidgets.QAction(MainWindow)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/Image/Images/Ellips.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Ellips.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionEllipse.setIcon(icon6)
         self.actionEllipse.setObjectName("actionEllipse")
         self.actionArc = QtWidgets.QAction(MainWindow)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/Image/Images/arc.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(
+            QtGui.QPixmap(":/Image/Images/arc.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.actionArc.setIcon(icon7)
         self.actionArc.setObjectName("actionArc")
         self.actionEndPointSnap = QtWidgets.QAction(MainWindow)
         self.actionEndPointSnap.setCheckable(True)
         icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/Image/Images/closeendpoint.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon8.addPixmap(QtGui.QPixmap(":/Image/Images/openendpoint.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon8.addPixmap(
+            QtGui.QPixmap(":/Image/Images/closeendpoint.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon8.addPixmap(
+            QtGui.QPixmap(":/Image/Images/openendpoint.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionEndPointSnap.setIcon(icon8)
         self.actionEndPointSnap.setObjectName("actionEndPointSnap")
         self.actionMidPointSnap = QtWidgets.QAction(MainWindow)
         self.actionMidPointSnap.setCheckable(True)
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/Image/Images/CloseMidPoint.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon9.addPixmap(QtGui.QPixmap(":/Image/Images/OpenMidPoint.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon9.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CloseMidPoint.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon9.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenMidPoint.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionMidPointSnap.setIcon(icon9)
         self.actionMidPointSnap.setObjectName("actionMidPointSnap")
         self.actionCenterPointSnap = QtWidgets.QAction(MainWindow)
         self.actionCenterPointSnap.setCheckable(True)
         icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(":/Image/Images/CloseCenter.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon10.addPixmap(QtGui.QPixmap(":/Image/Images/OpenCenter.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon10.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CloseCenter.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon10.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenCenter.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionCenterPointSnap.setIcon(icon10)
         self.actionCenterPointSnap.setObjectName("actionCenterPointSnap")
         self.actionIntersectionPointSnap = QtWidgets.QAction(MainWindow)
         self.actionIntersectionPointSnap.setCheckable(True)
         self.actionIntersectionPointSnap.setChecked(False)
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(":/Sembol/Semboller/kesisim.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon11.addPixmap(QtGui.QPixmap(":/Image/Images/CloseIntersection.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon11.addPixmap(QtGui.QPixmap(":/Image/Images/OpenIntersection.png"), QtGui.QIcon.Disabled, QtGui.QIcon.Off)
+        icon11.addPixmap(
+            QtGui.QPixmap(":/Sembol/Semboller/kesisim.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon11.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CloseIntersection.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
+        icon11.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenIntersection.png"),
+            QtGui.QIcon.Disabled,
+            QtGui.QIcon.Off,
+        )
         self.actionIntersectionPointSnap.setIcon(icon11)
         self.actionIntersectionPointSnap.setObjectName("actionIntersectionPointSnap")
         self.actionNearestPointSnap = QtWidgets.QAction(MainWindow)
         self.actionNearestPointSnap.setCheckable(True)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(":/Image/Images/CloseNearest.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon12.addPixmap(QtGui.QPixmap(":/Image/Images/OpenNearest.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon12.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CloseNearest.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon12.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenNearest.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionNearestPointSnap.setIcon(icon12)
         self.actionNearestPointSnap.setObjectName("actionNearestPointSnap")
         self.actionGridSnap = QtWidgets.QAction(MainWindow)
         self.actionGridSnap.setCheckable(True)
         icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(":/Image/Images/CloseGrid.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon13.addPixmap(QtGui.QPixmap(":/Image/Images/OpenGrid.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon13.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CloseGrid.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon13.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenGrid.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionGridSnap.setIcon(icon13)
         self.actionGridSnap.setObjectName("actionGridSnap")
         self.actionMove = QtWidgets.QAction(MainWindow)
         self.actionMove.setCheckable(False)
         icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(":/Image/Images/move.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon14.addPixmap(
+            QtGui.QPixmap(":/Image/Images/move.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionMove.setIcon(icon14)
         self.actionMove.setObjectName("actionMove")
         self.actionPolygon = QtWidgets.QAction(MainWindow)
         icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap(":/Sembol/Semboller/Cokgen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon15.addPixmap(QtGui.QPixmap(":/Image/Images/Polygon.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon15.addPixmap(
+            QtGui.QPixmap(":/Sembol/Semboller/Cokgen.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon15.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Polygon.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionPolygon.setIcon(icon15)
         self.actionPolygon.setObjectName("actionPolygon")
         self.actionSPLine = QtWidgets.QAction(MainWindow)
         icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(":/Sembol/Semboller/spline.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon16.addPixmap(QtGui.QPixmap(":/Image/Images/spline.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon16.addPixmap(
+            QtGui.QPixmap(":/Sembol/Semboller/spline.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon16.addPixmap(
+            QtGui.QPixmap(":/Image/Images/spline.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionSPLine.setIcon(icon16)
         self.actionSPLine.setObjectName("actionSPLine")
         self.actionTreePointsCircle = QtWidgets.QAction(MainWindow)
         icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(":/Image/Images/treepointcircle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon17.addPixmap(
+            QtGui.QPixmap(":/Image/Images/treepointcircle.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionTreePointsCircle.setIcon(icon17)
         self.actionTreePointsCircle.setObjectName("actionTreePointsCircle")
         self.actionTwoPointsCircle = QtWidgets.QAction(MainWindow)
         icon18 = QtGui.QIcon()
-        icon18.addPixmap(QtGui.QPixmap(":/Image/Images/TwoPointCircle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon18.addPixmap(
+            QtGui.QPixmap(":/Image/Images/TwoPointCircle.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionTwoPointsCircle.setIcon(icon18)
         self.actionTwoPointsCircle.setObjectName("actionTwoPointsCircle")
         self.actionCenterRadiusCircle = QtWidgets.QAction(MainWindow)
         icon19 = QtGui.QIcon()
-        icon19.addPixmap(QtGui.QPixmap(":/Image/Images/CenterPointCircle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon19.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CenterPointCircle.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionCenterRadiusCircle.setIcon(icon19)
         self.actionCenterRadiusCircle.setObjectName("actionCenterRadiusCircle")
         self.actionTwoPointCenterArc = QtWidgets.QAction(MainWindow)
         icon20 = QtGui.QIcon()
-        icon20.addPixmap(QtGui.QPixmap(":/Image/Images/TwoPointCenterArc.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon20.addPixmap(
+            QtGui.QPixmap(":/Image/Images/TwoPointCenterArc.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionTwoPointCenterArc.setIcon(icon20)
         self.actionTwoPointCenterArc.setObjectName("actionTwoPointCenterArc")
         self.actionDimension = QtWidgets.QAction(MainWindow)
         icon21 = QtGui.QIcon()
-        icon21.addPixmap(QtGui.QPixmap(":/Image/Images/Dimension.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon21.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Dimension.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionDimension.setIcon(icon21)
         self.actionDimension.setObjectName("actionDimension")
         self.actionPainDimension = QtWidgets.QAction(MainWindow)
         icon22 = QtGui.QIcon()
-        icon22.addPixmap(QtGui.QPixmap(":/Image/Images/angle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon22.addPixmap(
+            QtGui.QPixmap(":/Image/Images/angle.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionPainDimension.setIcon(icon22)
         self.actionPainDimension.setObjectName("actionPainDimension")
         self.actionText = QtWidgets.QAction(MainWindow)
         icon23 = QtGui.QIcon()
-        icon23.addPixmap(QtGui.QPixmap(":/Image/Images/text.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon23.addPixmap(
+            QtGui.QPixmap(":/Image/Images/text.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionText.setIcon(icon23)
         self.actionText.setObjectName("actionText")
         self.actionHatch = QtWidgets.QAction(MainWindow)
         icon24 = QtGui.QIcon()
-        icon24.addPixmap(QtGui.QPixmap(":/Image/Images/hatch.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon24.addPixmap(
+            QtGui.QPixmap(":/Image/Images/hatch.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionHatch.setIcon(icon24)
         self.actionHatch.setObjectName("actionHatch")
         self.actionCopy = QtWidgets.QAction(MainWindow)
         icon25 = QtGui.QIcon()
-        icon25.addPixmap(QtGui.QPixmap(":/Image/Images/Copy.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon25.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Copy.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionCopy.setIcon(icon25)
         self.actionCopy.setObjectName("actionCopy")
         self.actionRotate = QtWidgets.QAction(MainWindow)
         icon26 = QtGui.QIcon()
-        icon26.addPixmap(QtGui.QPixmap(":/Image/Images/Rotate.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon26.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Rotate.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionRotate.setIcon(icon26)
         self.actionRotate.setObjectName("actionRotate")
         self.actionScale = QtWidgets.QAction(MainWindow)
         icon27 = QtGui.QIcon()
-        icon27.addPixmap(QtGui.QPixmap(":/Image/Images/Scale.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon27.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Scale.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionScale.setIcon(icon27)
         self.actionScale.setObjectName("actionScale")
         self.actionMirror = QtWidgets.QAction(MainWindow)
         icon28 = QtGui.QIcon()
-        icon28.addPixmap(QtGui.QPixmap(":/Image/Images/Mirror.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon28.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Mirror.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionMirror.setIcon(icon28)
         self.actionMirror.setObjectName("actionMirror")
         self.actionExplode = QtWidgets.QAction(MainWindow)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(":/Image/Images/Explode.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon29.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Explode.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionExplode.setIcon(icon29)
         self.actionExplode.setObjectName("actionExplode")
         self.actionJoin = QtWidgets.QAction(MainWindow)
         icon30 = QtGui.QIcon()
-        icon30.addPixmap(QtGui.QPixmap(":/Image/Images/Join.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon30.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Join.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionJoin.setIcon(icon30)
         self.actionJoin.setObjectName("actionJoin")
         self.actionStrech = QtWidgets.QAction(MainWindow)
         icon31 = QtGui.QIcon()
-        icon31.addPixmap(QtGui.QPixmap(":/Image/Images/strech.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon31.addPixmap(
+            QtGui.QPixmap(":/Image/Images/strech.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionStrech.setIcon(icon31)
         self.actionStrech.setObjectName("actionStrech")
         self.actionOpenElementInformationBox = QtWidgets.QAction(MainWindow)
         icon32 = QtGui.QIcon()
-        icon32.addPixmap(QtGui.QPixmap(":/Image/Images/CloseElementsImformation.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon32.addPixmap(QtGui.QPixmap(":/Image/Images/OpenElementsInformation.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon32.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CloseElementsImformation.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon32.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenElementsInformation.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionOpenElementInformationBox.setIcon(icon32)
-        self.actionOpenElementInformationBox.setObjectName("actionOpenElementInformationBox")
+        self.actionOpenElementInformationBox.setObjectName(
+            "actionOpenElementInformationBox"
+        )
         self.actionOrthoMode = QtWidgets.QAction(MainWindow)
         self.actionOrthoMode.setCheckable(True)
         icon33 = QtGui.QIcon()
-        icon33.addPixmap(QtGui.QPixmap(":/Image/Images/CloseOrtho.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon33.addPixmap(QtGui.QPixmap(":/Image/Images/OpenOrtho.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon33.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CloseOrtho.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon33.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenOrtho.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionOrthoMode.setIcon(icon33)
         self.actionOrthoMode.setObjectName("actionOrthoMode")
         self.actionPolarMode = QtWidgets.QAction(MainWindow)
         self.actionPolarMode.setCheckable(True)
         icon34 = QtGui.QIcon()
-        icon34.addPixmap(QtGui.QPixmap(":/Image/Images/ClosePain.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon34.addPixmap(QtGui.QPixmap(":/Image/Images/OpenPain.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon34.addPixmap(
+            QtGui.QPixmap(":/Image/Images/ClosePain.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon34.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenPain.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionPolarMode.setIcon(icon34)
         self.actionPolarMode.setObjectName("actionPolarMode")
         self.actionOpenCommandBox = QtWidgets.QAction(MainWindow)
         icon35 = QtGui.QIcon()
-        icon35.addPixmap(QtGui.QPixmap(":/Image/Images/CloseCommandLine.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon35.addPixmap(QtGui.QPixmap(":/Image/Images/OpenCommandLine.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon35.addPixmap(
+            QtGui.QPixmap(":/Image/Images/CloseCommandLine.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        icon35.addPixmap(
+            QtGui.QPixmap(":/Image/Images/OpenCommandLine.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.On,
+        )
         self.actionOpenCommandBox.setIcon(icon35)
         self.actionOpenCommandBox.setObjectName("actionOpenCommandBox")
         self.actionNew = QtWidgets.QAction(MainWindow)
         self.actionNew.setObjectName("actionNew")
         self.actionTrim = QtWidgets.QAction(MainWindow)
         icon36 = QtGui.QIcon()
-        icon36.addPixmap(QtGui.QPixmap(":/Image/Images/Trim.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon36.addPixmap(
+            QtGui.QPixmap(":/Image/Images/Trim.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionTrim.setIcon(icon36)
         self.actionTrim.setObjectName("actionTrim")
         self.actionExtend = QtWidgets.QAction(MainWindow)
         icon37 = QtGui.QIcon()
-        icon37.addPixmap(QtGui.QPixmap(":/Image/Images/extend.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon37.addPixmap(
+            QtGui.QPixmap(":/Image/Images/extend.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionExtend.setIcon(icon37)
         self.actionExtend.setObjectName("actionExtend")
         self.actionOffset = QtWidgets.QAction(MainWindow)
         icon38 = QtGui.QIcon()
-        icon38.addPixmap(QtGui.QPixmap(":/Image/Images/offset.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon38.addPixmap(
+            QtGui.QPixmap(":/Image/Images/offset.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionOffset.setIcon(icon38)
         self.actionOffset.setObjectName("actionOffset")
         self.mnFolder.addAction(self.actionNew)
@@ -599,8 +869,12 @@ class Ui_DrawView(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Draw Program"))
-        self.twDrawTabs.setTabText(self.twDrawTabs.indexOf(self.tab), _translate("MainWindow", "Draw Name"))
-        self.twDrawTabs.setTabText(self.twDrawTabs.indexOf(self.tab_2), _translate("MainWindow", "+"))
+        self.twDrawTabs.setTabText(
+            self.twDrawTabs.indexOf(self.tab), _translate("MainWindow", "Draw Name")
+        )
+        self.twDrawTabs.setTabText(
+            self.twDrawTabs.indexOf(self.tab_2), _translate("MainWindow", "+")
+        )
         self.lblXCoordinate.setText(_translate("MainWindow", "0000.0000"))
         self.label.setText(_translate("MainWindow", "-"))
         self.lblYcoordinate.setText(_translate("MainWindow", "0000.0000"))
@@ -619,7 +893,9 @@ class Ui_DrawView(object):
         self.toolBar_5.setWindowTitle(_translate("MainWindow", "toolBar_5"))
         self.toolBar_6.setWindowTitle(_translate("MainWindow", "toolBar_6"))
         self.toolBar_7.setWindowTitle(_translate("MainWindow", "toolBar_7"))
-        self.ElementsImformation.setWindowTitle(_translate("MainWindow", "Elements Imformation"))
+        self.ElementsImformation.setWindowTitle(
+            _translate("MainWindow", "Elements Imformation")
+        )
         self.actionImport.setText(_translate("MainWindow", "Import"))
         self.actionExport.setText(_translate("MainWindow", "Export"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
@@ -634,19 +910,34 @@ class Ui_DrawView(object):
         self.actionEllipse.setText(_translate("MainWindow", "Ellips"))
         self.actionArc.setText(_translate("MainWindow", "Tree Point Arc"))
         self.actionEndPointSnap.setText(_translate("MainWindow", "End Point Snap"))
-        self.actionMidPointSnap.setText(_translate("MainWindow", "\n"
-"Middle Point Snap"))
-        self.actionCenterPointSnap.setText(_translate("MainWindow", "Center Point Snap"))
-        self.actionIntersectionPointSnap.setText(_translate("MainWindow", "Intersection Point Snap"))
-        self.actionNearestPointSnap.setText(_translate("MainWindow", "Nearest Point Snap"))
+        self.actionMidPointSnap.setText(
+            _translate("MainWindow", "\n" "Middle Point Snap")
+        )
+        self.actionCenterPointSnap.setText(
+            _translate("MainWindow", "Center Point Snap")
+        )
+        self.actionIntersectionPointSnap.setText(
+            _translate("MainWindow", "Intersection Point Snap")
+        )
+        self.actionNearestPointSnap.setText(
+            _translate("MainWindow", "Nearest Point Snap")
+        )
         self.actionGridSnap.setText(_translate("MainWindow", "Grid Snap"))
         self.actionMove.setText(_translate("MainWindow", "Move"))
         self.actionPolygon.setText(_translate("MainWindow", "Polygon"))
         self.actionSPLine.setText(_translate("MainWindow", "SPLine"))
-        self.actionTreePointsCircle.setText(_translate("MainWindow", "Tree Points Circle"))
-        self.actionTwoPointsCircle.setText(_translate("MainWindow", "Two Points Circle"))
-        self.actionCenterRadiusCircle.setText(_translate("MainWindow", "Center Radius Circle"))
-        self.actionTwoPointCenterArc.setText(_translate("MainWindow", "Two Point Center Arc"))
+        self.actionTreePointsCircle.setText(
+            _translate("MainWindow", "Tree Points Circle")
+        )
+        self.actionTwoPointsCircle.setText(
+            _translate("MainWindow", "Two Points Circle")
+        )
+        self.actionCenterRadiusCircle.setText(
+            _translate("MainWindow", "Center Radius Circle")
+        )
+        self.actionTwoPointCenterArc.setText(
+            _translate("MainWindow", "Two Point Center Arc")
+        )
         self.actionDimension.setText(_translate("MainWindow", "Dimension"))
         self.actionPainDimension.setText(_translate("MainWindow", "Paint Dimension"))
         self.actionText.setText(_translate("MainWindow", "Text"))
@@ -659,7 +950,9 @@ class Ui_DrawView(object):
         self.actionExplode.setText(_translate("MainWindow", "Explode"))
         self.actionJoin.setText(_translate("MainWindow", "Join"))
         self.actionStrech.setText(_translate("MainWindow", "Strech"))
-        self.actionOpenElementInformationBox.setText(_translate("MainWindow", "Elements Information Box"))
+        self.actionOpenElementInformationBox.setText(
+            _translate("MainWindow", "Elements Information Box")
+        )
         self.actionOrthoMode.setText(_translate("MainWindow", "Ortho Mode"))
         self.actionOrthoMode.setShortcut(_translate("MainWindow", "F8"))
         self.actionPolarMode.setText(_translate("MainWindow", "Polat Mode"))
@@ -668,6 +961,8 @@ class Ui_DrawView(object):
         self.actionTrim.setText(_translate("MainWindow", "Trim"))
         self.actionExtend.setText(_translate("MainWindow", "Extend"))
         self.actionOffset.setText(_translate("MainWindow", "Offset"))
+
+
 from Commands import CommandLine
 from UI.GraphicsView import GraphicsView
 from UI import ImagesSrc

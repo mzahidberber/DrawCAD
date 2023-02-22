@@ -1,3 +1,2 @@
-
-
-class SplinePreview:pass
+class SplinePreview:
+    pass

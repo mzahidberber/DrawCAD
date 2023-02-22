@@ -1,3 +1,2 @@
-
-
-class RectanglePreview:pass
+class RectanglePreview:
+    pass

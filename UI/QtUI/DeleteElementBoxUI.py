@@ -30,14 +30,16 @@ class Ui_DeleteElementBox(object):
         self.verticalLayout.addWidget(self.LayerList)
         self.Result = QtWidgets.QDialogButtonBox(DeleteElement)
         self.Result.setOrientation(QtCore.Qt.Horizontal)
-        self.Result.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.Result.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok
+        )
         self.Result.setCenterButtons(False)
         self.Result.setObjectName("Result")
         self.verticalLayout.addWidget(self.Result)
 
         self.retranslateUi(DeleteElement)
-        self.Result.accepted.connect(DeleteElement.accept) # type: ignore
-        self.Result.rejected.connect(DeleteElement.reject) # type: ignore
+        self.Result.accepted.connect(DeleteElement.accept)  # type: ignore
+        self.Result.rejected.connect(DeleteElement.reject)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(DeleteElement)
 
     def retranslateUi(self, DeleteElement):
