@@ -267,6 +267,20 @@ class GeoService(object):
         body = [p1.to_dict_geo(), p2.to_dict_geo()]
         result = requests.post(conString, json=body)
         return result.json()["zone"]
+    
+    def findNearestPoint(self, point: QPointF, points: list[Point]) -> PointGeo:
+        conString = (
+            UrlBuilder()
+            .urlBuild(self.__url)
+            .urlBuild(GeoEnum.findNearestPoint.value + "/")
+            .build()
+        )
+        body = {"point":{"X":point.x(),"Y":point.y(),"Z":1},"points":list(map(lambda x:x.to_dict_geo(),points))}
+        result = requests.post(conString, json=body)
+        if(result.ok):
+            snapPoint = result.json()
+            return PointGeo(pInfo=snapPoint)
+        else:return PointGeo(0,0,0)
 
 
 class GeoEnum(Enum):
@@ -286,6 +300,7 @@ class GeoEnum(Enum):
     findInsectionPointToTwoLines = "findInsectionPointToTwoLines"
     findPointLength = "findPointLength"
     wherePointZone = "wherePointZone"
+    findNearestPoint="findNearetPoint"
 
 
 if __name__ == "__main__":

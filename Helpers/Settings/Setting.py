@@ -24,7 +24,7 @@ class Setting:
     snapSize = 3
     snapSizeSetting = 5
 
-    snapPen = CreatePen.createPen(211, 0, 0, 1, 1)
+    snapPen = CreatePen.createPen(211, 0, 0, 2, 1)
 
     # Snap Degree Setting
     snapDegreePen = CreatePen.createPen(74, 128, 77, 1, 1)

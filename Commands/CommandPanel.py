@@ -5,7 +5,7 @@ from Commands.ElementDraw import ElementDraw
 from Model import Element
 from Service import DrawService
 from Helpers.Preview import PreviewObject
-from Helpers.Snap import SnapElement
+from Helpers.Snap import SnapElement,SnapSquare
 
 
 class CommandPanel:
@@ -17,6 +17,8 @@ class CommandPanel:
         self.__elementDraw:ElementDraw = ElementDraw(self.__drawScene)
         self.__drawService:DrawService=DrawService()
 
+        self.__snapObject=SnapSquare(self.__drawScene)
+        self.__drawScene.addItem(self.__snapObject)
 
         self.__preview = PreviewObject()
         self.__drawScene.addItem(self.__preview)
@@ -41,15 +43,18 @@ class CommandPanel:
     def addCoordinate(self, coordinate):
         print(coordinate)
         if self.__isStartCommand == True:
-            # element = self.__drawService.addCoordinate(coordinate.x(), coordinate.y(), 1, 0)
-            self.__preview.addPoint(coordinate)
+            if (self.__snap.getSnapPoint()!=None):
+                self.__preview.addPoint(self.__snap.getSnapPoint())
+            else:
+                # element = self.__drawService.addCoordinate(coordinate.x(), coordinate.y(), 1, 0)
+                self.__preview.addPoint(coordinate)
 
-            # if type(element) == Element:
-            #     self.__elementDraw.drawElement(element)
-            #     self.__preview.stop()
-            #     self.__isStartCommand = False
-            # else:
-            #     print(element)
+                # if type(element) == Element:
+                #     self.__elementDraw.drawElement(element)
+                #     self.__preview.stop()
+                #     self.__isStartCommand = False
+                # else:
+                #     print(element)
 
     def getLayers(self, drawBoxId: int):
         return self.__drawService.getLayers(drawBoxId)

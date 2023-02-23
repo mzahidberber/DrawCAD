@@ -54,7 +54,7 @@ class DrawService(object):
         )
         connectionString = builder.paramsBuild(f"userLayerId={userLayerId}").build()
         result = requests.post(connectionString, json=body)
-        print(result.text)
+        # print(result.text)
 
     def getElementsWithItsLayer(self, drawBoxId: int):
         builder = (
@@ -73,9 +73,9 @@ class DrawService(object):
             result = requests.post(connectionString)
             elements = []
             for element in result.json():
-                print("*************", element)
+                # print("*************", element)
                 elementObject = Element(element)
-                print(elementObject)
+                # print(elementObject)
                 elements.append(elementObject)
             return elements
         except:
@@ -85,7 +85,7 @@ class DrawService(object):
         logginString = (
             f"http://localhost:5000/Draw/mouseposition?userName={self.__username}"
         )
-        print(x, y)
+        # print(x, y)
         mousePosition = {
             "x": f"{x}",
             f"y": f"{y}",

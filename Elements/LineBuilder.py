@@ -18,7 +18,7 @@ class LineBuilder(ElementBuilder):
         )
 
     def paint(self, painter):
-        painter.drawPath(self.drawPath())
+        # painter.drawPath(self.drawPath())
         painter.drawLine(self.__p1, self.__p2)
 
     def shape(self, painterPath: QPainterPath):

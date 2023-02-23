@@ -36,7 +36,7 @@ class CircleBuilder(ElementBuilder):
 
     def paint(self, painter):
         painter.drawEllipse(self.__center, self.__radius, self.__radius)
-        painter.drawPath(self.drawPath())
+        # painter.drawPath(self.drawPath())
 
     def shape(self, painterPath: QPainterPath):
         startP = self.__center + QPointF(self.__radius, 0)

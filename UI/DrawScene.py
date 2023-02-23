@@ -22,7 +22,7 @@ class DrawScene(QGraphicsScene):
         self.gridtarama = Setting.gridHatch
 
     
-    def scanFieldObjects(self,field:QRectF) -> list[ElementObject]:return self.items(field)
+    def scanFieldObjects(self,field:QRectF) -> list[ElementObject]:return self.items(field,mode=Qt.IntersectsItemBoundingRect)
 
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_Escape:

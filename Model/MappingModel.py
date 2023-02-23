@@ -4,8 +4,7 @@ from Model.BaseModel import BaseModel
 class MappingModel:
     @staticmethod
     def mapDictToClass(
-        listItems: list[dict] or None, type: BaseModel
-    ) -> list[BaseModel] or None:
+        listItems: list[dict] or None, type: BaseModel) -> list[BaseModel] or None:
         return list(map(lambda x: type(x), listItems)) if listItems != None else None
 
     @staticmethod
