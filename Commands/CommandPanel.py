@@ -15,7 +15,7 @@ class CommandPanel:
 
         self.__snap:SnapElement=SnapElement(self.__drawScene)
         self.__elementDraw:ElementDraw = ElementDraw(self.__drawScene)
-        self.__drawService=DrawService()
+        self.__drawService:DrawService=DrawService()
 
         self.__snapObject=SnapSquare(self.__drawScene)
         self.__drawScene.addItem(self.__snapObject)
