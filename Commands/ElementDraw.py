@@ -8,7 +8,7 @@ class ElementDraw:
         self.__drawScene = drawScene
 
     def drawElement(self, element: Element):
-        elementObject = ElementObject(element)
+        elementObject = ElementObject(element,self.__drawScene)
         self.__drawScene.addItem(elementObject)
         elementObject.elementUpdate.connect(self.__drawScene.updateScene)
 

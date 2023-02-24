@@ -1,10 +1,9 @@
 from PyQt5.QtWidgets import QGraphicsObject
 from PyQt5.QtCore import QRectF,QPointF
 from Helpers.Settings.Setting import Setting
-from UI.DrawScene import DrawScene
 
 class SnapSquare(QGraphicsObject):
-    def __init__(self, drawScene:DrawScene,parent=None) -> None:
+    def __init__(self, drawScene,parent=None) -> None:
         super().__init__(parent)
         self.__drawScene=drawScene
         self.__drawScene.MovedMouse.connect(self.mouseMove)

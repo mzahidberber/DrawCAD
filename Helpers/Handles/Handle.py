@@ -2,16 +2,17 @@ from PyQt5.QtWidgets import QGraphicsObject
 from PyQt5.QtCore import QPointF, QRectF, Qt, pyqtSignal
 from PyQt5.QtGui import QPen, QColor
 from Helpers.Handles import HandleTypes
+from Helpers.Settings import Setting
+from Model import Element, Point
+from Service.GeoService import GeoService
 
 
 class Handle(QGraphicsObject):
-    moveSignal = pyqtSignal(object, object)
     __id: int
-    __type: HandleTypes
-    __centerPoint: QPointF
+    __type: int
     __square: QRectF
-    __squreSize: int = 5
-    __pen: QPen = QPen(QColor(125, 125, 125), 1, Qt.SolidLine)
+    __pen:QPen
+    
     ##Yakalama Noktası Eklenecek
 
     @property
@@ -27,16 +28,8 @@ class Handle(QGraphicsObject):
         return self.__type
 
     @type.setter
-    def type(self, type: HandleTypes):
+    def type(self, type: int):
         self.__type = type
-
-    @property
-    def centerPoint(self):
-        return self.__centerPoint
-
-    @centerPoint.setter
-    def centerPoint(self, point: QPointF):
-        self.__centerPoint = point
 
     @property
     def pen(self):
@@ -46,45 +39,62 @@ class Handle(QGraphicsObject):
     def pen(self, pen: QPen):
         self.__pen = pen
 
-    def __init__(self, centerPoint: QPointF, parent=None) -> None:
+    def __init__(self,point:Point,element:Element, parent=None) -> None:
         super().__init__(parent)
-        self.__centerPoint = centerPoint
+        self.__point=point
+        self.__element=element
+        self.__geoService=GeoService()
+        self.__pen:QPen=Setting.handlePen
+        
+        self.__id = point.pointId
+        if self.__point.pointTypeId == 1:
+            self.__type = 0
+        elif self.__point.pointTypeId == 2:
+            self.__type = 1
+        elif self.__point.pointTypeId == 4:
+            self.__type = 3
 
         self.createSqure()
         self.setFlag(QGraphicsObject.ItemIsMovable)
         self.setAcceptHoverEvents(True)
 
     def createSqure(self):
-        self.__square = QRectF(
-            self.__centerPoint.x() - (self.__squreSize / 2),
-            self.__centerPoint.y() - (self.__squreSize / 2),
-            self.__squreSize,
-            self.__squreSize,
-        )
+        self.__square = QRectF(QPointF(self.__point.pointX-Setting.handleSize,self.__point.pointY-Setting.handleSize),
+                               QPointF(self.__point.pointX+Setting.handleSize,self.__point.pointY+Setting.handleSize))
 
     def hoverLeaveEvent(self, event):
         QGraphicsObject.hoverLeaveEvent(self, event)
-        self.pen = QPen(QColor(153, 153, 153), 1, Qt.SolidLine)
+        self.__pen = Setting.handleSelectedPen
 
     def hoverEnterEvent(self, event):
         QGraphicsObject.hoverEnterEvent(self, event)
-        self.pen = QPen(QColor(99, 184, 255), 1, Qt.SolidLine)
+        self.__pen = Setting.handlePen
 
     def mousePressEvent(self, event):
         pass
 
     def mouseReleaseEvent(self, event):
-        self.centerPoint = event.scenePos()
+        if self.__type==0:
+            self.__point.pointX = event.scenePos().x()
+            self.__point.pointY = event.scenePos().y()
+        elif self.__type==3:
+            self.__element.radiuses[0].radiusValue = self.__geoService.findTwoPointsLength(
+                QPointF(self.__element.points[0].pointX,self.__element.points[0].pointY),event.scenePos())
+        
         self.createSqure()
-        self.moveSignal.emit(self.centerPoint, self)
+
 
     def mouseMoveEvent(self, event):
-        self.centerPoint = event.scenePos()
-        self.moveSignal.emit(self.centerPoint, self)
+        if self.__type==0:
+            self.__point.pointX = event.scenePos().x()
+            self.__point.pointY = event.scenePos().y()
+        elif self.__type==3:
+            self.__element.radiuses[0].radiusValue = self.__geoService.findTwoPointsLength(
+                QPointF(self.__element.points[0].pointX,self.__element.points[0].pointY),event.scenePos())
         self.createSqure()
 
     def paint(self, painter, option, widget):
-        painter.setPen(self.pen)
+        painter.setPen(self.__pen)
         painter.drawRect(self.__square)
 
     def boundingRect(self):

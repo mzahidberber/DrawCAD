@@ -12,7 +12,7 @@ class Setting:
     handleSelectedHatch = CreatePen.createHatch(255, 127, 0, 1)
 
     handleSize = 1
-    handleSizeSetting = 5
+    handleSizeSetting = 10
 
     # Line Setting
     lineSelectedPen = CreatePen.createPen(99, 184, 255, 1, 1)

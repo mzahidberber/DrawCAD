@@ -2,14 +2,12 @@ import math
 from threading import Event,Thread
 from PyQt5.QtCore import QPointF,QRectF
 from Model import Point
-from UI.DrawScene import DrawScene
 from Helpers.Settings import Setting
 from Service.GeoService import GeoService
-from PyQt5.QtCore import pyqtSignal
 from Helpers.Snap.SnapObject import SnapObject
 
 class SnapElement:
-    def __init__(self,drawScene:DrawScene) -> None:
+    def __init__(self,drawScene) -> None:
         self.__drawScene=drawScene
         self.__drawScene.MovedMouse.connect(self.moveMouse)
         self.__snapSetting:dict={"end":True,"middle":True,"center":True}

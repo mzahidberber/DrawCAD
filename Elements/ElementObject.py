@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt, QPointF, pyqtSignal
 from Model import Element
 from Helpers.Handles import Handle, HandleTypes
 from Elements.BuilderContext import BuilderContext
+from UI import DrawScene
 
 
 class ElementObject(QGraphicsObject):
@@ -15,22 +16,26 @@ class ElementObject(QGraphicsObject):
     def element(self):
         return self.__element
 
-    def __init__(self, element: Element, parent=None):
+    def __init__(self, element: Element,drawScene:DrawScene, parent=None):
         QGraphicsObject.__init__(self, parent)
         self.__element: Element = element
+        self.__drawScene=drawScene
         self.__elementContext = BuilderContext()
         self.__elementBuilder = self.__elementContext.setElementBuilder(
             self.__element.elementTypeId
         )
         self.__elementBuilder.setElementInformation(self.__element)
+        
 
         self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
         self.setFlag(QGraphicsObject.ItemIsFocusable)
         self.setFlag(QGraphicsObject.ItemIsSelectable, True)
 
         self.handles: list[Handle] = []
+        
 
     def mousePressEvent(self, event) -> None:
+        print(self.__element.to_dict())
         if self.isSelected() == False:
             print("seçili")
             if len(self.handles) == 0:
@@ -49,37 +54,11 @@ class ElementObject(QGraphicsObject):
 
     def addHanles(self):
         for point in self.__element.points:
-            handle = Handle(QPointF(point.pointX, point.pointY), self)
-            handle.id = point.pointId
-            if point.pointTypeId == 1:
-                handle.type = HandleTypes.move.value
-            elif point.pointTypeId == 2:
-                handle.type = HandleTypes.pointMove.value
-            handle.moveSignal.connect(self.changePointPositionWithHandle)
+            handle = Handle(point,self.__element, self)
             self.handles.append(handle)
 
-    def changePointPositionWithHandle(self, position: QPointF, handle: Handle):
-        # print(self.__element.elementId)
-        # print(handle.id)
-        for i in self.childItems():
-            i.setParentItem(None)
-            del i
-        if handle.type == HandleTypes.move.value:
-            farkX = position.x() - self.__element.points[0].pointX
-            farkY = position.y() - self.__element.points[0].pointY
-            for i in self.__element.points:
-                i.pointX += farkX
-                i.pointY += farkY
-        elif handle.type == HandleTypes.pointMove.value:
-            point = next(x for x in self.__element.points if x.pointId == handle.id)
-            point.pointX = position.x()
-            point.pointY = position.y()
-        self.__elementBuilder.setElementInformation(self.__element)
-        self.elementUpdate.emit(self)
-        for i in self.__element.points:
-            print("point id : ", i.pointId, "--------", i.pointX, "--------", i.pointY)
-
     def paint(self, painter, option, widget):
+        self.__elementBuilder.setElementInformation(self.__element)
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
         # painter.setPen(QPen(QColor(255,127,0),2, Qt.SolidLine))
         painter.setPen(
