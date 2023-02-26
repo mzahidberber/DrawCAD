@@ -4,3 +4,5 @@
 *__pycache__
 
 drawProject.egg-info/
+
+*.log
