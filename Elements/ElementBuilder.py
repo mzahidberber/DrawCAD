@@ -16,19 +16,6 @@ class ElementBuilder(ABC):
         self.__element = element
         self.setPointsInformation()
 
-    def drawPath(self):
-        painterStrock = QPainterPathStroker()
-        painterStrock.setWidth(Setting.lineBoundDistance)
-        p = QPainterPath()
-
-        self.shape(p)
-
-        path1 = painterStrock.createStroke(p)
-        return path1
-
-    def boundaryBuild(self) -> QRectF:
-        return self.drawPath().boundingRect()
-
     @abstractmethod
     def setPointsInformation(self):
         pass
@@ -40,3 +27,9 @@ class ElementBuilder(ABC):
     @abstractmethod
     def shape(self, painterPath: QPainterPath):
         pass
+
+    @abstractmethod
+    def boundaryBuild(self) -> QRectF:
+        pass
+
+

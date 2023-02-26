@@ -3,8 +3,8 @@ from threading import Event,Thread
 from PyQt5.QtCore import QPointF,QRectF
 from Model import Point
 from Helpers.Settings import Setting
-from Service.GeoService import GeoService
 from Helpers.Snap.SnapObject import SnapObject
+from Helpers.GeoMath import GeoMath
 
 class SnapElement:
     def __init__(self,drawScene) -> None:
@@ -12,8 +12,8 @@ class SnapElement:
         self.__drawScene.MovedMouse.connect(self.moveMouse)
         self.__snapSetting:dict={"end":True,"middle":True,"center":True}
         self.__snapPoint=None
-        self.__geoService=GeoService()
         self.__time=1
+
 
         self.__snapObject=SnapObject()
         self.__drawScene.addItem(self.__snapObject)
@@ -46,7 +46,7 @@ class SnapElement:
                         pointList.extend(list(filter(lambda x:x.pointTypeId==2,i.element.points)))
         
         if(len(pointList)!=0 and self.__time==1):
-            snapPoint=self.findNearestPoint(scenePos,pointList)
+            snapPoint=GeoMath.findNearestPoint(scenePos,pointList)
             self.__snapPoint=QPointF(snapPoint.pointX,snapPoint.pointY)
             self.__snapObject.setElementType(snapPoint.pointTypeId)
             if(self.__time==1):
@@ -57,17 +57,12 @@ class SnapElement:
             self.__snapPoint=None
 
         
+        
         self.__snapObject.setSnapPoint(self.__snapPoint)
         self.__drawScene.updateScene()
         
         if(self.__snapPoint!=None):pass #sprint(self.__snapPoint.x(),"   ",self.__snapPoint.y())
         else:pass
 
-    def findNearestPoint(self,p:QPointF,pointList:list[Point]) -> Point:
-        liste=list(map(lambda x:self.findLengthLine(p,x),pointList))
-        return pointList[liste.index(min(liste))]
-    
-    def findLengthLine(self,point1:QPointF,point2:Point) -> float:
-        return math.sqrt(((point2.pointX-point1.x())**2)+((point2.pointY-point1.y())**2))
 
     

@@ -2,6 +2,9 @@ from PyQt5.QtGui import QPainterPath
 from PyQt5.QtCore import QPointF
 from Elements.ElementBuilder import ElementBuilder
 
+from PyQt5.QtGui import QPainterPathStroker, QPainterPath
+from Helpers.Settings import Setting
+
 
 class LineBuilder(ElementBuilder):
     __p1: QPointF
@@ -18,9 +21,20 @@ class LineBuilder(ElementBuilder):
         )
 
     def paint(self, painter):
-        # painter.drawPath(self.drawPath())
+        # painter.drawRect(self.shape().boundingRect())
         painter.drawLine(self.__p1, self.__p2)
 
-    def shape(self, painterPath: QPainterPath):
-        painterPath.moveTo(self.__p1)
-        painterPath.lineTo(self.__p2)
+    def shape(self) -> QPainterPath:
+        painterStrock = QPainterPathStroker()
+        painterStrock.setWidth(Setting.lineBoundDistance)
+        p = QPainterPath()
+
+        p.moveTo(self.__p1)
+        p.lineTo(self.__p2)
+
+        path1 = painterStrock.createStroke(p)
+        return path1
+        
+
+    def boundaryBuild(self):
+        return self.shape().boundingRect()

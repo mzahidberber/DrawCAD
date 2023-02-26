@@ -1,9 +1,9 @@
+
 from PyQt5.QtCore import QPointF
-from UI import DrawScene
-from Commands.CommandEnums import CommandEnums,getType
-from Commands.ElementDraw import ElementDraw
-from Model import Element
 from Service import DrawService
+from UI import DrawScene
+from Commands.CommandEnums import CommandEnums
+from Commands.ElementDraw import ElementDraw
 from Helpers.Preview import PreviewObject
 from Helpers.Snap import SnapElement,SnapSquare
 
@@ -16,6 +16,7 @@ class CommandPanel:
         self.__snap:SnapElement=SnapElement(self.__drawScene)
         self.__elementDraw:ElementDraw = ElementDraw(self.__drawScene)
         self.__drawService:DrawService=DrawService()
+
 
         self.__snapObject=SnapSquare(self.__drawScene)
         self.__drawScene.addItem(self.__snapObject)
@@ -41,7 +42,7 @@ class CommandPanel:
         self.__isStartCommand = True
 
     def addCoordinate(self, coordinate):
-        print(coordinate)
+        # print(coordinate)
         if self.__isStartCommand == True:
             if (self.__snap.getSnapPoint()!=None):
                 self.__preview.addPoint(self.__snap.getSnapPoint())

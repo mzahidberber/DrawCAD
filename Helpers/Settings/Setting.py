@@ -34,6 +34,6 @@ class Setting:
     previewSquareHatch = CreatePen.createHatch(74, 128, 77, 1)
 
     # Grid Setting
-    gridPen = CreatePen.createPen(153, 153, 153, 1, 1)
+    gridPen = CreatePen.createPen(153, 153, 153, 0.5, 1)
     gridHatch = CreatePen.createHatch(0, 0, 0, 1)
-    XYAxlePen = CreatePen.createPen(255, 127, 0, 1, 1)
+    XYAxlePen = CreatePen.createPen(255, 127, 0, 0.5, 1)

@@ -63,14 +63,14 @@ class DrawView(QMainWindow):
 
     def changeLayer(self, event):
         self.__selectedLayerId = self.layers[self.ui.cbxLayers.currentIndex()].layerId
-        print(self.layers[self.ui.cbxLayers.currentIndex()].layerId)
+        # print(self.layers[self.ui.cbxLayers.currentIndex()].layerId)
 
     def getLayers(self):
         for i in self.layers:
             self.ui.cbxLayers.addItem(i.layerName)
 
     def closeEvent(self, event):
-        print("kapandıDrawView")
+        # print("kapandıDrawView")
         result = DrawService().logout()
 
     def connectButtons(self):

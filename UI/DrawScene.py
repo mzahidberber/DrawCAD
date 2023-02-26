@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsScene,QGraphicsObject
 from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import Qt, pyqtSignal, QLineF, QPointF,QRectF
 
@@ -17,12 +17,14 @@ class DrawScene(QGraphicsScene):
         self.__view = view
         self.setSceneRect(-10000, -10000, 20000, 20000)
 
-        self.xykalem = Setting.XYAxlePen
-        self.gridkalem = Setting.gridPen
-        self.gridtarama = Setting.gridHatch
+        self.setItemIndexMethod(QGraphicsScene.ItemIndexMethod.NoIndex)
 
     
     def scanFieldObjects(self,field:QRectF) -> list[ElementObject]:return self.items(field,mode=Qt.IntersectsItemBoundingRect)
+
+    def changed(self, region) -> None:
+        print("regionnn")
+        print(region)
 
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_Escape:
@@ -42,6 +44,9 @@ class DrawScene(QGraphicsScene):
 
     def mousePressEvent(self, event):
         QGraphicsScene.mousePressEvent(self, event)
+        # print(self.selectionArea().boundingRect().getCoords(),"-----------")
+        # print(self.activePanel())
+        # print(len(self.items()))
         # print("mousepreesDrawScenee")
         self.updateScene()
         if event.button() == Qt.LeftButton:
@@ -95,8 +100,8 @@ class DrawScene(QGraphicsScene):
 
     def drawBackground(self, painter, rect):
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
-        painter.fillRect(rect, self.gridtarama)
-        painter.setPen(self.gridkalem)
+        painter.fillRect(rect, Setting.gridHatch)
+        painter.setPen(Setting.gridPen)
         painter.setOpacity(0.25)
 
         koordinat = rect.getCoords()
@@ -108,7 +113,7 @@ class DrawScene(QGraphicsScene):
             painter.drawLines(i)
         # xveyAksları
         painter.setOpacity(0.5)
-        painter.setPen(self.xykalem)
+        painter.setPen(Setting.XYAxlePen)
         painter.drawLine(0, int(y1), 0, int(y2))
         painter.drawLine(int(x1), 0, int(x2), 0)
 
@@ -123,3 +128,5 @@ class DrawScene(QGraphicsScene):
             zoomFactor = zoomOutFactor
             pixelboyut = self.pixelBoyutBul()
         self.scale(zoomFactor, zoomFactor)
+
+

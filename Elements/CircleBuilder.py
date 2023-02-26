@@ -1,7 +1,8 @@
 from PyQt5.QtGui import QPainterPath
 from PyQt5.QtCore import QPointF, QRectF
 from Elements.ElementBuilder import ElementBuilder
-
+from PyQt5.QtGui import QPainterPathStroker, QPainterPath
+from Helpers.Settings import Setting
 
 class CircleBuilder(ElementBuilder):
     __center: QPointF
@@ -36,12 +37,24 @@ class CircleBuilder(ElementBuilder):
 
     def paint(self, painter):
         painter.drawEllipse(self.__center, self.__radius, self.__radius)
-        # painter.drawPath(self.drawPath())
+        # painter.drawPath(self.shape())
 
-    def shape(self, painterPath: QPainterPath):
+    def shape(self):
+        
+
+        painterStrock = QPainterPathStroker()
+        painterStrock.setWidth(Setting.lineBoundDistance)
+        p = QPainterPath()
+
         startP = self.__center + QPointF(self.__radius, 0)
-        painterPath.moveTo(startP)
+        p.moveTo(startP)
         squareStartP = self.__center - QPointF(self.__radius, self.__radius)
         squareStopP = self.__center + QPointF(self.__radius, self.__radius)
         square = QRectF(squareStartP, squareStopP)
-        painterPath.arcTo(square, 0, 360)
+        p.arcTo(square, 0, 360)
+
+        path1 = painterStrock.createStroke(p)
+        return path1
+
+    def boundaryBuild(self):
+        return self.shape().boundingRect()

@@ -19,6 +19,8 @@ class GraphicsView(QGraphicsView):
         self.panY: float
         self.pan: bool = False
 
+        # self.setMouseTracking(True)
+
     def setSettinInfo(self, pixelSize: float):
         Setting.pixelSize = pixelSize
         Setting.lineBoundDistance = int(pixelSize * Setting.lineBoundDistanceSetting)

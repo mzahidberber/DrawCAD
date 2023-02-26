@@ -1,11 +1,12 @@
-from PyQt5.QtWidgets import QGraphicsObject
+from PyQt5.QtWidgets import QGraphicsObject,QGraphicsItem
 from PyQt5.QtGui import QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPointF, pyqtSignal
 
 from Model import Element
-from Helpers.Handles import Handle, HandleTypes
+from Helpers.Handles import Handle
 from Elements.BuilderContext import BuilderContext
 from UI import DrawScene
+from Helpers.Settings import Setting
 
 
 class ElementObject(QGraphicsObject):
@@ -21,58 +22,91 @@ class ElementObject(QGraphicsObject):
         self.__element: Element = element
         self.__drawScene=drawScene
         self.__elementContext = BuilderContext()
-        self.__elementBuilder = self.__elementContext.setElementBuilder(
-            self.__element.elementTypeId
-        )
+        self.__elementBuilder = self.__elementContext.setElementBuilder(self.__element.elementTypeId)
         self.__elementBuilder.setElementInformation(self.__element)
+
+        self.__isSelected:bool=False
+
+        self.__pen:QPen=QPen(QColor(
+            self.__element.layer.layerPen.penColor.colorRed,
+            self.__element.layer.layerPen.penColor.colorBlue,
+            self.__element.layer.layerPen.penColor.colorGreen,),
+            self.__element.layer.layerThickness,
+            Qt.SolidLine,)
         
+        # self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
+        # self.setFlag(QGraphicsObject.ItemIsFocusable)
+        
+        # self.setAcceptDrops(True)
+        # self.setBoundingRegionGranularity(1) 
 
-        self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
-        self.setFlag(QGraphicsObject.ItemIsFocusable)
-        self.setFlag(QGraphicsObject.ItemIsSelectable, True)
-
+        
+        # self.setFlag(QGraphicsObject.ItemIsMovable)
+        # self.setCacheMode(QGraphicsItem.NoCache)
+        
+        
         self.handles: list[Handle] = []
+        # self.addHanles()
+        # for i in self.handles:i.setVisible(False)
+        # self.setFlag(QGraphicsObject.ItemIsMovable)
+        # self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
+        # self.setFlag(QGraphicsObject.ItemIsFocusable)
+        # self.setFlag(QGraphicsObject.ItemIsSelectable, True)
         
+    def mouseMoveEvent(self, event) -> None:
+        QGraphicsObject.mouseMoveEvent(self,event)
+        # print(event.scenePos())
+    
+    
+    
 
     def mousePressEvent(self, event) -> None:
-        print(self.__element.to_dict())
-        if self.isSelected() == False:
-            print("seçili")
-            if len(self.handles) == 0:
+        if(event.isAccepted()):
+            if self.__isSelected == False:
+                # for i in self.handles:i.setVisible(True)
                 self.addHanles()
-        else:
-            print("seçili degil")
-            self.removeHandles()
-
-        self.setSelected(False)
+                self.setPen(Setting.lineSelectedPen)
+                self.__isSelected=True
+            else:
+                self.setPen(QPen(QColor(
+                    self.__element.layer.layerPen.penColor.colorRed,
+                    self.__element.layer.layerPen.penColor.colorBlue,
+                    self.__element.layer.layerPen.penColor.colorGreen,),
+                    self.__element.layer.layerThickness,
+                    Qt.SolidLine,))
+                self.__isSelected=False
+                # for i in self.handles:i.setVisible(False)
+                self.removeHandles()
 
     def removeHandles(self):
-        for i in self.childItems():
-            i.setParentItem(None)
-            del i
+        for i in self.handles:
+            self.__drawScene.removeItem(i)
         self.handles.clear()
+
+    def updateHandles(self):
+        if(len(self.handles)!=0):
+            for i in self.handles:
+                i.updateHandle(self.__element)
 
     def addHanles(self):
         for point in self.__element.points:
-            handle = Handle(point,self.__element, self)
+            handle = Handle(point.pointId,self.__element)
+            self.__drawScene.addItem(handle)
+            handle.setZValue(1000)
             self.handles.append(handle)
+
+    def setPen(self,pen=QPen):
+        self.__pen=pen
+
+    def shape(self):return self.__elementBuilder.shape()
 
     def paint(self, painter, option, widget):
         self.__elementBuilder.setElementInformation(self.__element)
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
-        # painter.setPen(QPen(QColor(255,127,0),2, Qt.SolidLine))
-        painter.setPen(
-            QPen(
-                QColor(
-                    self.__element.layer.layerPen.penColor.colorRed,
-                    self.__element.layer.layerPen.penColor.colorBlue,
-                    self.__element.layer.layerPen.penColor.colorGreen,
-                ),
-                self.__element.layer.layerThickness,
-                Qt.SolidLine,
-            )
-        )
+        painter.setPen(self.__pen)
+        self.updateHandles()
         self.__elementBuilder.paint(painter)
+        
         # print("elementpoint: ",self.__element.points[0].pointX,"-------",self.__element.points[0].pointY)
         # print("elementpoint: ",self.__element.points[1].pointX,"-------",self.__element.points[1].pointY)
 
