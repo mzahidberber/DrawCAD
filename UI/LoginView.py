@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from UI.QtUI import Ui_LoginView
 from Service import DrawService
 from UI import DrawView
-
+from CrossCuttingConcers.Logging import log
 class UserInfo:
     username = "zahid"
     password = "123456"
