@@ -6,3 +6,5 @@
 drawProject.egg-info/
 
 *.log
+
+.vscode/
