@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1202</width>
-    <height>781</height>
+    <width>1206</width>
+    <height>812</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,51 +40,6 @@
     <property name="spacing">
      <number>3</number>
     </property>
-    <item row="1" column="0">
-     <widget class="QTabWidget" name="twDrawTabs">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Draw Name</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QListWidget" name="lwDrawBoxes">
-          <property name="textElideMode">
-           <enum>Qt::ElideRight</enum>
-          </property>
-          <property name="resizeMode">
-           <enum>QListView::Fixed</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="GraphicsView" name="gvGraphicsView">
-          <property name="mouseTracking">
-           <bool>false</bool>
-          </property>
-          <property name="viewportUpdateMode">
-           <enum>QGraphicsView::FullViewportUpdate</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>+</string>
-       </attribute>
-      </widget>
-     </widget>
-    </item>
     <item row="11" column="0" colspan="2">
      <widget class="QGroupBox" name="gbxValueBox">
       <property name="sizePolicy">
@@ -426,6 +381,51 @@
       </layout>
      </widget>
     </item>
+    <item row="1" column="0">
+     <widget class="QTabWidget" name="twDrawTabs">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Draw Name</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QListWidget" name="lwDrawBoxes">
+          <property name="textElideMode">
+           <enum>Qt::ElideRight</enum>
+          </property>
+          <property name="resizeMode">
+           <enum>QListView::Fixed</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="GraphicsView" name="gvGraphicsView">
+          <property name="mouseTracking">
+           <bool>false</bool>
+          </property>
+          <property name="viewportUpdateMode">
+           <enum>QGraphicsView::FullViewportUpdate</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>+</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -433,7 +433,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1202</width>
+     <width>1206</width>
      <height>26</height>
     </rect>
    </property>
@@ -783,6 +783,34 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="toolBar_8">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="mouseTracking">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar_8</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionLogout"/>
+   <addaction name="actionUserEmail"/>
+  </widget>
   <action name="actionImport">
    <property name="text">
     <string>Import</string>
@@ -816,7 +844,7 @@
   </action>
   <action name="actionLine">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Line.png</normaloff>:/Image/Images/Line.png</iconset>
    </property>
    <property name="text">
@@ -825,7 +853,7 @@
   </action>
   <action name="actionPolyLine">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/polyline.png</normaloff>:/Image/Images/polyline.png</iconset>
    </property>
    <property name="text">
@@ -834,7 +862,7 @@
   </action>
   <action name="actionRectangle">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Rectangle.png</normaloff>:/Image/Images/Rectangle.png</iconset>
    </property>
    <property name="text">
@@ -843,7 +871,7 @@
   </action>
   <action name="actionCircle">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Circle.png</normaloff>:/Image/Images/Circle.png</iconset>
    </property>
    <property name="text">
@@ -852,7 +880,7 @@
   </action>
   <action name="actionEllipse">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Ellips.png</normaloff>:/Image/Images/Ellips.png</iconset>
    </property>
    <property name="text">
@@ -861,7 +889,7 @@
   </action>
   <action name="actionArc">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/arc.png</normaloff>:/Image/Images/arc.png</iconset>
    </property>
    <property name="text">
@@ -873,7 +901,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/closeendpoint.png</normaloff>
      <normalon>:/Image/Images/openendpoint.png</normalon>:/Image/Images/closeendpoint.png</iconset>
    </property>
@@ -886,7 +914,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/CloseMidPoint.png</normaloff>
      <normalon>:/Image/Images/OpenMidPoint.png</normalon>:/Image/Images/CloseMidPoint.png</iconset>
    </property>
@@ -900,7 +928,7 @@ Middle Point Snap</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/CloseCenter.png</normaloff>
      <normalon>:/Image/Images/OpenCenter.png</normalon>:/Image/Images/CloseCenter.png</iconset>
    </property>
@@ -930,7 +958,7 @@ Middle Point Snap</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/CloseNearest.png</normaloff>
      <normalon>:/Image/Images/OpenNearest.png</normalon>:/Image/Images/CloseNearest.png</iconset>
    </property>
@@ -943,7 +971,7 @@ Middle Point Snap</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/CloseGrid.png</normaloff>
      <normalon>:/Image/Images/OpenGrid.png</normalon>:/Image/Images/CloseGrid.png</iconset>
    </property>
@@ -956,7 +984,7 @@ Middle Point Snap</string>
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/move.png</normaloff>:/Image/Images/move.png</iconset>
    </property>
    <property name="text">
@@ -985,7 +1013,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionTreePointsCircle">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/treepointcircle.png</normaloff>:/Image/Images/treepointcircle.png</iconset>
    </property>
    <property name="text">
@@ -994,7 +1022,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionTwoPointsCircle">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/TwoPointCircle.png</normaloff>:/Image/Images/TwoPointCircle.png</iconset>
    </property>
    <property name="text">
@@ -1003,7 +1031,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionCenterRadiusCircle">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/CenterPointCircle.png</normaloff>:/Image/Images/CenterPointCircle.png</iconset>
    </property>
    <property name="text">
@@ -1012,7 +1040,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionTwoPointCenterArc">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/TwoPointCenterArc.png</normaloff>:/Image/Images/TwoPointCenterArc.png</iconset>
    </property>
    <property name="text">
@@ -1021,7 +1049,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionDimension">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Dimension.png</normaloff>:/Image/Images/Dimension.png</iconset>
    </property>
    <property name="text">
@@ -1030,7 +1058,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionPainDimension">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/angle.png</normaloff>:/Image/Images/angle.png</iconset>
    </property>
    <property name="text">
@@ -1039,7 +1067,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionText">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/text.png</normaloff>:/Image/Images/text.png</iconset>
    </property>
    <property name="text">
@@ -1048,7 +1076,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionHatch">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/hatch.png</normaloff>:/Image/Images/hatch.png</iconset>
    </property>
    <property name="text">
@@ -1057,7 +1085,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Copy.png</normaloff>:/Image/Images/Copy.png</iconset>
    </property>
    <property name="text">
@@ -1066,7 +1094,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionRotate">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Rotate.png</normaloff>:/Image/Images/Rotate.png</iconset>
    </property>
    <property name="text">
@@ -1078,7 +1106,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionScale">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Scale.png</normaloff>:/Image/Images/Scale.png</iconset>
    </property>
    <property name="text">
@@ -1087,7 +1115,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionMirror">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Mirror.png</normaloff>:/Image/Images/Mirror.png</iconset>
    </property>
    <property name="text">
@@ -1096,7 +1124,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionExplode">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Explode.png</normaloff>:/Image/Images/Explode.png</iconset>
    </property>
    <property name="text">
@@ -1105,7 +1133,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionJoin">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Join.png</normaloff>:/Image/Images/Join.png</iconset>
    </property>
    <property name="text">
@@ -1114,7 +1142,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionStrech">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/strech.png</normaloff>:/Image/Images/strech.png</iconset>
    </property>
    <property name="text">
@@ -1123,7 +1151,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionOpenElementInformationBox">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/CloseElementsImformation.png</normaloff>
      <normalon>:/Image/Images/OpenElementsInformation.png</normalon>:/Image/Images/CloseElementsImformation.png</iconset>
    </property>
@@ -1136,7 +1164,7 @@ Middle Point Snap</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/CloseOrtho.png</normaloff>
      <normalon>:/Image/Images/OpenOrtho.png</normalon>:/Image/Images/CloseOrtho.png</iconset>
    </property>
@@ -1152,7 +1180,7 @@ Middle Point Snap</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/ClosePain.png</normaloff>
      <normalon>:/Image/Images/OpenPain.png</normalon>:/Image/Images/ClosePain.png</iconset>
    </property>
@@ -1162,7 +1190,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionOpenCommandBox">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/CloseCommandLine.png</normaloff>
      <normalon>:/Image/Images/OpenCommandLine.png</normalon>:/Image/Images/CloseCommandLine.png</iconset>
    </property>
@@ -1177,7 +1205,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionTrim">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/Trim.png</normaloff>:/Image/Images/Trim.png</iconset>
    </property>
    <property name="text">
@@ -1186,7 +1214,7 @@ Middle Point Snap</string>
   </action>
   <action name="actionExtend">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/extend.png</normaloff>:/Image/Images/extend.png</iconset>
    </property>
    <property name="text">
@@ -1195,11 +1223,21 @@ Middle Point Snap</string>
   </action>
   <action name="actionOffset">
    <property name="icon">
-    <iconset resource="../ImagesSrc/ImagesSrc.qrc">
+    <iconset resource="../ImagesSrc.qrc">
      <normaloff>:/Image/Images/offset.png</normaloff>:/Image/Images/offset.png</iconset>
    </property>
    <property name="text">
     <string>Offset</string>
+   </property>
+  </action>
+  <action name="actionLogout">
+   <property name="text">
+    <string>Logout</string>
+   </property>
+  </action>
+  <action name="actionUserEmail">
+   <property name="text">
+    <string>useremail</string>
    </property>
   </action>
  </widget>
@@ -1216,7 +1254,7 @@ Middle Point Snap</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../ImagesSrc/ImagesSrc.qrc"/>
+  <include location="../ImagesSrc.qrc"/>
  </resources>
  <connections/>
 </ui>

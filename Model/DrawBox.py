@@ -7,7 +7,7 @@ from Model.DrawEnums import DBInfo
 class DrawBox(BaseModel):
     __drawBoxId: int
     __drawName: str
-    __userId: int
+    __userId: str
     __layers: list[Layer] or None
 
     @property
@@ -31,9 +31,9 @@ class DrawBox(BaseModel):
         self.__drawBoxId = self.__drawBoxInfo[DBInfo.drawBoxId.value]
         self.__drawName = self.__drawBoxInfo[DBInfo.drawName.value]
         self.__userId = self.__drawBoxInfo[DBInfo.userId.value]
-        self.__layers = MappingModel.mapDictToClass(
-            self.__drawBoxInfo[DBInfo.layers.value], Layer
-        )
+        # self.__layers = MappingModel.mapDictToClass(
+        #     self.__drawBoxInfo[DBInfo.layers.value], Layer
+        # )
 
     def to_dict(self) -> dict:
         return {

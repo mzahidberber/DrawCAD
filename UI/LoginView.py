@@ -1,11 +1,10 @@
 from PyQt5.QtWidgets import QMainWindow
 from UI.QtUI import Ui_LoginView
-from Service import DrawService
+from Service import DrawService, AuthService
 from UI import DrawView
 from CrossCuttingConcers.Logging import log
-class UserInfo:
-    username = "zahid"
-    password = "123456"
+import json
+from Service.Model.Token import Token
 
 
 class LoginView(QMainWindow):
@@ -16,9 +15,7 @@ class LoginView(QMainWindow):
 
         self.connectButtons()
 
-        self.username = ""
-        self.password = ""
-
+        self.__auth=AuthService("zahid@gmail.com", "123456Aa")
 
         self.drawBoxView = None
         self.drawView = None
@@ -27,31 +24,16 @@ class LoginView(QMainWindow):
 
     def loggin(self):
         self.close()
-        DrawService().login("zahid", "123456")
         self.showDrawViewWindow()
 
-    def connectButtons(self):
-        self.ui.btnLogin.clicked.connect(self.login)
-        self.ui.btnRegister.clicked.connect(self.register)
+    def connectButtons(self):pass
+        # self.ui.btnLogin.clicked.connect(self.loggin)
+        # self.ui.btnRegister.clicked.connect(self.register)
 
     def showDrawViewWindow(self):
         if self.drawView == None:
-            self.drawView = DrawView()
+            self.drawView = DrawView(self.__auth.userAndToken.token)
         self.drawView.show()
 
-    def login(self):
-        self.username = self.ui.leUsername.text()
-        self.password = self.ui.lePassword.text()
-        result = DrawService().login(self.username, self.password)
-        print(type(result))
-        try:
-            resultt = result.json()
-            if resultt["login"] == True:
-                self.close()
-                self.showDrawViewWindow()
+    
 
-        except:
-            print(result.text)
-
-    def register(self):
-        pass

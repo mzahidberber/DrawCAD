@@ -1,6 +1,7 @@
 
 from PyQt5.QtCore import QPointF
 from Service import DrawService
+from Service.Model import Token
 from UI import DrawScene
 from Commands.CommandEnums import CommandEnums
 from Commands.ElementDraw import ElementDraw
@@ -9,13 +10,14 @@ from Helpers.Snap import SnapElement,SnapSquare
 
 
 class CommandPanel:
-    def __init__(self, drawScene: DrawScene) -> None:
+    def __init__(self, drawScene: DrawScene,token:Token) -> None:
         self.__drawScene = drawScene
         self.__isStartCommand: bool = False
+        self.__token=token
 
         self.__snap:SnapElement=SnapElement(self.__drawScene)
         self.__elementDraw:ElementDraw = ElementDraw(self.__drawScene)
-        self.__drawService:DrawService=DrawService()
+        self.__drawService:DrawService=DrawService.DrawService(self.__token)
 
 
         self.__snapObject=SnapSquare(self.__drawScene)
@@ -58,8 +60,16 @@ class CommandPanel:
                 #     print(element)
 
     def getLayers(self, drawBoxId: int):
-        return self.__drawService.getLayers(drawBoxId)
+        self.layers=self.__drawService.getLayers(drawBoxId)
+        return self.layers
 
     def getElements(self, drawBoxId: int):
         elements = self.__drawService.getElementsWithItsLayer(drawBoxId)
+        for element in elements:
+            for i in self.layers:
+                if(i.layerId==element.layerId):element.layer=i
+
+        
+        for i in elements:
+            print(i.to_dict())
         for element in elements:self.__elementDraw.drawElement(element)

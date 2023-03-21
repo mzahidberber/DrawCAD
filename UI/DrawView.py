@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow
+from Service.Model.Token import Token
 
 from UI.QtUI import Ui_DrawView
 from UI.DrawScene import DrawScene
@@ -8,17 +9,18 @@ from Service import DrawService
 
 
 class DrawView(QMainWindow):
-    def __init__(self):
+    def __init__(self, token: Token):
         super(DrawView, self).__init__()
         self.ui = Ui_DrawView()
         self.ui.setupUi(self)
+        self.token = token
 
         self.__userDrawBoxId: int
 
         self.settingsGraphicsView()
 
-        self.drawService = DrawService()
-        self.commandPanel = CommandPanel(self.drawScene)
+        self.drawService = DrawService(self.token)
+        self.commandPanel = CommandPanel(self.drawScene, self.token)
 
         self.ui.cbxLayers.currentTextChanged.connect(self.changeLayer)
 
@@ -26,7 +28,6 @@ class DrawView(QMainWindow):
         self.setButtonsDisable(True)
         self.getDrawBoxItems()
         self.ui.lwDrawBoxes.doubleClicked.connect(self.itemDoubleClicked)
-
 
     def settingsGraphicsView(self):
         self.drawScene = DrawScene(self)
@@ -45,9 +46,9 @@ class DrawView(QMainWindow):
 
         self.ui.twDrawTabs.setTabText(0, self.drawboxes[selectedIndex].drawName)
 
-        self.commandPanel.getElements(id)
         self.layers = self.commandPanel.getLayers(self.__userDrawBoxId)
         self.getLayers()
+        self.commandPanel.getElements(id)
 
         self.__selectedLayerId: int = self.layers[
             self.ui.cbxLayers.currentIndex()
@@ -71,16 +72,30 @@ class DrawView(QMainWindow):
 
     def closeEvent(self, event):
         # print("kapandıDrawView")
-        result = DrawService().logout()
+        result = self.drawService.logout()
 
     def connectButtons(self):
-        self.ui.actionLine.triggered.connect(lambda: self.startCommand(CommandEnums.line))
-        self.ui.actionTwoPointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleTwoPoint))
-        self.ui.actionCenterRadiusCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterRadius))
-        self.ui.actionCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterPoint))
-        self.ui.actionTreePointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleTreePoint))
-        self.ui.actionRectangle.triggered.connect(lambda: self.startCommand(CommandEnums.rectangle))
-        self.ui.actionEllipse.triggered.connect(lambda: self.startCommand(CommandEnums.ellipse))
+        self.ui.actionLine.triggered.connect(
+            lambda: self.startCommand(CommandEnums.line)
+        )
+        self.ui.actionTwoPointsCircle.triggered.connect(
+            lambda: self.startCommand(CommandEnums.circleTwoPoint)
+        )
+        self.ui.actionCenterRadiusCircle.triggered.connect(
+            lambda: self.startCommand(CommandEnums.circleCenterRadius)
+        )
+        self.ui.actionCircle.triggered.connect(
+            lambda: self.startCommand(CommandEnums.circleCenterPoint)
+        )
+        self.ui.actionTreePointsCircle.triggered.connect(
+            lambda: self.startCommand(CommandEnums.circleTreePoint)
+        )
+        self.ui.actionRectangle.triggered.connect(
+            lambda: self.startCommand(CommandEnums.rectangle)
+        )
+        self.ui.actionEllipse.triggered.connect(
+            lambda: self.startCommand(CommandEnums.ellipse)
+        )
 
     def setButtonsDisable(self, isDisable: bool):
         self.ui.actionLine.setDisabled(isDisable)

@@ -34,8 +34,11 @@ class Element(BaseModel):
         return self.__layerId
 
     @property
-    def layer(self) -> int:
+    def layer(self) -> Layer:
         return self.__layer
+    @layer.setter
+    def layer(self,layer:Layer):
+        self.__layer=layer
 
     @property
     def ssAngles(self) -> list[SSAngle]:
@@ -65,8 +68,8 @@ class Element(BaseModel):
             self.__elementInfo[EInfo.points.value], Point
         )
 
-        if self.__elementInfo[EInfo.layer.value] != None:
-            self.__layer = Layer(self.__elementInfo[EInfo.layer.value])
+        # if self.__elementInfo[EInfo.layer.value] != None:
+        #     self.__layer = Layer(self.__elementInfo[EInfo.layer.value])
 
     def to_dict(self) -> dict:
         return {

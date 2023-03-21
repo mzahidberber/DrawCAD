@@ -39,7 +39,7 @@ class EInfo(Enum):
     elementTypeId = "elementTypeId"
     layerId = "layerId"
     layer = "layer"
-    ssAngles = "ssAngles"
+    ssAngles = "ssangles"
     radiuses = "radiuses"
     points = "points"
 
