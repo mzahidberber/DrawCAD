@@ -11,7 +11,7 @@ from datetime import datetime, timezone, timedelta
 
 
 class AuthService:
-    __url = "http://localhost:5002"
+    __url:str
     __userAndToken:UserAndToken
 
     def __new__(cls,email:str,password:str):
@@ -25,9 +25,18 @@ class AuthService:
     def __init__(self,email:str,password:str) -> None:
         self.email=email
         self.password=password
+        self.getUrl()
         self.loggin(email,password)
         self.__userAndToken= self.readToken()
         self.checkTokenExpiration(self.__userAndToken.token)
+        
+        
+
+    def getUrl(self):
+        f=open("urls.json")
+        data=json.load(f)
+        self.__url=data["drawauth"]
+        print(self.__url)
 
     def setUrl(self, url):
         self.__url = url

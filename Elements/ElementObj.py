@@ -9,7 +9,7 @@ from UI import DrawScene
 from Helpers.Settings import Setting
 
 
-class ElementObject(QGraphicsObject):
+class ElementObj(QGraphicsObject):
     elementUpdate = pyqtSignal(object)
     __element: Element
 
@@ -28,9 +28,9 @@ class ElementObject(QGraphicsObject):
         self.__isSelected:bool=False
 
         self.__pen:QPen=QPen(QColor(
-            self.__element.layer.layerPen.penColor.colorRed,
-            self.__element.layer.layerPen.penColor.colorBlue,
-            self.__element.layer.layerPen.penColor.colorGreen,),
+            self.__element.layer.layerPen.penRed,
+            self.__element.layer.layerPen.penBlue,
+            self.__element.layer.layerPen.penGreen,),
             self.__element.layer.layerThickness,
             Qt.SolidLine,)
         
@@ -52,14 +52,17 @@ class ElementObject(QGraphicsObject):
         # self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
         # self.setFlag(QGraphicsObject.ItemIsFocusable)
         # self.setFlag(QGraphicsObject.ItemIsSelectable, True)
-        
+
+    def elementHide(self):self.hide()
+    def elementShow(self):self.show()
+    def elementSelectedOff(self):self.setFlag(QGraphicsObject.ItemIsSelectable,False)
+    def elementSelectedOn(self):self.setFlag(QGraphicsObject.ItemIsSelectable,True)
+
+
     def mouseMoveEvent(self, event) -> None:
         QGraphicsObject.mouseMoveEvent(self,event)
         # print(event.scenePos())
     
-    
-    
-
     def mousePressEvent(self, event) -> None:
         if(event.isAccepted()):
             if self.__isSelected == False:

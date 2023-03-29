@@ -1,16 +1,15 @@
 import requests
-
+import json
 from Commands import CommandEnums
-from Service.Model import Token
+from Service.Model import Token, Response
 from Service.UrlBuilder import UrlBuilder
-from Model import Element, DrawBox, Layer
+from Model import Element, DrawBox, Layer,Pen, PenStyle
+from CrossCuttingConcers.Handling import ErrorHandle
 
 
 class DrawService(object):
-    __url = "http://localhost:5000"
-    __token:Token
-    __username = None
-    __password = None
+    __url:str
+    __token: Token
 
     # def __new__(cls):
     #     if not hasattr(cls, "instance"):
@@ -18,34 +17,40 @@ class DrawService(object):
     #     return cls.instance
 
     @property
-    def token(self)->Token:return self.__token
+    def token(self) -> Token:
+        return self.__token
+    
+    @property
+    def url(self) -> str:
+        return self.__url
 
     def __init__(self, token: Token) -> None:
         self.__token = token
+        self.getUrl()
 
     def setUrl(self, url):
         self.__url = url
 
-    def getLayerssss(self):
-        conString = (
-            UrlBuilder()
-            .urlBuild(self.__url)
-            .urlBuild("Layer")
-            .urlBuild("layers")
-            .build()
-        )
-        data = requests.get(
-            conString, headers={"Authorization": f"Bearer {self.__token.accessToken}"}
-        )
-        print(data.json())
+    def getUrl(self):
+        f=open("urls.json")
+        data=json.load(f)
+        self.__url=data["drawapi"]
 
+    def getAuthorize(self) -> dict:
+        return {"Authorization": f"Bearer {self.__token.accessToken}"}
+
+    @ErrorHandle.Error_Handler
     def startCommand(
-        self, command: CommandEnums, userDrawBoxId: str, userLayerId: str, userPenId
+        self,
+        command: CommandEnums,
+        userDrawBoxId: int,
+        userLayerId: int,
+        userPenId: int,
     ):
-        body = command.value
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("startCommand")
         ).build()
+
         body = {
             "command": command.value,
             "drawId": userDrawBoxId,
@@ -53,13 +58,13 @@ class DrawService(object):
             "penId": userPenId,
         }
         result = requests.post(
-            connectionString,
-            json=body,
-            headers={"Authorization": f"Bearer {self.__token.accessToken}"},
-        )
+            connectionString, json=body, headers=self.getAuthorize()
+        ).json()
+        response = Response(result)
         # print(result.text)
 
-    def getElementsWithItsLayer(self, drawBoxId: int) -> list[Element]:
+    @ErrorHandle.Error_Handler
+    def getElements(self, drawBoxId: int) -> list[Element] or None:
         builder = (
             UrlBuilder()
             .urlBuild(self.__url)
@@ -67,38 +72,48 @@ class DrawService(object):
             .urlBuild("elementsbydrawwithatt")
         )
         connectionString = builder.paramsBuild(f"drawId={drawBoxId}").build()
-
-        try:
-            result = requests.get(
-                connectionString,
-                headers={"Authorization": f"Bearer {self.__token.accessToken}"},
-            ).json()
-            elements = []
-            for element in result["data"]:
-                # print("*************", element)
-                print(element)
-                elementObject = Element(element)
-                # print(elementObject)
-                elements.append(elementObject)
-            return elements
-        except:
-            pass
-
-    def addCoordinate(self, x, y):
-        logginString = f"http://localhost:5000/Draw/addCoordinate"
-        # print(x, y)
-        body = {"x": x, "y": y, "z": 1}
-        result = requests.post(
-            logginString,
-            json=body,
-            headers={"Authorization": f"Bearer {self.__token.accessToken}"},
+        response = Response(
+            requests.get(connectionString, headers=self.getAuthorize()).json()
         )
-        try:
-            element = Element(result.json())
-            return element
-        except:
-            return result.text
+        return list(map(lambda x: Element(x), response.data))
+    
+    @ErrorHandle.Error_Handler
+    def getPenStyles(self) -> list[PenStyle]:
+        connectionString = (
+            UrlBuilder()
+            .urlBuild(self.__url)
+            .urlBuild("PenStyles")
+            .urlBuild("penstyles")
+            .build()
+        )
+        response = Response(
+            requests.get(
+                connectionString, headers=self.getAuthorize()
+            ).json()
+        )
+        return list(map(lambda x: PenStyle(x), response.data))
 
+    @ErrorHandle.Error_Handler
+    def addCoordinate(self, x, y) -> Element or None:
+        connectionString = (
+            UrlBuilder()
+            .urlBuild(self.__url)
+            .urlBuild("draw")
+            .urlBuild("addcoordinate")
+            .build()
+        )
+        body = {"x": x, "y": y, "z": 1}
+        response = Response(
+            requests.post(
+                connectionString, json=body, headers=self.getAuthorize()
+            ).json()
+        )
+        if response.data == None:
+            return None
+        else:
+            return Element(response.data)
+
+    @ErrorHandle.Error_Handler
     def getLayers(self, userDrawBoxId: int) -> list[Layer]:
         connectionString = (
             UrlBuilder()
@@ -108,34 +123,28 @@ class DrawService(object):
             .paramsBuild(f"drawId={userDrawBoxId}")
             .build()
         )
-        try:
-            result = requests.post(
-                connectionString,
-                headers={"Authorization": f"Bearer {self.__token.accessToken}"},
-            ).json()
-            layers = []
-            for layer in result["data"]:
-                print(layer)
-                layerObject = Layer(layer)
-                layers.append(layerObject)
-            return layers
-        except Exception as ex:
-            print(ex)
+        response = Response(
+            requests.post(connectionString, headers=self.getAuthorize()).json()
+        )
+        return list(map(lambda x: Layer(layerInfo=x), response.data))
 
+    @ErrorHandle.Error_Handler
     def getDrawBoxes(self) -> list[DrawBox]:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("DrawBox").urlBuild("drawBoxes")
         ).build()
-        try:
-            result = requests.get(
-                connectionString,
-                headers={"Authorization": f"Bearer {self.__token.accessToken}"},
-            ).json()
-            drawBoxes = []
-            for db in result["data"]:
-                print(db)
-                drawBox = DrawBox(db)
-                drawBoxes.append(drawBox)
-            return drawBoxes
-        except:
-            pass
+        response = Response(
+            requests.get(connectionString, headers=self.getAuthorize()).json()
+        )
+        return list(map(lambda x: DrawBox(x), response.data))
+    
+    @ErrorHandle.Error_Handler
+    def getPens(self) -> list[Pen]:
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Pen").urlBuild("penswithatt")
+        ).build()
+        response = Response(
+            requests.get(connectionString, headers=self.getAuthorize()).json()
+        )
+        print(response.data)
+        return list(map(lambda x: Pen(x), response.data))

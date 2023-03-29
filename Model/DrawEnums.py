@@ -79,8 +79,11 @@ class PenInfo(Enum):
     "Pen Information"
     penId = "penId"
     penName = "penName"
-    penColorId = "penColorId"
-    penColor = "penColor"
+    # penColorId = "penColorId"
+    # penColor = "penColor"
+    penRed="penRed"
+    penBlue="penBlue"
+    penGreen="penGreen"
     penStyleId = "penStyleId"
     penStyle = "penStyle"
 

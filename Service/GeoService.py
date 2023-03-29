@@ -1,4 +1,5 @@
 import requests
+import json
 from enum import Enum
 from Service.UrlBuilder import UrlBuilder
 from Model import PointGeo, Point, DrawEnums
@@ -7,7 +8,7 @@ from PyQt5.QtCore import QPointF
 
 
 class GeoService(object):
-    __url = "http://localhost:5001/geo"
+    __url:str
 
     @property
     def url(self):
@@ -21,6 +22,14 @@ class GeoService(object):
         if not hasattr(cls, "instance"):
             cls.instance = super(GeoService, cls).__new__(cls)
         return cls.instance
+    
+    def __init__(self):
+        self.getUrl()
+
+    def getUrl(self):
+        f=open("urls.json")
+        data=json.load(f)
+        self.__url=data["drawapi"]
 
     @dispatch(Point, Point)
     def findTwoPointsLength(self, p1: Point, p2: Point) -> float:

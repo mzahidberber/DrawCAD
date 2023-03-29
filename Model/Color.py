@@ -14,8 +14,9 @@ class Color(BaseModel):
         return self.__colorId
 
     @property
-    def colorName(self):
-        return self.__colorName
+    def colorName(self)->str:return self.__colorName
+    @colorName.setter
+    def colorName(self,name:str):self.__colorName=name
 
     @property
     def colorRed(self):
@@ -48,6 +49,8 @@ class Color(BaseModel):
         self.__colorRed = self.__colorInfo[CInfo.colorRed.value]
         self.__colorBlue = self.__colorInfo[CInfo.colorBlue.value]
         self.__colorGreen = self.__colorInfo[CInfo.colorGreen.value]
+
+    
 
     def to_dict(self) -> dict:
         return {

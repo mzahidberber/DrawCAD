@@ -1,80 +1,109 @@
 from PyQt5.QtWidgets import QMainWindow
+from Service import DrawService
 from Service.Model.Token import Token
 
 from UI.QtUI import Ui_DrawView
+from UI.LayerBox import LayerBox
 from UI.DrawScene import DrawScene
 from Commands import CommandPanel, CommandEnums
-from Model import Layer
-from Service import DrawService
+from Model import DrawBox
 
 
 class DrawView(QMainWindow):
+    __selecetedCommandP:CommandPanel
+
+    @property
+    def selectedCommandP(self) -> CommandPanel: return self.__selecetedCommandP
+    @selectedCommandP.setter
+    def selectedCommandP(self,commandPanel:CommandPanel):self.__selecetedCommandP=commandPanel
+
+
     def __init__(self, token: Token):
         super(DrawView, self).__init__()
         self.ui = Ui_DrawView()
         self.ui.setupUi(self)
-        self.token = token
+        self.__token = token
 
-        self.__userDrawBoxId: int
+        
+        self.__drawScene = DrawScene(self)
+        self.__graphicView = self.ui.gvGraphicsView
+        self.__graphicView.setMouseTracking(True)
+        self.__graphicView.setScene(self.__drawScene)
+        self.__graphicView.setVisible(False)
 
-        self.settingsGraphicsView()
+        self.__drawService:DrawService=DrawService(self.__token)
+        self.__drawBoxes:list[DrawBox]= self.__drawService.getDrawBoxes()
+        self.__commandPanels:dict[int,CommandPanel]={}
+        self.getDrawBoxItems()
 
-        self.drawService = DrawService(self.token)
-        self.commandPanel = CommandPanel(self.drawScene, self.token)
-
-        self.ui.cbxLayers.currentTextChanged.connect(self.changeLayer)
+        self.layerBox=LayerBox()
 
         self.connectButtons()
         self.setButtonsDisable(True)
-        self.getDrawBoxItems()
-        self.ui.lwDrawBoxes.doubleClicked.connect(self.itemDoubleClicked)
+        
+        self.ui.lwDrawBoxes.doubleClicked.connect(self.drawDoubleClicked)
+        self.ui.cbxLayers.currentTextChanged.connect(self.changeLayer)
 
-    def settingsGraphicsView(self):
-        self.drawScene = DrawScene(self)
-        self.graphicView = self.ui.gvGraphicsView
-        self.graphicView.setMouseTracking(True)
-        self.graphicView.setScene(self.drawScene)
-        self.graphicView.setVisible(False)
+    def startCommand(self, command: CommandEnums):
+        self.__selecetedCommandP.startCommand(command)
 
-    def itemDoubleClicked(self, event):
-        selectedIndex = self.ui.lwDrawBoxes.currentRow()
-        id = self.drawboxes[selectedIndex].drawBoxId
-        self.__userDrawBoxId = id
+    def showDraw(self):
         self.setButtonsDisable(False)
         self.ui.lwDrawBoxes.setVisible(False)
-        self.graphicView.setVisible(True)
+        self.__graphicView.setVisible(True)
 
-        self.ui.twDrawTabs.setTabText(0, self.drawboxes[selectedIndex].drawName)
+    def drawDoubleClicked(self, event):
+        __selectedIndex = self.ui.lwDrawBoxes.currentRow()
+        __selectedDrawBoxId=self.__drawBoxes[__selectedIndex].drawBoxId
+        __selectedDrawBox=self.__drawBoxes[__selectedIndex]
+        
+        if(__selectedDrawBoxId in self.__commandPanels):
+            self.__selecetedCommandP=self.__commandPanels[__selectedDrawBoxId]
+        else:
+            self.__selecetedCommandP = CommandPanel(self.__drawScene,self.__token,__selectedDrawBox)
+        
+        self.__commandPanels[self.__selecetedCommandP.drawBox.drawBoxId]=self.__selecetedCommandP
+        self.showDraw()
+        
+        #indexi degişmeli
+        self.ui.twDrawTabs.setTabText(0, self.__selecetedCommandP.drawBox.drawName)
 
-        self.layers = self.commandPanel.getLayers(self.__userDrawBoxId)
         self.getLayers()
-        self.commandPanel.getElements(id)
+        
+        self.setSelectedLayerAndPen(self.ui.cbxLayers.currentIndex())
 
-        self.__selectedLayerId: int = self.layers[
-            self.ui.cbxLayers.currentIndex()
-        ].layerId
+        
+    
+    
+    def setSelectedLayerAndPen(self,index:int):
+        self.__selecetedCommandP.selectedLayer=self.__selecetedCommandP.layers[index]
+        self.__selecetedCommandP.selectedPen= self.__selecetedCommandP.layers[index].layerPen
+
+
 
     def getDrawBoxItems(self):
-        self.drawboxes = self.drawService.getDrawBoxes()
-        for i in self.drawboxes:
+        for i in self.__drawBoxes :
             self.ui.lwDrawBoxes.addItem(i.drawName)
 
-    def getSelectedLayer(self) -> Layer:
-        return self.layers[self.ui.cbxLayers.currentIndex()]
-
-    def changeLayer(self, event):
-        self.__selectedLayerId = self.layers[self.ui.cbxLayers.currentIndex()].layerId
-        # print(self.layers[self.ui.cbxLayers.currentIndex()].layerId)
-
     def getLayers(self):
-        for i in self.layers:
+        for i in self.__selecetedCommandP.layers:
             self.ui.cbxLayers.addItem(i.layerName)
 
+    def changeLayer(self, event):self.setSelectedLayerAndPen(self.ui.cbxLayers.currentIndex())
+       
+
+    
+
     def closeEvent(self, event):
-        # print("kapandıDrawView")
-        result = self.drawService.logout()
+        pass
+
+    def layerBoxShow(self):
+        self.layerBox.show(self.__selecetedCommandP)
+        self.layerBox.updateLayers(self.__selecetedCommandP)
 
     def connectButtons(self):
+        self.ui.pbLayerButton.clicked.connect(self.layerBoxShow)
+
         self.ui.actionLine.triggered.connect(
             lambda: self.startCommand(CommandEnums.line)
         )
@@ -132,10 +161,7 @@ class DrawView(QMainWindow):
         self.ui.actionJoin.setDisabled(isDisable)
         self.ui.actionTreePointsCircle.setDisabled(isDisable)
 
-    def startCommand(self, command: CommandEnums):
-        self.commandPanel.startCommand(
-            command, self.__userDrawBoxId, self.__selectedLayerId
-        )
+    
 
 
 if __name__ == "__main__":

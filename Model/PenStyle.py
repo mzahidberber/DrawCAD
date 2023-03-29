@@ -9,6 +9,7 @@ class PenStyle(BaseModel):
     @property
     def penStyleId(self):
         return self.__penStyleId
+    
 
     @property
     def penStyleName(self):

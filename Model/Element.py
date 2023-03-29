@@ -71,6 +71,8 @@ class Element(BaseModel):
         # if self.__elementInfo[EInfo.layer.value] != None:
         #     self.__layer = Layer(self.__elementInfo[EInfo.layer.value])
 
+    
+
     def to_dict(self) -> dict:
         return {
             EInfo.elementId.value: self.__elementId,
