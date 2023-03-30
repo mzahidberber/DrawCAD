@@ -1,7 +1,7 @@
 from Model.BaseModel import BaseModel
 from Model.Color import Color
 from Model.PenStyle import PenStyle
-from Model.DrawEnums import PenInfo
+from Model.DrawEnums import PenInfo,StateTypes
 
 
 class Pen(BaseModel):
@@ -26,7 +26,8 @@ class Pen(BaseModel):
     @penName.setter
     def penName(self, name: str):
         self.__penName = name
-
+        self.state=StateTypes.update
+        
     @property
     def penRed(self):
         return self.__penRed
@@ -34,6 +35,7 @@ class Pen(BaseModel):
     @penRed.setter
     def penRed(self, rCode: int):
         self.__penRed = rCode
+        self.state=StateTypes.update
 
     @property
     def penBlue(self):
@@ -41,14 +43,15 @@ class Pen(BaseModel):
 
     @penBlue.setter
     def penBlue(self, bCode: int):
+        self.state=StateTypes.update
         self.__penBlue = bCode
 
     @property
     def penGreen(self):
         return self.__penGreen
-
     @penGreen.setter
     def penGreen(self, gCode: int):
+        self.state=StateTypes.update
         self.__penGreen = gCode
 
     # @property
@@ -63,13 +66,20 @@ class Pen(BaseModel):
     def penStyleId(self):
         return self.__penStyleId
     @penStyleId.setter
-    def penStyleId(self,id:int):self.__penStyleId=id
+    def penStyleId(self,id:int):
+        self.state=StateTypes.update
+        self.__penStyleId=id
 
     @property
     def penStyle(self):
         return self.__penStyle if self.__penStyle != None else None
     @penStyle.setter
-    def penStyle(self,style:PenStyle):self.__penStyle=style
+    def penStyle(self,style:PenStyle):
+        self.state=StateTypes.update
+        self.__penStyle=style
+
+    
+
 
     def __init__(self, penInfo: dict) -> None:
         self.__penInfo = penInfo
@@ -86,10 +96,16 @@ class Pen(BaseModel):
         # else:
         #     self.__penColor = None
 
+
+
         if self.__penInfo[PenInfo.penStyle.value] != None:
             self.__penStyle = PenStyle(self.__penInfo[PenInfo.penStyle.value])
         else:
             self.__penStyle = None
+
+
+
+        self.state=StateTypes.unchanged
 
     def to_dict(self) -> dict:
         return {

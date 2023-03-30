@@ -1,6 +1,16 @@
 from enum import Enum
 
 
+class StateTypes(Enum):
+    "ModelStateTypes"
+    added="added"
+    update="update"
+    delete="delete"
+    unchanged="unchange"
+    detached="detached"
+
+
+
 class ETypes(Enum):
     "ElementTypes"
     line = 0
@@ -73,6 +83,8 @@ class SSAInfo(Enum):
     ssangleType = "ssAngleType"
     ssangleValue = "ssAngleValue"
     ssangleElementId = "ssAngleElementId"
+
+
 
 
 class PenInfo(Enum):

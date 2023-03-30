@@ -1,10 +1,21 @@
 from PyQt5.QtGui import QPen, QColor, QBrush
 from PyQt5.QtCore import Qt
 
+from Model import Layer
+
 
 class CreatePen:
     penStyles: dict = {1: Qt.SolidLine, 2: Qt.DotLine}
     penHatches: dict = {1: Qt.SolidPattern}
+
+    @staticmethod
+    def createPenAtLayer(layer:Layer):
+        return QPen(QColor(
+            layer.layerPen.penRed,
+            layer.layerPen.penGreen,
+            layer.layerPen.penBlue),
+            layer.layerThickness,
+            CreatePen.penStyles[layer.layerPen.penStyleId])
 
     @staticmethod
     def createPen(r: int, g: int, b: int, width: float, penStyleId: int) -> QPen:

@@ -83,12 +83,13 @@ class CommandPanel:
         
 
         for element in self.elements:
+            elementObj=ElementObj(element,self.__drawScene)
             for layer in self.layers:
                 if layer.layerId == element.layerId:
                     element.layer = layer
-                    layer.addElement(ElementObj(element,self.__drawScene))
+                    layer.addElement(elementObj)
 
-            self.__drawElementObj.append(self.__elementDraw.drawElement(element))
+            self.__drawElementObj.append(self.__elementDraw.drawElement(elementObj))
 
         
 
@@ -138,6 +139,16 @@ class CommandPanel:
     def addLayer(self,layer: Layer):self.layers.append(layer)
 
     def removeLayer(self,layer: Layer):self.layers.remove(layer)
+
+    def updateScene(self):self.__drawScene.updateScene()
+
+    def saveDraw(self):
+        for i in self.layers:
+            print("layer--",i.state)
+            print("pen--",i.layerPen.state)
+        for i in self.elements:
+            print("element--",i.state)
+        # self.__drawService.saveDraw()
 
 
 

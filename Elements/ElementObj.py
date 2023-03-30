@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, QPointF, pyqtSignal
 
 from Model import Element
 from Helpers.Handles import Handle
+from Helpers.Pen.CreatePen import CreatePen
 from Elements.BuilderContext import BuilderContext
 from UI import DrawScene
 from Helpers.Settings import Setting
@@ -27,12 +28,7 @@ class ElementObj(QGraphicsObject):
 
         self.__isSelected:bool=False
 
-        self.__pen:QPen=QPen(QColor(
-            self.__element.layer.layerPen.penRed,
-            self.__element.layer.layerPen.penBlue,
-            self.__element.layer.layerPen.penGreen,),
-            self.__element.layer.layerThickness,
-            Qt.SolidLine,)
+        
         
         # self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
         # self.setFlag(QGraphicsObject.ItemIsFocusable)
@@ -106,9 +102,11 @@ class ElementObj(QGraphicsObject):
     def paint(self, painter, option, widget):
         self.__elementBuilder.setElementInformation(self.__element)
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
+        self.__pen:QPen=CreatePen.createPenAtLayer(self.__element.layer)
         painter.setPen(self.__pen)
         self.updateHandles()
         self.__elementBuilder.paint(painter)
+
         
         # print("elementpoint: ",self.__element.points[0].pointX,"-------",self.__element.points[0].pointY)
         # print("elementpoint: ",self.__element.points[1].pointX,"-------",self.__element.points[1].pointY)

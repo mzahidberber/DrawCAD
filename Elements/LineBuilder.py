@@ -22,6 +22,7 @@ class LineBuilder(ElementBuilder):
 
     def paint(self, painter):
         # painter.drawRect(self.shape().boundingRect())
+        
         painter.drawLine(self.__p1, self.__p2)
 
     def shape(self) -> QPainterPath:

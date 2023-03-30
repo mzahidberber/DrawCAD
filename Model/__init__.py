@@ -23,5 +23,6 @@ from Model.DrawEnums import (
     CInfo,
     PSInfo,
     UInfo,
+    StateTypes
 )
 from Model.PointGeo import PointGeo

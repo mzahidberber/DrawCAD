@@ -2,7 +2,8 @@
 from Elements import ElementObj
 from Model.BaseModel import BaseModel
 from Model.Pen import Pen
-from Model.DrawEnums import LInfo
+from Model.DrawEnums import LInfo,StateTypes
+
 
 
 class Layer(BaseModel):
@@ -15,6 +16,7 @@ class Layer(BaseModel):
     __layerPenId: int
     __layerPen: Pen
     __layerElements:list[ElementObj] or None
+    
 
     @property
     def layerId(self):
@@ -24,25 +26,33 @@ class Layer(BaseModel):
     def layerName(self):
         return self.__layerName
     @layerName.setter
-    def layerName(self,name:str):self.__layerName=name
+    def layerName(self,name:str):
+        self.state=StateTypes.update
+        self.__layerName=name
 
     @property
     def layerLock(self):
         return self.__layerLock
     @layerLock.setter
-    def layerLock(self,lock:bool):self.__layerLock=lock
+    def layerLock(self,lock:bool):
+        self.state=StateTypes.update
+        self.__layerLock=lock
 
     @property
     def layerVisibility(self):
         return self.__layerVisibility
     @layerVisibility.setter
-    def layerVisibility(self,visibility:bool):self.__layerVisibility=visibility
+    def layerVisibility(self,visibility:bool):
+        self.state=StateTypes.update
+        self.__layerVisibility=visibility
 
     @property
     def layerThickness(self):
         return self.__layerThickness
     @layerThickness.setter
-    def layerThickness(self,thickness:float):self.__layerThickness=thickness
+    def layerThickness(self,thickness:float):
+        self.state=StateTypes.update
+        self.__layerThickness=thickness
 
     @property
     def layerDrawBoxId(self):
@@ -59,7 +69,11 @@ class Layer(BaseModel):
     @property
     def layerElements(self) -> list[ElementObj]:return self.__layerElements
     @layerElements.setter
-    def layerElements(self,elements:list[ElementObj]):self.__layerElements=elements
+    def layerElements(self,elements:list[ElementObj]):
+        self.state=StateTypes.update
+        self.__layerElements=elements
+
+    
 
     def __init__(self, layerInfo: dict=None,
                 layerId:int=None,layerName: str=None,
@@ -90,7 +104,10 @@ class Layer(BaseModel):
             self.__layerPen = layerPen
 
 
+        self.state=StateTypes.unchanged
         self.__layerElements=[]
+
+    
 
 
     def addElement(self,element:ElementObj):self.__layerElements.append(element)

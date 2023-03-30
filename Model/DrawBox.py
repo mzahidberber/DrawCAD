@@ -1,7 +1,7 @@
 from Model.Layer import Layer
 from Model.BaseModel import BaseModel
 from Model.MappingModel import MappingModel
-from Model.DrawEnums import DBInfo
+from Model.DrawEnums import DBInfo,StateTypes
 
 
 class DrawBox(BaseModel):
@@ -17,6 +17,10 @@ class DrawBox(BaseModel):
     @property
     def drawName(self):
         return self.__drawName
+    @drawName.setter
+    def drawName(self,name:str):
+        self.state=StateTypes.update
+        self.__drawName=name
 
     @property
     def userId(self):
@@ -34,6 +38,9 @@ class DrawBox(BaseModel):
         # self.__layers = MappingModel.mapDictToClass(
         #     self.__drawBoxInfo[DBInfo.layers.value], Layer
         # )
+
+
+        self.state=StateTypes.unchanged
 
     def to_dict(self) -> dict:
         return {

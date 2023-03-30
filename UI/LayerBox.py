@@ -99,12 +99,12 @@ class LayerBox(QDialog):
         self.ui.LayerList.removeRow(line)
 
     def addLineWithWidgets(self,line:int,layer: Layer):
-        self.ui.LayerList.setCellWidget(line,0,NameEdit(layer,self.__commandPanel.layers))
-        self.ui.LayerList.setCellWidget(line,1,LayerLock(layer))
-        self.ui.LayerList.setCellWidget(line,2,VisibilityButton(layer))
-        self.ui.LayerList.setCellWidget(line,3,ThicknessEdit(layer))
-        self.ui.LayerList.setCellWidget(line,4,ColorButton(layer))
-        self.ui.LayerList.setCellWidget(line,5,PenStyleSelect(layer,self.__commandPanel.penStyles))
+        self.ui.LayerList.setCellWidget(line,0,NameEdit(self.__commandPanel,layer))
+        self.ui.LayerList.setCellWidget(line,1,LayerLock(self.__commandPanel,layer))
+        self.ui.LayerList.setCellWidget(line,2,VisibilityButton(self.__commandPanel,layer))
+        self.ui.LayerList.setCellWidget(line,3,ThicknessEdit(self.__commandPanel,layer))
+        self.ui.LayerList.setCellWidget(line,4,ColorButton(self.__commandPanel,layer))
+        self.ui.LayerList.setCellWidget(line,5,PenStyleSelect(self.__commandPanel,layer))
         self.ui.LayerList.setItem(line,6,QTableWidgetItem(str(len(layer.layerElements))))
 
     def updateLayers(self,commandPanel:CommandPanel):
@@ -117,10 +117,11 @@ class LayerBox(QDialog):
 
 
 class NameEdit(QLineEdit):
-    def __init__(self,layer: Layer,layerList:list[Layer]):
+    def __init__(self,commandPanel:CommandPanel,layer: Layer):
         QLineEdit.__init__(self)
+        self.__commandPanel=commandPanel
         self.__layer=layer
-        self.__layerList=layerList
+        self.__layerList=self.__commandPanel.layers
 
         self.setText(str(self.__layer.layerName))
 
@@ -132,6 +133,7 @@ class NameEdit(QLineEdit):
         if value=="background-color: rgb(211,0,0);":
             self.setText(str(self.__layer.layerName))
             self.setStyleSheet(f"background-color: rgb(255,255,255);")
+            self.__commandPanel.updateScene()
      
     def ChangeName(self,ev):
         adListesi=[]
@@ -143,10 +145,12 @@ class NameEdit(QLineEdit):
             self.setStyleSheet(f"background-color: rgb(255,255,255);")
             self.__layer.layerName=ev
 
+
 class ThicknessEdit(QLineEdit):
-     def __init__(self,layer: Layer):
+     def __init__(self,commandPanel:CommandPanel,layer: Layer):
           QLineEdit.__init__(self)
           self.__layer=layer
+          self.__commandPanel=commandPanel
 
           self.setText(str(self.__layer.layerThickness))
           self.textChanged.connect(self.changeThickness)
@@ -162,6 +166,7 @@ class ThicknessEdit(QLineEdit):
           try:
                if float(ev)<=20 and float(ev)>0:
                     self.__layer.layerThickness=float(ev)
+                    self.__commandPanel.updateScene()
                else:
                     self.setText(str(self.__layer.layerThickness))
           except Exception as ex:
@@ -173,9 +178,10 @@ class ThicknessEdit(QLineEdit):
                print(self.__layer.layerThickness)
 
 class ColorButton(QPushButton):
-    def __init__(self,layer: Layer):
+    def __init__(self,commandPanel:CommandPanel,layer: Layer):
         QPushButton.__init__(self)
         self.layer=layer
+        self.__commandPanel=commandPanel
 
         # self.setSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)
         # self.setMaximumSize(20,20)
@@ -192,19 +198,22 @@ class ColorButton(QPushButton):
             self.layer.layerPen.penBlue=selectedColor.blue()
             self.layer.layerPen.penGreen=selectedColor.green()
             self.layer.layerPen.penRed=selectedColor.red()
+            self.__commandPanel.updateScene()
 
-            print(self.layer.to_dict())
+            # print(self.layer.to_dict())
 
 class PenStyleSelect(QComboBox):
-    def __init__(self,layer: Layer,penStyleList: list[PenStyle]):
+    def __init__(self,commandPanel:CommandPanel,layer: Layer):
         QComboBox.__init__(self)
         self.layer=layer
-        self.__penStyleList=penStyleList
+        self.__commandPanel=commandPanel
+        self.__penStyleList=self.__commandPanel.penStyles
 
-        for i in penStyleList:
+        for i in self.__penStyleList:
             self.addItem(i.penStyleName)
             if i==self.layer.layerPen.penStyle:
                 self.setCurrentText(i.penStyleName)
+                
 
         self.currentTextChanged.connect(self.changePenStyle)
      
@@ -213,11 +222,13 @@ class PenStyleSelect(QComboBox):
             if(style.penStyleName==ev):
                 self.layer.layerPen.penStyle=style
                 self.layer.layerPen.penStyleId=style.penStyleId
+                self.__commandPanel.updateScene()
 
 class VisibilityButton(QPushButton):
-    def __init__(self,layer: Layer):
+    def __init__(self,commandPanel:CommandPanel,layer: Layer):
         QPushButton.__init__(self)
         self.__layer=layer
+        self.__commandPanel=commandPanel
 
         self.setText("")
         icon = QIcon()
@@ -241,11 +252,13 @@ class VisibilityButton(QPushButton):
         else:
             self.__layer.layerVisibility=True
             self.__layer.showElements()
+        self.__commandPanel.updateScene()
 
 class LayerLock(QPushButton):
-    def __init__(self,layer:Layer):
+    def __init__(self,commandPanel:CommandPanel,layer:Layer):
         QPushButton.__init__(self)
         self.__layer=layer
+        self.__commandPanel=commandPanel
 
         self.setText("")
         icon = QIcon()
@@ -269,3 +282,4 @@ class LayerLock(QPushButton):
         else:
             self.__layer.layerLock=True
             self.__layer.unlockElements()
+        self.__commandPanel.updateScene()

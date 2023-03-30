@@ -1,4 +1,4 @@
-from Model.DrawEnums import EInfo
+from Model.DrawEnums import EInfo,StateTypes
 from Model.Point import Point
 from Model.SSAngle import SSAngle
 from Model.Radius import Radius
@@ -38,6 +38,7 @@ class Element(BaseModel):
         return self.__layer
     @layer.setter
     def layer(self,layer:Layer):
+        self.state=StateTypes.update
         self.__layer=layer
 
     @property
@@ -51,6 +52,7 @@ class Element(BaseModel):
     @property
     def points(self) -> list[Point]:
         return self.__points
+    
 
     def __init__(self, elementInfo: dict) -> None:
         self.__elementInfo = elementInfo
@@ -67,6 +69,9 @@ class Element(BaseModel):
         self.__points = MappingModel.mapDictToClass(
             self.__elementInfo[EInfo.points.value], Point
         )
+
+
+        self.state=StateTypes.unchanged
 
         # if self.__elementInfo[EInfo.layer.value] != None:
         #     self.__layer = Layer(self.__elementInfo[EInfo.layer.value])

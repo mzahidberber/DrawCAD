@@ -97,12 +97,17 @@ class DrawView(QMainWindow):
     def closeEvent(self, event):
         pass
 
+    def saveDraw(self,event):
+        self.selectedCommandP.saveDraw()
+
     def layerBoxShow(self):
         self.layerBox.show(self.__selecetedCommandP)
         self.layerBox.updateLayers(self.__selecetedCommandP)
 
     def connectButtons(self):
         self.ui.pbLayerButton.clicked.connect(self.layerBoxShow)
+
+        self.ui.actionSave.triggered.connect(self.saveDraw)
 
         self.ui.actionLine.triggered.connect(
             lambda: self.startCommand(CommandEnums.line)
