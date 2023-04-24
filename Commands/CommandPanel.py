@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QPointF
 from Elements import ElementObj
-from Model import DrawBox, Element, Layer, Pen, PenStyle
+from Model import DrawBox, Element, Layer, pen, PenStyle
 from Service import DrawService
 from Service.Model import Token
 from UI import DrawScene
@@ -8,15 +8,16 @@ from Commands.CommandEnums import CommandEnums
 from Commands.ElementDraw import ElementDraw
 from Helpers.Preview import PreviewObject
 from Helpers.Snap import SnapElement, SnapSquare
+from Model.DrawEnums import StateTypes
 
 
 class CommandPanel:
     __drawElementObj:list[ElementObj]
     __layers:list[Layer]
-    __pens:list[Pen]
+    __pens:list[pen]
     __penStyles:list[PenStyle]
     __selectedLayer:Layer
-    __selectedPen:Pen
+    __selectedPen:pen
     __drawBox=DrawBox
 
     @property
@@ -25,9 +26,9 @@ class CommandPanel:
     def selectedLayer(self,layer:Layer):self.__selectedLayer=layer
 
     @property
-    def selectedPen(self)-> Pen:return self.__selectedPen
+    def selectedPen(self)-> pen:return self.__selectedPen
     @selectedPen.setter
-    def selectedPen(self,pen:Pen):self.__selectedPen=pen
+    def selectedPen(self,pen:pen):self.__selectedPen=pen
 
     @property
     def drawElementObjects(self):return self.__drawElementObj
@@ -42,7 +43,7 @@ class CommandPanel:
     @property
     def pens(self):return self.__pens
     @pens.setter
-    def pens(self,pens:list[Pen]):self.__pens=pens
+    def pens(self,pens:list[pen]):self.__pens=pens
 
     @property
     def penStyles(self):return self.__penStyles
@@ -75,8 +76,8 @@ class CommandPanel:
         drawScene.MovedMouse.connect(self.mouseMove)
 
         
-        self.layers = self.__drawService.getLayers(self.__drawBox.drawBoxId)
-        self.elements = self.__drawService.getElements(self.__drawBox.drawBoxId)
+        self.layers = self.__drawService.getLayers(self.__drawBox.id)
+        self.elements = self.__drawService.getElements(self.__drawBox.id)
         
         self.__penStyles=self.__drawService.getPenStyles()
 
@@ -85,8 +86,9 @@ class CommandPanel:
         for element in self.elements:
             elementObj=ElementObj(element,self.__drawScene)
             for layer in self.layers:
-                if layer.layerId == element.layerId:
+                if layer.id == element.layerId:
                     element.layer = layer
+                    element.state=StateTypes.unchanged
                     layer.addElement(elementObj)
 
             self.__drawElementObj.append(self.__elementDraw.drawElement(elementObj))
@@ -102,7 +104,7 @@ class CommandPanel:
 
     def startCommand(self,command: CommandEnums):
         self.__drawService.startCommand(
-            command, self.__drawBox.drawBoxId, self.__selectedLayer, self.__selectedPen
+            command, self.__drawBox.id, self.__selectedLayer, self.__selectedPen
         )
         self.__preview.setElementType(command.value)
         self.__isStartCommand = True
@@ -119,7 +121,7 @@ class CommandPanel:
                 self.__preview.addPoint(coordinate)
                 if element != None:
                     for i in self.layers:
-                        if element.layerId == i.layerId:
+                        if element.layerId == i.id:
                             element.layer = i
                     self.__elementDraw.drawElement(element)
                     self.__preview.stop()
@@ -127,7 +129,7 @@ class CommandPanel:
 
     def changeSelectedLayer(self,layerName: str):
         for i in self.layers:
-            if i.layerName==layerName:
+            if i.name==layerName:
                 self.selectedLayer=i
 
     def removeElement(self,element:ElementObj):
@@ -145,7 +147,7 @@ class CommandPanel:
     def saveDraw(self):
         for i in self.layers:
             print("layer--",i.state)
-            print("pen--",i.layerPen.state)
+            print("pen--",i.pen.state)
         for i in self.elements:
             print("element--",i.state)
         # self.__drawService.saveDraw()

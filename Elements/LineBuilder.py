@@ -12,12 +12,12 @@ class LineBuilder(ElementBuilder):
 
     def setPointsInformation(self):
         self.__p1 = QPointF(
-            self.element.points[0].pointX,
-            self.element.points[0].pointY,
+            self.element.points[0].x,
+            self.element.points[0].y,
         )
         self.__p2 = QPointF(
-            self.element.points[1].pointX,
-            self.element.points[1].pointY,
+            self.element.points[1].x,
+            self.element.points[1].y,
         )
 
     def paint(self, painter):

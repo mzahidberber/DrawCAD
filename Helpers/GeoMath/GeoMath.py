@@ -13,7 +13,7 @@ class GeoMath:
     @staticmethod
     @dispatch(QPointF,Point)
     def findLengthLine(point1:QPointF,point2:Point) -> float:
-        return math.sqrt(((point2.pointX-point1.x())**2)+((point2.pointY-point1.y())**2))
+        return math.sqrt(((point2.x-point1.x())**2)+((point2.y-point1.y())**2))
     
     @staticmethod
     @dispatch(QPointF,QPointF)

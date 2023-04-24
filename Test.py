@@ -13,9 +13,9 @@ from Model.DrawEnums import PInfo
 
 point = Point(
     {
-        PInfo.pointId.value: 1,
-        PInfo.pointX.value: 20,
-        PInfo.pointY.value: 20,
+        PInfo.id.value: 1,
+        PInfo.x.value: 20,
+        PInfo.y.value: 20,
         PInfo.elementId.value: 1,
         PInfo.pointTypeId.value: 1,
     }
@@ -29,24 +29,24 @@ from Model.DrawEnums import EInfo
 
 element = Element(
     {
-        EInfo.elementId.value: 1,
+        EInfo.id.value: 1,
         EInfo.penId.value: 1,
-        EInfo.elementTypeId.value: 1,
+        EInfo.typeId.value: 1,
         EInfo.layerId.value: 1,
         EInfo.ssAngles.value: None,
         EInfo.radiuses.value: None,
         EInfo.points.value: [
             {
-                PInfo.pointId.value: 1,
-                PInfo.pointX.value: 20,
-                PInfo.pointY.value: 20,
+                PInfo.id.value: 1,
+                PInfo.x.value: 20,
+                PInfo.y.value: 20,
                 PInfo.elementId.value: 1,
                 PInfo.pointTypeId.value: 1,
             },
             {
-                PInfo.pointId.value: 2,
-                PInfo.pointX.value: 30,
-                PInfo.pointY.value: 30,
+                PInfo.id.value: 2,
+                PInfo.x.value: 30,
+                PInfo.y.value: 30,
                 PInfo.elementId.value: 1,
                 PInfo.pointTypeId.value: 1,
             },
@@ -57,4 +57,4 @@ element = Element(
 print(element.to_dict())
 for i in element.points:
     print(i.to_dict())
-print(element.points[1].pointX)
+print(element.points[1].x)

@@ -1,40 +1,42 @@
 from Model.BaseModel import BaseModel
-from Model.DrawEnums import SSAInfo
+from Model.DrawEnums import SSAInfo,StateTypes
 
 
 class SSAngle(BaseModel):
-    __ssAngleId: int
-    __ssAngleType: str
-    __ssAngleValue: float
-    __ssAngleElementId: int
+    __type: str
+    __value: float
+    __elementId: int
+
 
     @property
-    def ssAngleId(self) -> int:
-        return self.__ssAngleId
+    def type(self) -> int:
+        return self.__type
 
     @property
-    def ssAngleType(self) -> int:
-        return self.__ssAngleType
+    def value(self) -> int:
+        return self.__value
+    @value.setter
+    def value(self,value: float):
+        self.__value=value
+        self.state=StateTypes.update
 
     @property
-    def ssAngleValue(self) -> int:
-        return self.__ssAngleValue
-
-    @property
-    def ssAngleElementId(self) -> int:
-        return self.__ssAngleElementId
+    def elementId(self) -> int:
+        return self.__elementId
 
     def __init__(self, ssangleInfo: dict) -> None:
         self.__ssangeInfo = ssangleInfo
-        self.__ssAngleId = self.__ssangeInfo[SSAInfo.ssangleId.value]
-        self.__ssAngleType = self.__ssangeInfo[SSAInfo.ssangleType.value]
-        self.__ssAngleValue = self.__ssangeInfo[SSAInfo.ssangleValue.value]
-        self.__ssAngleElementId = self.__ssangeInfo[SSAInfo.ssangleElementId.value]
+        self._id = self.__ssangeInfo[SSAInfo.id.value]
+        self.__type = self.__ssangeInfo[SSAInfo.type.value]
+        self.__value = self.__ssangeInfo[SSAInfo.value.value]
+        self.__elementId = self.__ssangeInfo[SSAInfo.elementId.value]
+
+        self.state=StateTypes.unchanged
 
     def to_dict(self) -> dict:
         return {
-            SSAInfo.ssangleId.value: self.__ssAngleId,
-            SSAInfo.ssangleType.value: self.__ssAngleType,
-            SSAInfo.ssangleValue.value: self.__ssAngleValue,
-            SSAInfo.ssangleElementId.value: self.__ssAngleElementId,
+            SSAInfo.id.value: self._id,
+            SSAInfo.type.value: self.__type,
+            SSAInfo.value.value: self.__value,
+            SSAInfo.elementId.value: self.__elementId,
         }

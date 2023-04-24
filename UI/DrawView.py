@@ -33,6 +33,7 @@ class DrawView(QMainWindow):
 
         self.__drawService:DrawService=DrawService(self.__token)
         self.__drawBoxes:list[DrawBox]= self.__drawService.getDrawBoxes()
+        print(self.__drawBoxes)
         self.__commandPanels:dict[int,CommandPanel]={}
         self.getDrawBoxItems()
 
@@ -54,7 +55,7 @@ class DrawView(QMainWindow):
 
     def drawDoubleClicked(self, event):
         __selectedIndex = self.ui.lwDrawBoxes.currentRow()
-        __selectedDrawBoxId=self.__drawBoxes[__selectedIndex].drawBoxId
+        __selectedDrawBoxId=self.__drawBoxes[__selectedIndex].id
         __selectedDrawBox=self.__drawBoxes[__selectedIndex]
         
         if(__selectedDrawBoxId in self.__commandPanels):
@@ -62,11 +63,11 @@ class DrawView(QMainWindow):
         else:
             self.__selecetedCommandP = CommandPanel(self.__drawScene,self.__token,__selectedDrawBox)
         
-        self.__commandPanels[self.__selecetedCommandP.drawBox.drawBoxId]=self.__selecetedCommandP
+        self.__commandPanels[self.__selecetedCommandP.drawBox.id]=self.__selecetedCommandP
         self.showDraw()
         
         #indexi degişmeli
-        self.ui.twDrawTabs.setTabText(0, self.__selecetedCommandP.drawBox.drawName)
+        self.ui.twDrawTabs.setTabText(0, self.__selecetedCommandP.drawBox.name)
 
         self.getLayers()
         
@@ -77,17 +78,17 @@ class DrawView(QMainWindow):
     
     def setSelectedLayerAndPen(self,index:int):
         self.__selecetedCommandP.selectedLayer=self.__selecetedCommandP.layers[index]
-        self.__selecetedCommandP.selectedPen= self.__selecetedCommandP.layers[index].layerPen
+        self.__selecetedCommandP.selectedPen= self.__selecetedCommandP.layers[index].pen
 
 
 
     def getDrawBoxItems(self):
         for i in self.__drawBoxes :
-            self.ui.lwDrawBoxes.addItem(i.drawName)
+            self.ui.lwDrawBoxes.addItem(i.name)
 
     def getLayers(self):
         for i in self.__selecetedCommandP.layers:
-            self.ui.cbxLayers.addItem(i.layerName)
+            self.ui.cbxLayers.addItem(i.name)
 
     def changeLayer(self, event):self.setSelectedLayerAndPen(self.ui.cbxLayers.currentIndex())
        

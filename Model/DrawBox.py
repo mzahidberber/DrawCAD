@@ -5,22 +5,18 @@ from Model.DrawEnums import DBInfo,StateTypes
 
 
 class DrawBox(BaseModel):
-    __drawBoxId: int
-    __drawName: str
+    __name: str
     __userId: str
     __layers: list[Layer] or None
 
-    @property
-    def drawBoxId(self):
-        return self.__drawBoxId
 
     @property
-    def drawName(self):
-        return self.__drawName
-    @drawName.setter
-    def drawName(self,name:str):
+    def name(self):
+        return self.__name
+    @name.setter
+    def name(self,name:str):
         self.state=StateTypes.update
-        self.__drawName=name
+        self.__name=name
 
     @property
     def userId(self):
@@ -32,8 +28,8 @@ class DrawBox(BaseModel):
 
     def __init__(self, drawBoxInfo: dict) -> None:
         self.__drawBoxInfo = drawBoxInfo
-        self.__drawBoxId = self.__drawBoxInfo[DBInfo.drawBoxId.value]
-        self.__drawName = self.__drawBoxInfo[DBInfo.drawName.value]
+        self._id = self.__drawBoxInfo[DBInfo.id.value]
+        self.__name = self.__drawBoxInfo[DBInfo.dname.value]
         self.__userId = self.__drawBoxInfo[DBInfo.userId.value]
         # self.__layers = MappingModel.mapDictToClass(
         #     self.__drawBoxInfo[DBInfo.layers.value], Layer
@@ -44,8 +40,8 @@ class DrawBox(BaseModel):
 
     def to_dict(self) -> dict:
         return {
-            DBInfo.drawBoxId.value: self.__drawBoxId,
-            DBInfo.drawName.value: self.__drawName,
+            DBInfo.id.value: self._id,
+            DBInfo.dname.value: self.__name,
             DBInfo.userId.value: self.__userId,
             DBInfo.layers.value: MappingModel.mapClassToDict(self.__layers),
         }

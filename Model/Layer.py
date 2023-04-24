@@ -1,77 +1,73 @@
 
 from Elements import ElementObj
 from Model.BaseModel import BaseModel
-from Model.Pen import Pen
+from Model.Pen import pen
 from Model.DrawEnums import LInfo,StateTypes
 
 
 
 class Layer(BaseModel):
-    __layerId: int or None
-    __layerName: str
-    __layerLock: bool
-    __layerVisibility: bool
-    __layerThickness: float
-    __layerDrawBoxId: int
-    __layerPenId: int
-    __layerPen: Pen
-    __layerElements:list[ElementObj] or None
+    __name: str
+    __lock: bool
+    __visibility: bool
+    __thickness: float
+    __drawBoxId: int
+    __penId: int
+    __pen: pen
+    __elements:list[ElementObj] or None
     
 
-    @property
-    def layerId(self):
-        return self.__layerId
 
     @property
-    def layerName(self):
-        return self.__layerName
-    @layerName.setter
-    def layerName(self,name:str):
+    def name(self):
+        return self.__name
+    @name.setter
+    def name(self,name:str):
         self.state=StateTypes.update
-        self.__layerName=name
+        self.__name=name
 
     @property
-    def layerLock(self):
-        return self.__layerLock
-    @layerLock.setter
-    def layerLock(self,lock:bool):
+    def lock(self):
+        return self.__lock
+    @lock.setter
+    def lock(self,lock:bool):
         self.state=StateTypes.update
-        self.__layerLock=lock
+        self.__lock=lock
 
     @property
-    def layerVisibility(self):
-        return self.__layerVisibility
-    @layerVisibility.setter
-    def layerVisibility(self,visibility:bool):
+    def visibility(self):
+        return self.__visibility
+    @visibility.setter
+    def visibility(self,visibility:bool):
         self.state=StateTypes.update
-        self.__layerVisibility=visibility
+        self.__visibility=visibility
 
     @property
-    def layerThickness(self):
-        return self.__layerThickness
-    @layerThickness.setter
-    def layerThickness(self,thickness:float):
+    def thickness(self):
+        return self.__thickness
+    @thickness.setter
+    def thickness(self,thickness:float):
         self.state=StateTypes.update
-        self.__layerThickness=thickness
+        self.__thickness=thickness
 
     @property
-    def layerDrawBoxId(self):
-        return self.__layerDrawBoxId
+    def drawBoxId(self):
+        return self.__drawBoxId
 
     @property
-    def layerPenId(self):
-        return self.__layerPenId
+    def penId(self):
+        return self.__penId
 
     @property
-    def layerPen(self):
-        return self.__layerPen
+    def pen(self):
+        return self.__pen
 
     @property
-    def layerElements(self) -> list[ElementObj]:return self.__layerElements
-    @layerElements.setter
-    def layerElements(self,elements:list[ElementObj]):
+    def elements(self) -> list[ElementObj]:return self.__elements
+    @elements.setter
+    def elements(self,elements:list[ElementObj]):
         self.state=StateTypes.update
-        self.__layerElements=elements
+        self.__elements=elements
 
     
 
@@ -79,69 +75,71 @@ class Layer(BaseModel):
                 layerId:int=None,layerName: str=None,
                 layerLock:bool=False,layerThickness: float=1,
                 layerVisibility: bool=True,layerDrawBoxId: int=None,
-                layerPen:Pen=None) -> None:
+                layerPen:pen=None) -> None:
         
         if(layerInfo!=None):
             self.__layerInfo = layerInfo
-            self.__layerId = self.__layerInfo[LInfo.layerId.value]
-            self.__layerName = self.__layerInfo[LInfo.layerName.value]
-            self.__layerLock = self.__layerInfo[LInfo.layerLock.value]
-            self.__layerVisibility = self.__layerInfo[LInfo.LayerVisibility.value]
-            self.__layerThickness = self.__layerInfo[LInfo.LayerThickness.value]
-            self.__layerDrawBoxId = self.__layerInfo[LInfo.DrawBoxId.value]
-            self.__layerPenId = self.__layerInfo[LInfo.PenId.value]
+            self._id = self.__layerInfo[LInfo.id.value]
+            self.__name = self.__layerInfo[LInfo.lname.value]
+            self.__lock = self.__layerInfo[LInfo.lock.value]
+            self.__visibility = self.__layerInfo[LInfo.visibility.value]
+            self.__thickness = self.__layerInfo[LInfo.thickness.value]
+            self.__drawBoxId = self.__layerInfo[LInfo.drawBoxId.value]
+            self.__penId = self.__layerInfo[LInfo.penId.value]
             # self.__layerElements=MappingModel.mapDictToClass(self.__layerInfo[LInfo.elements.value],Element)
-            self.__layerPen = Pen(self.__layerInfo[LInfo.Pen.value])
+            self.__pen = pen(self.__layerInfo[LInfo.pen.value])
+
         else:
-            self.__layerId = layerId
-            self.__layerName = layerName
-            self.__layerLock = layerLock
-            self.__layerVisibility = layerVisibility
-            self.__layerThickness = layerThickness
-            self.__layerDrawBoxId = layerDrawBoxId
-            self.__layerPenId = layerPen.penId
+            self._id = layerId
+            self.__name = layerName
+            self.__lock = layerLock
+            self.__visibility = layerVisibility
+            self.__thickness = layerThickness
+            self.__drawBoxId = layerDrawBoxId
+            self.__penId = layerPen.Id
             # self.__layerElements=MappingModel.mapDictToClass(self.__layerInfo[LInfo.elements.value],Element)
-            self.__layerPen = layerPen
+            self.__pen = layerPen
+
 
 
         self.state=StateTypes.unchanged
-        self.__layerElements=[]
+        self.__elements=[]
 
     
 
 
-    def addElement(self,element:ElementObj):self.__layerElements.append(element)
+    def addElement(self,element:ElementObj):self.__elements.append(element)
 
     def copy(self):return Layer(
-        layerId=None,layerName=self.layerName,
-        layerLock=self.layerLock,layerThickness=self.layerThickness,layerVisibility=self.layerVisibility,
-        layerDrawBoxId=self.layerDrawBoxId,layerPen=self.layerPen)
+        layerId=None,layerName=self.name,
+        layerLock=self.lock,layerThickness=self.thickness,layerVisibility=self.visibility,
+        layerDrawBoxId=self.drawBoxId,layerPen=self.pen)
 
     def lockElements(self):
-        for e in self.__layerElements:
+        for e in self.__elements:
             e.elementSelectedOff()
 
     def unlockElements(self):
-        for e in self.__layerElements:
+        for e in self.__elements:
             e.elementSelectedOn()
 
     def hideElements(self):
-        for e in self.__layerElements:
+        for e in self.__elements:
             e.elementHide()
 
     def showElements(self):
-        for e in self.__layerElements:
+        for e in self.__elements:
             e.elementShow()
 
     def to_dict(self) -> dict:
         return {
-            LInfo.layerId.value: self.__layerId,
-            LInfo.layerName.value: self.__layerName,
-            LInfo.layerLock.value: self.__layerLock,
-            LInfo.LayerVisibility.value: self.__layerVisibility,
-            LInfo.LayerThickness.value: self.__layerThickness,
-            LInfo.DrawBoxId.value: self.__layerDrawBoxId,
-            LInfo.PenId.value: self.__layerPenId,
-            LInfo.Pen.value: self.__layerPen.to_dict(),
+            LInfo.id.value: self._id,
+            LInfo.lname.value: self.__name,
+            LInfo.lock.value: self.__lock,
+            LInfo.visibility.value: self.__visibility,
+            LInfo.thickness.value: self.__thickness,
+            LInfo.drawBoxId.value: self.__drawBoxId,
+            LInfo.penId.value: self.__penId,
+            LInfo.pen.value: self.__pen.to_dict(),
             # LInfo.elements.value:MappingModel.mapClassToDict(self.__layerElements),
         }

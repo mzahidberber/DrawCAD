@@ -8,7 +8,6 @@ from Model.Layer import Layer
 
 
 class Element(BaseModel):
-    __elementId: int
     __penId: int
     __elementTypeId: int
     __layerId: int
@@ -17,9 +16,6 @@ class Element(BaseModel):
     __radiuses: list[Radius] or None
     __points: list[Point] or None
 
-    @property
-    def elementId(self) -> int:
-        return self.__elementId
 
     @property
     def penId(self) -> int:
@@ -41,6 +37,13 @@ class Element(BaseModel):
         self.state=StateTypes.update
         self.__layer=layer
 
+    def setLayer(self,layer:Layer,isUpdate: bool=True):
+        if(isUpdate==False):
+            self.__layer=layer
+        else:
+            self.state=StateTypes.update
+            self.__layer=layer
+
     @property
     def ssAngles(self) -> list[SSAngle]:
         return self.__ssAngles
@@ -56,9 +59,9 @@ class Element(BaseModel):
 
     def __init__(self, elementInfo: dict) -> None:
         self.__elementInfo = elementInfo
-        self.__elementId = self.__elementInfo[EInfo.elementId.value]
+        self._id = self.__elementInfo[EInfo.id.value]
         self.__penId = self.__elementInfo[EInfo.penId.value]
-        self.__elementTypeId = self.__elementInfo[EInfo.elementTypeId.value]
+        self.__elementTypeId = self.__elementInfo[EInfo.typeId.value]
         self.__layerId = self.__elementInfo[EInfo.layerId.value]
         self.__ssAngles = MappingModel.mapDictToClass(
             self.__elementInfo[EInfo.ssAngles.value], SSAngle
@@ -80,9 +83,9 @@ class Element(BaseModel):
 
     def to_dict(self) -> dict:
         return {
-            EInfo.elementId.value: self.__elementId,
+            EInfo.id.value: self._id,
             EInfo.penId.value: self.__penId,
-            EInfo.elementTypeId.value: self.__elementTypeId,
+            EInfo.typeId.value: self.__elementTypeId,
             EInfo.layerId.value: self.__layerId,
             EInfo.layer.value: self.__layer.to_dict() if self.__layer != None else None,
             EInfo.ssAngles.value: MappingModel.mapClassToDict(self.__ssAngles),

@@ -68,10 +68,10 @@ class ElementObj(QGraphicsObject):
                 self.__isSelected=True
             else:
                 self.setPen(QPen(QColor(
-                    self.__element.layer.layerPen.penColor.colorRed,
-                    self.__element.layer.layerPen.penColor.colorBlue,
-                    self.__element.layer.layerPen.penColor.colorGreen,),
-                    self.__element.layer.layerThickness,
+                    self.__element.layer.pen.penColor.colorRed,
+                    self.__element.layer.pen.penColor.colorBlue,
+                    self.__element.layer.pen.penColor.colorGreen,),
+                    self.__element.layer.thickness,
                     Qt.SolidLine,))
                 self.__isSelected=False
                 # for i in self.handles:i.setVisible(False)
@@ -89,7 +89,7 @@ class ElementObj(QGraphicsObject):
 
     def addHanles(self):
         for point in self.__element.points:
-            handle = Handle(point.pointId,self.__element)
+            handle = Handle(point.id,self.__element)
             self.__drawScene.addItem(handle)
             handle.setZValue(1000)
             self.handles.append(handle)

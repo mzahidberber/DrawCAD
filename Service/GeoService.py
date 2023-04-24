@@ -332,18 +332,18 @@ if __name__ == "__main__":
     result = service.wherePointZone(
         Point(
             {
-                DrawEnums.PInfo.pointId.value: 1,
-                DrawEnums.PInfo.pointX.value: 0,
-                DrawEnums.PInfo.pointY.value: 0,
+                DrawEnums.PInfo.id.value: 1,
+                DrawEnums.PInfo.x.value: 0,
+                DrawEnums.PInfo.y.value: 0,
                 DrawEnums.PInfo.elementId.value: 1,
                 DrawEnums.PInfo.pointTypeId.value: 1,
             }
         ),
         Point(
             {
-                DrawEnums.PInfo.pointId.value: 1,
-                DrawEnums.PInfo.pointX.value: 10,
-                DrawEnums.PInfo.pointY.value: 10,
+                DrawEnums.PInfo.id.value: 1,
+                DrawEnums.PInfo.x.value: 10,
+                DrawEnums.PInfo.y.value: 10,
                 DrawEnums.PInfo.elementId.value: 1,
                 DrawEnums.PInfo.pointTypeId.value: 1,
             }

@@ -11,11 +11,11 @@ class CreatePen:
     @staticmethod
     def createPenAtLayer(layer:Layer):
         return QPen(QColor(
-            layer.layerPen.penRed,
-            layer.layerPen.penGreen,
-            layer.layerPen.penBlue),
-            layer.layerThickness,
-            CreatePen.penStyles[layer.layerPen.penStyleId])
+            layer.pen.red,
+            layer.pen.green,
+            layer.pen.blue),
+            layer.thickness,
+            CreatePen.penStyles[layer.pen.penStyleId])
 
     @staticmethod
     def createPen(r: int, g: int, b: int, width: float, penStyleId: int) -> QPen:

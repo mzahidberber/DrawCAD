@@ -4,55 +4,51 @@ from Model.PenStyle import PenStyle
 from Model.DrawEnums import PenInfo,StateTypes
 
 
-class Pen(BaseModel):
-    __penId: int
-    __penName: str
+class pen(BaseModel):
+    __name: str
     # __penColorId: int
     # __penColor: Color or None
-    __penRed: int
-    __penBlue: int
-    __penGreen: int
+    __red: int
+    __blue: int
+    __green: int
     __penStyleId: int
     __penStyle: PenStyle or None
 
-    @property
-    def penId(self):
-        return self.__penId
 
     @property
-    def penName(self):
-        return self.__penName
+    def name(self):
+        return self.__name
 
-    @penName.setter
-    def penName(self, name: str):
-        self.__penName = name
+    @name.setter
+    def name(self, name: str):
+        self.__name = name
         self.state=StateTypes.update
         
     @property
-    def penRed(self):
-        return self.__penRed
+    def red(self):
+        return self.__red
 
-    @penRed.setter
-    def penRed(self, rCode: int):
-        self.__penRed = rCode
+    @red.setter
+    def red(self, rCode: int):
+        self.__red = rCode
         self.state=StateTypes.update
 
     @property
-    def penBlue(self):
-        return self.__penBlue
+    def blue(self):
+        return self.__blue
 
-    @penBlue.setter
-    def penBlue(self, bCode: int):
+    @blue.setter
+    def blue(self, bCode: int):
         self.state=StateTypes.update
-        self.__penBlue = bCode
+        self.__blue = bCode
 
     @property
-    def penGreen(self):
-        return self.__penGreen
-    @penGreen.setter
-    def penGreen(self, gCode: int):
+    def green(self):
+        return self.__green
+    @green.setter
+    def green(self, gCode: int):
         self.state=StateTypes.update
-        self.__penGreen = gCode
+        self.__green = gCode
 
     # @property
     # def penColorId(self):
@@ -83,13 +79,13 @@ class Pen(BaseModel):
 
     def __init__(self, penInfo: dict) -> None:
         self.__penInfo = penInfo
-        self.__penId = self.__penInfo[PenInfo.penId.value]
-        self.__penName = self.__penInfo[PenInfo.penName.value]
+        self._id = self.__penInfo[PenInfo.id.value]
+        self.__name = self.__penInfo[PenInfo.pname.value]
         # self.__penColorId = self.__penInfo[PenInfo.penColorId.value]
         self.__penStyleId = self.__penInfo[PenInfo.penStyleId.value]
-        self.__penRed=self.__penInfo[PenInfo.penRed.value]
-        self.__penBlue=self.__penInfo[PenInfo.penBlue.value]
-        self.__penGreen=self.__penInfo[PenInfo.penGreen.value]
+        self.__red=self.__penInfo[PenInfo.red.value]
+        self.__blue=self.__penInfo[PenInfo.blue.value]
+        self.__green=self.__penInfo[PenInfo.green.value]
 
         # if self.__penInfo[PenInfo.penColor.value] != None:
         #     self.__penColor = Color(self.__penInfo[PenInfo.penColor.value])
@@ -109,15 +105,15 @@ class Pen(BaseModel):
 
     def to_dict(self) -> dict:
         return {
-            PenInfo.penId.value: self.__penId,
-            PenInfo.penName.value: self.__penName,
+            PenInfo.id.value: self._id,
+            PenInfo.pname.value: self.__name,
             # PenInfo.penColorId.value: self.__penColorId,
             # PenInfo.penColor.value: self.__penColor.to_dict()
             # if self.__penColor != None
             # else None,
-            PenInfo.penRed.value:self.__penRed,
-            PenInfo.penGreen.value:self.__penGreen,
-            PenInfo.penBlue.value:self.__penBlue,
+            PenInfo.red.value:self.__red,
+            PenInfo.green.value:self.__green,
+            PenInfo.blue.value:self.__blue,
             PenInfo.penStyleId.value: self.__penStyleId,
             PenInfo.penStyle.value: self.__penStyle.to_dict()
             if self.penStyle != None

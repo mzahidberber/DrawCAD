@@ -23,30 +23,30 @@ class ETypes(Enum):
 
 class DBInfo(Enum):
     "DrawBoxInformation"
-    drawBoxId = "drawBoxId"
-    drawName = "drawName"
+    id = "id"
+    dname = "name"
     userId = "userId"
     layers = "layers"
 
 
 class LInfo(Enum):
     "LayerInformation"
-    layerId = "layerId"
-    layerName = "layerName"
-    layerLock = "layerLock"
-    LayerVisibility = "layerVisibility"
-    LayerThickness = "layerThickness"
-    DrawBoxId = "drawBoxId"
-    PenId = "penId"
-    Pen = "pen"
+    id = "id"
+    lname = "name"
+    lock = "lock"
+    visibility = "visibility"
+    thickness = "thickness"
+    drawBoxId = "drawBoxId"
+    penId = "penId"
+    pen = "pen"
     elements = "elements"
 
 
 class EInfo(Enum):
     "ElementInformation"
-    elementId = "elementId"
+    id = "id"
     penId = "penId"
-    elementTypeId = "elementTypeId"
+    typeId = "typeId"
     layerId = "layerId"
     layer = "layer"
     ssAngles = "ssangles"
@@ -56,63 +56,63 @@ class EInfo(Enum):
 
 class PInfo(Enum):
     "PointInformation"
-    pointId = "pointId"
-    pointX = "pointX"
-    pointY = "pointY"
+    id = "id"
+    x = "x"
+    y = "y"
     elementId = "elementId"
     pointTypeId = "pointTypeId"
 
 
 class RInfo(Enum):
     "RadiusInformation"
-    radiusId = "radiusId"
-    radiusValue = "radiusValue"
-    radiusElementId = "radiusElementId"
+    id = "id"
+    value = "value"
+    elementId = "elementId"
 
 
 class HInfo(Enum):
     "HandleInformation"
-    handleId = "handleId"
-    handleElementId = "handleElementId"
-    handleTypeId = "handleTypeId"
+    id = "id"
+    elementId = "elementId"
+    handleTypeId = "typeId"
 
 
 class SSAInfo(Enum):
     "SSAngleInformation"
-    ssangleId = "ssAngleId"
-    ssangleType = "ssAngleType"
-    ssangleValue = "ssAngleValue"
-    ssangleElementId = "ssAngleElementId"
+    id = "id"
+    type = "type"
+    value = "value"
+    elementId = "elementId"
 
 
 
 
 class PenInfo(Enum):
     "Pen Information"
-    penId = "penId"
-    penName = "penName"
+    id = "id"
+    pname = "name"
     # penColorId = "penColorId"
     # penColor = "penColor"
-    penRed="penRed"
-    penBlue="penBlue"
-    penGreen="penGreen"
+    red="red"
+    blue="blue"
+    green="green"
     penStyleId = "penStyleId"
     penStyle = "penStyle"
 
 
 class CInfo(Enum):
     "ColorInformation"
-    colorId = "colorId"
-    colorName = "colorName"
-    colorRed = "colorRed"
-    colorBlue = "colorBlue"
-    colorGreen = "colorGreen"
+    id = "id"
+    cname = "name"
+    red = "red"
+    blue = "blue"
+    green = "green"
 
 
 class PSInfo(Enum):
     "PenStyleInformation"
-    penStyleId = "penStyleId"
-    penStyleName = "penStyleName"
+    id = "id"
+    psname = "name"
 
 
 class UInfo(Enum):

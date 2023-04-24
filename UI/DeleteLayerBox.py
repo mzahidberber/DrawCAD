@@ -32,7 +32,7 @@ class DeleteLayerBox(QDialog):
 
     def showLayerList(self):
         for layer in self.__commandPanel.layers:
-            self.ui.LayerList.addItem(layer.layerName)
+            self.ui.LayerList.addItem(layer.name)
 
     def hideDeleteLayer(self,deleteLayerIndex:int):
         self.ui.LayerList.item(deleteLayerIndex).setHidden(True)
@@ -57,20 +57,20 @@ class DeleteLayerBox(QDialog):
         if ev.text()=="OK":
             if self.selectInfo=="Transfer":
                 for i in self.__commandPanel.layers:
-                    if i.layerName==self.selectedLayerName:
+                    if i.name==self.selectedLayerName:
                         self.selectedLayer=i
                         break
                          
                 itemList:list[ElementObj]=[]
                 for i in self.__deleteLayers:
-                    itemList.extend(i.layerElements)
+                    itemList.extend(i.elements)
                     self.__commandPanel.removeLayer(i)
                 for i in itemList:i.element.layer(self.selectedLayer)
 
             elif self.selectInfo=="Delete":
                 itemList:list[ElementObj]=[]
                 for i in self.__deleteLayers:
-                    itemList.extend(i.layerElements)
+                    itemList.extend(i.elements)
                     self.__commandPanel.removeLayer(i)
                 for i in itemList:self.__commandPanel.removeElement(i)
             else:

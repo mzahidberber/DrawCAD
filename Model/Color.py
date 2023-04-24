@@ -3,60 +3,56 @@ from Model.DrawEnums import CInfo
 
 
 class Color(BaseModel):
-    __colorId: int
-    __colorName: str
-    __colorRed: int
-    __colorBlue: int
-    __colorGreen: int
+    __name: str
+    __red: int
+    __blue: int
+    __green: int
+
 
     @property
-    def colorId(self):
-        return self.__colorId
+    def name(self)->str:return self.__name
+    @name.setter
+    def name(self,name:str):self.__name=name
 
     @property
-    def colorName(self)->str:return self.__colorName
-    @colorName.setter
-    def colorName(self,name:str):self.__colorName=name
+    def red(self):
+        return self.__red
+
+    @red.setter
+    def red(self, red: int):
+        self.__red = red
 
     @property
-    def colorRed(self):
-        return self.__colorRed
+    def blue(self):
+        return self.__blue
 
-    @colorRed.setter
-    def colorRed(self, red: int):
-        self.__colorRed = red
-
-    @property
-    def colorBlue(self):
-        return self.__colorBlue
-
-    @colorBlue.setter
-    def colorBlue(self, blue: int):
-        self.__colorBlue = blue
+    @blue.setter
+    def blue(self, blue: int):
+        self.__blue = blue
 
     @property
-    def colorGreen(self):
-        return self.__colorGreen
+    def green(self):
+        return self.__green
 
-    @colorGreen.setter
-    def colorGreen(self, green: int):
-        self.__colorGreen = green
+    @green.setter
+    def green(self, green: int):
+        self.__green = green
 
     def __init__(self, colorInformation: dict):
         self.__colorInfo = colorInformation
-        self.__colorId = self.__colorInfo[CInfo.colorId.value]
-        self.__colorName = self.__colorInfo[CInfo.colorName.value]
-        self.__colorRed = self.__colorInfo[CInfo.colorRed.value]
-        self.__colorBlue = self.__colorInfo[CInfo.colorBlue.value]
-        self.__colorGreen = self.__colorInfo[CInfo.colorGreen.value]
+        self._id = self.__colorInfo[CInfo.id.value]
+        self.__name = self.__colorInfo[CInfo.cname.value]
+        self.__red = self.__colorInfo[CInfo.red.value]
+        self.__blue = self.__colorInfo[CInfo.blue.value]
+        self.__green = self.__colorInfo[CInfo.green.value]
 
     
 
     def to_dict(self) -> dict:
         return {
-            CInfo.colorId.value: self.__colorId,
-            CInfo.colorName.value: self.__colorName,
-            CInfo.colorRed.value: self.__colorRed,
-            CInfo.colorBlue.value: self.__colorBlue,
-            CInfo.colorGreen.value: self.__colorGreen,
+            CInfo.id.value: self._id,
+            CInfo.cname.value: self.__name,
+            CInfo.red.value: self.__red,
+            CInfo.blue.value: self.__blue,
+            CInfo.green.value: self.__green,
         }

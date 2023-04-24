@@ -47,7 +47,7 @@ class SnapElement:
         
         if(len(pointList)!=0 and self.__time==1):
             snapPoint=GeoMath.findNearestPoint(scenePos,pointList)
-            self.__snapPoint=QPointF(snapPoint.pointX,snapPoint.pointY)
+            self.__snapPoint=QPointF(snapPoint.x,snapPoint.y)
             self.__snapObject.setElementType(snapPoint.pointTypeId)
             if(self.__time==1):
                 self.t1 =Thread(target=self.sayac)

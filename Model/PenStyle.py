@@ -3,29 +3,24 @@ from Model.DrawEnums import PSInfo
 
 
 class PenStyle(BaseModel):
-    __penStyleId: int
-    __penStyleName: str
-
-    @property
-    def penStyleId(self):
-        return self.__penStyleId
+    __name: str
     
 
     @property
-    def penStyleName(self):
-        return self.__penStyleName
+    def name(self):
+        return self.__name
 
-    @penStyleName.setter
-    def penStyleName(self, name: str):
-        self.__penStyleName = name
+    @name.setter
+    def name(self, name: str):
+        self.__name = name
 
     def __init__(self, penStyleInformation: dict):
         self.__penStyleInfo = penStyleInformation
-        self.__penStyleId = self.__penStyleInfo[PSInfo.penStyleId.value]
-        self.__penStyleName = self.__penStyleInfo[PSInfo.penStyleName.value]
+        self._id = self.__penStyleInfo[PSInfo.id.value]
+        self.__name = self.__penStyleInfo[PSInfo.psname.value]
 
     def to_dict(self) -> dict:
         return {
-            PSInfo.penStyleId.value: self.__penStyleId,
-            PSInfo.penStyleName.value: self.__penStyleName,
+            PSInfo.id.value: self._id,
+            PSInfo.psname.value: self.__name,
         }
