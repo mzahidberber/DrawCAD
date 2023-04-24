@@ -66,7 +66,7 @@ class PInfo(Enum):
 class RInfo(Enum):
     "RadiusInformation"
     id = "id"
-    value = "value"
+    rvalue = "value"
     elementId = "elementId"
 
 
@@ -81,7 +81,7 @@ class SSAInfo(Enum):
     "SSAngleInformation"
     id = "id"
     type = "type"
-    value = "value"
+    ssvalue = "value"
     elementId = "elementId"
 
 

@@ -61,7 +61,7 @@ class DrawService(object):
             connectionString, json=body, headers=self.getAuthorize()
         ).json()
         response = Response(result)
-        # print(result.text)
+        print(response.statusCode)
 
     @ErrorHandle.Error_Handler
     def getElements(self, drawBoxId: int) -> list[Element] or None:
@@ -148,5 +148,17 @@ class DrawService(object):
         )
         print(response.data)
         return list(map(lambda x: pen(x), response.data))
+    
+
+    @ErrorHandle.Error_Handler
+    def saveElements(self,elements:list[Element]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Element").urlBuild("elements").urlBuild("add")
+        ).build()
+        body = {"elements":list(map(lambda x:x.to_dict(),elements))}
+        response = Response(
+            requests.post(connectionString,json=body, headers=self.getAuthorize()).json()
+        )
+        print(response.statusCode)
     
     

@@ -37,13 +37,6 @@ class Element(BaseModel):
         self.state=StateTypes.update
         self.__layer=layer
 
-    def setLayer(self,layer:Layer,isUpdate: bool=True):
-        if(isUpdate==False):
-            self.__layer=layer
-        else:
-            self.state=StateTypes.update
-            self.__layer=layer
-
     @property
     def ssAngles(self) -> list[SSAngle]:
         return self.__ssAngles
@@ -87,7 +80,7 @@ class Element(BaseModel):
             EInfo.penId.value: self.__penId,
             EInfo.typeId.value: self.__elementTypeId,
             EInfo.layerId.value: self.__layerId,
-            EInfo.layer.value: self.__layer.to_dict() if self.__layer != None else None,
+            # EInfo.layer.value: self.__layer.to_dict() if self.__layer != None else None,
             EInfo.ssAngles.value: MappingModel.mapClassToDict(self.__ssAngles),
             EInfo.radiuses.value: MappingModel.mapClassToDict(self.__radiuses),
             EInfo.points.value: MappingModel.mapClassToDict(self.__points),

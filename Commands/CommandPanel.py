@@ -104,7 +104,7 @@ class CommandPanel:
 
     def startCommand(self,command: CommandEnums):
         self.__drawService.startCommand(
-            command, self.__drawBox.id, self.__selectedLayer, self.__selectedPen
+            command, self.__drawBox.id, self.__selectedLayer.id, self.__selectedPen.id
         )
         self.__preview.setElementType(command.value)
         self.__isStartCommand = True
@@ -123,9 +123,13 @@ class CommandPanel:
                     for i in self.layers:
                         if element.layerId == i.id:
                             element.layer = i
-                    self.__elementDraw.drawElement(element)
+                            
+                    
+                    self.__elementDraw.drawElement(ElementObj(element,self.__drawScene))
                     self.__preview.stop()
                     self.__isStartCommand = False
+                    element.state=StateTypes.added
+                    self.elements.append(element)
 
     def changeSelectedLayer(self,layerName: str):
         for i in self.layers:
@@ -148,9 +152,12 @@ class CommandPanel:
         for i in self.layers:
             print("layer--",i.state)
             print("pen--",i.pen.state)
+        
+        ## Kaydettikten sonra kaydedilen nesnelerin idlerini kaydetmek gerekiyor
+        self.__drawService.saveElements(list(filter(lambda x:x.state==StateTypes.added,self.elements)))
+
         for i in self.elements:
             print("element--",i.state)
-        # self.__drawService.saveDraw()
 
 
 

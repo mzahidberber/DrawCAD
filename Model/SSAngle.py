@@ -28,7 +28,7 @@ class SSAngle(BaseModel):
         self.__ssangeInfo = ssangleInfo
         self._id = self.__ssangeInfo[SSAInfo.id.value]
         self.__type = self.__ssangeInfo[SSAInfo.type.value]
-        self.__value = self.__ssangeInfo[SSAInfo.value.value]
+        self.__value = self.__ssangeInfo[SSAInfo.ssvalue.value]
         self.__elementId = self.__ssangeInfo[SSAInfo.elementId.value]
 
         self.state=StateTypes.unchanged
@@ -37,6 +37,6 @@ class SSAngle(BaseModel):
         return {
             SSAInfo.id.value: self._id,
             SSAInfo.type.value: self.__type,
-            SSAInfo.value.value: self.__value,
+            SSAInfo.ssvalue.value: self.__value,
             SSAInfo.elementId.value: self.__elementId,
         }

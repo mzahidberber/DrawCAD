@@ -23,7 +23,7 @@ class Radius(BaseModel):
     def __init__(self, radiusInfo: dict) -> None:
         self.__radiusInfo = radiusInfo
         self._id = self.__radiusInfo[RInfo.id.value]
-        self.__value = self.__radiusInfo[RInfo.value.value]
+        self.__value = self.__radiusInfo[RInfo.rvalue.value]
         self.__elementId = self.__radiusInfo[RInfo.elementId.value]
 
         self.state=StateTypes.unchanged
@@ -31,6 +31,6 @@ class Radius(BaseModel):
     def to_dict(self) -> dict:
         return {
             RInfo.id.value: self._id,
-            RInfo.value.value: self.__value,
+            RInfo.rvalue.value: self.__value,
             RInfo.elementId.value: self.__elementId,
         }
