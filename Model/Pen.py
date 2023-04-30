@@ -4,7 +4,7 @@ from Model.PenStyle import PenStyle
 from Model.DrawEnums import PenInfo,StateTypes
 
 
-class pen(BaseModel):
+class Pen(BaseModel):
     __name: str
     # __penColorId: int
     # __penColor: Color or None

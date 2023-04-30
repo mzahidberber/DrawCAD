@@ -23,7 +23,7 @@ class PreviewContext:
         5: RectanglePreview,
         6: ArcPreview,
         7: SplinePreview,
-        8: EllipsPreview
+        10: EllipsPreview
     }
 
     def __new__(self):

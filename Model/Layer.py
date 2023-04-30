@@ -1,7 +1,7 @@
 
 from Elements import ElementObj
 from Model.BaseModel import BaseModel
-from Model.Pen import pen
+from Model.Pen import Pen
 from Model.DrawEnums import LInfo,StateTypes
 
 
@@ -13,7 +13,7 @@ class Layer(BaseModel):
     __thickness: float
     __drawBoxId: int
     __penId: int
-    __pen: pen
+    __pen: Pen
     __elements:list[ElementObj] or None
     
 
@@ -72,10 +72,10 @@ class Layer(BaseModel):
     
 
     def __init__(self, layerInfo: dict=None,
-                layerId:int=None,layerName: str=None,
-                layerLock:bool=False,layerThickness: float=1,
-                layerVisibility: bool=True,layerDrawBoxId: int=None,
-                layerPen:pen=None) -> None:
+                id:int=None,name: str=None,
+                lock:bool=False,thickness: float=1,
+                visibility: bool=True,drawBoxId: int=None,
+                pen:Pen=None) -> None:
         
         if(layerInfo!=None):
             self.__layerInfo = layerInfo
@@ -87,18 +87,18 @@ class Layer(BaseModel):
             self.__drawBoxId = self.__layerInfo[LInfo.drawBoxId.value]
             self.__penId = self.__layerInfo[LInfo.penId.value]
             # self.__layerElements=MappingModel.mapDictToClass(self.__layerInfo[LInfo.elements.value],Element)
-            self.__pen = pen(self.__layerInfo[LInfo.pen.value])
+            self.__pen = Pen(self.__layerInfo[LInfo.pen.value])
 
         else:
-            self._id = layerId
-            self.__name = layerName
-            self.__lock = layerLock
-            self.__visibility = layerVisibility
-            self.__thickness = layerThickness
-            self.__drawBoxId = layerDrawBoxId
-            self.__penId = layerPen.Id
+            self._id = id
+            self.__name = name
+            self.__lock = lock
+            self.__visibility = visibility
+            self.__thickness = thickness
+            self.__drawBoxId = drawBoxId
+            self.__penId = pen.id
             # self.__layerElements=MappingModel.mapDictToClass(self.__layerInfo[LInfo.elements.value],Element)
-            self.__pen = layerPen
+            self.__pen = pen
 
 
 
@@ -111,9 +111,9 @@ class Layer(BaseModel):
     def addElement(self,element:ElementObj):self.__elements.append(element)
 
     def copy(self):return Layer(
-        layerId=None,layerName=self.name,
-        layerLock=self.lock,layerThickness=self.thickness,layerVisibility=self.visibility,
-        layerDrawBoxId=self.drawBoxId,layerPen=self.pen)
+        id=None,name=self.name,
+        lock=self.lock,thickness=self.thickness,visibility=self.visibility,
+        drawBoxId=self.drawBoxId,pen=self.pen)
 
     def lockElements(self):
         for e in self.__elements:

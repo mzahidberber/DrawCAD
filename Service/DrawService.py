@@ -3,7 +3,7 @@ import json
 from Commands import CommandEnums
 from Service.Model import Token, Response
 from Service.UrlBuilder import UrlBuilder
-from Model import Element, DrawBox, Layer,pen, PenStyle
+from Model import Element, DrawBox, Layer,Pen, PenStyle
 from CrossCuttingConcers.Handling import ErrorHandle
 
 
@@ -139,7 +139,7 @@ class DrawService(object):
         return list(map(lambda x: DrawBox(x), response.data))
     
     @ErrorHandle.Error_Handler
-    def getPens(self) -> list[pen]:
+    def getPens(self) -> list[Pen]:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Pen").urlBuild("penswithatt")
         ).build()
@@ -147,7 +147,7 @@ class DrawService(object):
             requests.get(connectionString, headers=self.getAuthorize()).json()
         )
         print(response.data)
-        return list(map(lambda x: pen(x), response.data))
+        return list(map(lambda x: Pen(x), response.data))
     
 
     @ErrorHandle.Error_Handler
@@ -158,6 +158,16 @@ class DrawService(object):
         body = {"elements":list(map(lambda x:x.to_dict(),elements))}
         response = Response(
             requests.post(connectionString,json=body, headers=self.getAuthorize()).json()
+        )
+        print(response.statusCode)
+
+    @ErrorHandle.Error_Handler
+    def stopCommand(self):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("stopCommand")
+        ).build()
+        response = Response(
+            requests.put(connectionString, headers=self.getAuthorize()).json()
         )
         print(response.statusCode)
     

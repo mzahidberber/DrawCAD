@@ -22,18 +22,18 @@ class CircleBuilder(ElementBuilder):
         # if self.element.points[1].pointX-self.__center.x()!=self.element.radiuses[0].radiusValue:
         #     self.element.radiuses[0].radiusValue=self.element.points[1].pointX-self.__center.x()
 
-        self.__p1 = QPointF(
-            self.element.points[1].x, self.element.points[1].y
-        )
-        self.__p2 = QPointF(
-            self.element.points[2].x, self.element.points[2].y
-        )
-        self.__p3 = QPointF(
-            self.element.points[3].x, self.element.points[3].y
-        )
-        self.__p4 = QPointF(
-            self.element.points[4].x, self.element.points[4].y
-        )
+        # self.__p1 = QPointF(
+        #     self.element.points[1].x, self.element.points[1].y
+        # )
+        # self.__p2 = QPointF(
+        #     self.element.points[2].x, self.element.points[2].y
+        # )
+        # self.__p3 = QPointF(
+        #     self.element.points[3].x, self.element.points[3].y
+        # )
+        # self.__p4 = QPointF(
+        #     self.element.points[4].x, self.element.points[4].y
+        # )
 
     def paint(self, painter):
         painter.drawEllipse(self.__center, self.__radius, self.__radius)

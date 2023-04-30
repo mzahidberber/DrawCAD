@@ -31,6 +31,8 @@ class DrawView(QMainWindow):
         self.__graphicView.setScene(self.__drawScene)
         self.__graphicView.setVisible(False)
 
+        self.__drawScene.MovedMouse.connect(self.mousePosition)
+
         self.__drawService:DrawService=DrawService(self.__token)
         self.__drawBoxes:list[DrawBox]= self.__drawService.getDrawBoxes()
         print(self.__drawBoxes)
@@ -44,6 +46,10 @@ class DrawView(QMainWindow):
         
         self.ui.lwDrawBoxes.doubleClicked.connect(self.drawDoubleClicked)
         self.ui.cbxLayers.currentTextChanged.connect(self.changeLayer)
+
+    def mousePosition(self,pos):
+        self.ui.lblXCoordinate.setText(f"{round(pos.x(),4)}")
+        self.ui.lblYcoordinate.setText(f"{round(pos.y(),4)}")
 
     def startCommand(self, command: CommandEnums):
         self.__selecetedCommandP.startCommand(command)
@@ -113,6 +119,9 @@ class DrawView(QMainWindow):
         self.ui.actionLine.triggered.connect(
             lambda: self.startCommand(CommandEnums.line)
         )
+        self.ui.actionPolyLine.triggered.connect(
+            lambda:self.startCommand(CommandEnums.spline)
+        )
         self.ui.actionTwoPointsCircle.triggered.connect(
             lambda: self.startCommand(CommandEnums.circleTwoPoint)
         )
@@ -131,6 +140,8 @@ class DrawView(QMainWindow):
         self.ui.actionEllipse.triggered.connect(
             lambda: self.startCommand(CommandEnums.ellipse)
         )
+        self.ui.actionArc.triggered.connect(lambda:self.startCommand(CommandEnums.arc))
+        # self.ui.actionTwoPointCenterArc.triggered.connect()
 
     def setButtonsDisable(self, isDisable: bool):
         self.ui.actionLine.setDisabled(isDisable)

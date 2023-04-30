@@ -1,12 +1,13 @@
 from Helpers.Preview.BasePreview import BasePreview
 from PyQt5.QtCore import QRectF,QPointF
+from Helpers.GeoMath import GeoMath
 
 
 class CircleTwoPointPreview(BasePreview):
 
     def findRect(self):
-        centerPoint=self._geoService.findCenterPointToLine(self._pointList[0], self._mousePosition)
-        radius=self._geoService.findTwoPointsLength(self._pointList[0], self._mousePosition)
+        centerPoint=GeoMath.findLineCenterPoint(self._pointList[0], self._mousePosition)
+        radius=GeoMath.findLengthLine(self._pointList[0], self._mousePosition)
         return QRectF(
             QPointF(centerPoint.x()-radius/2,centerPoint.y()-radius/2),
             QPointF(centerPoint.x()+radius/2,centerPoint.y()+radius/2))

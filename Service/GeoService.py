@@ -5,7 +5,7 @@ from Service.UrlBuilder import UrlBuilder
 from Model import PointGeo, Point, DrawEnums
 from multipledispatch import dispatch
 from PyQt5.QtCore import QPointF
-
+from Service.Model import Response
 
 class GeoService(object):
     __url:str
@@ -29,7 +29,7 @@ class GeoService(object):
     def getUrl(self):
         f=open("urls.json")
         data=json.load(f)
-        self.__url=data["drawapi"]
+        self.__url=data["drawgeo"]
 
     @dispatch(Point, Point)
     def findTwoPointsLength(self, p1: Point, p2: Point) -> float:
@@ -40,9 +40,10 @@ class GeoService(object):
             .build()
         )
         body = [p1.to_dict_geo(), p2.to_dict_geo()]
-        result = requests.post(conString, json=body)
-        length = result.json()["length"]
-        return length
+        response=requests.post(conString, json=body)
+        if(response.status_code==200):
+            data=Response(response.json())
+            return data.data
     
     @dispatch(QPointF,QPointF)
     def findTwoPointsLength(self, p1:QPointF,p2:QPointF) -> float:
@@ -53,9 +54,10 @@ class GeoService(object):
             .build()
         )
         body = [{"X": p1.x(), "Y": p1.y(), "Z": 1}, {"X": p2.x(), "Y": p2.y(), "Z": 1}]
-        result = requests.post(conString, json=body)
-        length = result.json()["length"]
-        return length
+        response=requests.post(conString, json=body)
+        if(response.status_code==200):
+            data=Response(response.json())
+            return data.data
 
     @dispatch(float, float, float, float, float, float)
     def findTwoPointsLength(
@@ -68,9 +70,11 @@ class GeoService(object):
             .build()
         )
         body = [{"X": x1, "Y": y1, "Z": z1}, {"X": x2, "Y": y2, "Z": z2}]
-        result = requests.post(conString, json=body)
-        length = result.json()["length"]
-        return length
+        response=requests.post(conString, json=body)
+        if(response.status_code==200):
+            data=Response(response.json())
+            return data.data
+
 
     @dispatch(Point,Point,Point)
     def findCenterAndRadius(

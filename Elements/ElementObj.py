@@ -30,8 +30,8 @@ class ElementObj(QGraphicsObject):
 
         
         
-        # self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
-        # self.setFlag(QGraphicsObject.ItemIsFocusable)
+        self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
+        self.setFlag(QGraphicsObject.ItemIsFocusable)
         
         # self.setAcceptDrops(True)
         # self.setBoundingRegionGranularity(1) 
@@ -68,9 +68,9 @@ class ElementObj(QGraphicsObject):
                 self.__isSelected=True
             else:
                 self.setPen(QPen(QColor(
-                    self.__element.layer.pen.penColor.colorRed,
-                    self.__element.layer.pen.penColor.colorBlue,
-                    self.__element.layer.pen.penColor.colorGreen,),
+                    self.__element.layer.pen.red,
+                    self.__element.layer.pen.green,
+                    self.__element.layer.pen.blue),
                     self.__element.layer.thickness,
                     Qt.SolidLine,))
                 self.__isSelected=False

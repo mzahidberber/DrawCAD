@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from Helpers.Settings import Setting
+from Helpers.GeoMath import GeoMath
 from Service.GeoService import GeoService
 import threading
 
@@ -33,7 +34,7 @@ class GraphicsView(QGraphicsView):
         pos2 = QPoint(1, 0)
         p1 = self.mapToScene(pos1)
         p2 = self.mapToScene(pos2)
-        pixelSize = GeoService().findTwoPointsLength(p1.x(), p1.y(), 1.0, p2.x(), p2.y(), 1.0)
+        pixelSize = GeoMath.findLengthLine(p1,p2)
         self.setSettinInfo(pixelSize)
 
     def wheelEvent(self, event):

@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QPointF
 from Elements import ElementObj
-from Model import DrawBox, Element, Layer, pen, PenStyle
+from Model import DrawBox, Element, Layer, Pen, PenStyle
 from Service import DrawService
 from Service.Model import Token
 from UI import DrawScene
@@ -14,10 +14,10 @@ from Model.DrawEnums import StateTypes
 class CommandPanel:
     __drawElementObj:list[ElementObj]
     __layers:list[Layer]
-    __pens:list[pen]
+    __pens:list[Pen]
     __penStyles:list[PenStyle]
     __selectedLayer:Layer
-    __selectedPen:pen
+    __selectedPen:Pen
     __drawBox=DrawBox
 
     @property
@@ -26,9 +26,9 @@ class CommandPanel:
     def selectedLayer(self,layer:Layer):self.__selectedLayer=layer
 
     @property
-    def selectedPen(self)-> pen:return self.__selectedPen
+    def selectedPen(self)-> Pen:return self.__selectedPen
     @selectedPen.setter
-    def selectedPen(self,pen:pen):self.__selectedPen=pen
+    def selectedPen(self,pen:Pen):self.__selectedPen=pen
 
     @property
     def drawElementObjects(self):return self.__drawElementObj
@@ -43,7 +43,7 @@ class CommandPanel:
     @property
     def pens(self):return self.__pens
     @pens.setter
-    def pens(self,pens:list[pen]):self.__pens=pens
+    def pens(self,pens:list[Pen]):self.__pens=pens
 
     @property
     def penStyles(self):return self.__penStyles
@@ -70,6 +70,7 @@ class CommandPanel:
         self.__drawScene.addItem(self.__snapObject)
 
         self.__preview = PreviewObject()
+        self.__preview.cancelSignal.connect(self.stopCommand)
         self.__drawScene.addItem(self.__preview)
 
         drawScene.ClickedMouse.connect(self.addCoordinate)
@@ -97,6 +98,7 @@ class CommandPanel:
 
         self.radius: float = 10
 
+
     def mouseMove(self, scenePos):
         self.__preview.setMousePosition(scenePos)
         self.__drawScene.updateScene()
@@ -109,6 +111,11 @@ class CommandPanel:
         self.__preview.setElementType(command.value)
         self.__isStartCommand = True
 
+    def stopCommand(self):
+        print("stop command")
+        self.__drawService.stopCommand()
+        self.__isStartCommand=False
+
     def addCoordinate(self, coordinate: QPointF):
         # print(coordinate)
         if self.__isStartCommand == True:
@@ -116,7 +123,7 @@ class CommandPanel:
                 self.__preview.addPoint(self.__snap.getSnapPoint())
             else:
                 element = self.__drawService.addCoordinate(
-                    coordinate.x(), coordinate.y()
+                    round(coordinate.x(),4), round(coordinate.y(),4)
                 )
                 self.__preview.addPoint(coordinate)
                 if element != None:

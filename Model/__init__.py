@@ -4,7 +4,7 @@ from Model.DrawBox import DrawBox
 from Model.Element import Element
 from Model.Layer import Layer
 from Model.MappingModel import MappingModel
-from Model.Pen import pen
+from Model.Pen import Pen
 from Model.PenStyle import PenStyle
 from Model.Point import Point
 from Model.Radius import Radius
