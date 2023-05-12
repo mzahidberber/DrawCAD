@@ -84,7 +84,6 @@ class CommandPanel:
 
         self.__elementDraw.drawElements(self.__drawObjs.elementObjs)
 
-        
         ##Snap
         self.__snap = SnapElement(self.__drawScene)
         self.__snapObject = SnapSquare(self.__drawScene)

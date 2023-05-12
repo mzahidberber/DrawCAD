@@ -1,15 +1,42 @@
-from PyQt5 import QtWidgets,QtCore
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QSize
 from PyQt5.QtCore import pyqtSignal
+from Commands.CommandPanel import CommandPanel
+from Model import DrawBox
+from Model.DrawEnums import StateTypes
+from Service import DrawService
+from Service.Model import Token
 from UI.GraphicsView import GraphicsView
 from UI.DrawScene import DrawScene
-class TabWidget(QtWidgets.QWidget):
-    mousePositionSignal=pyqtSignal(object)
+from UI.Models import DrawBoxDeleteButton, DrawBoxEditButton
 
-    def __init__(self) -> None:
+
+class TabWidget(QWidget):
+    mousePositionSignal=pyqtSignal(object)
+    selectDrawSignal=pyqtSignal(object)
+
+    __commandPanel:CommandPanel
+
+
+    @property
+    def commandPanel(self)->CommandPanel:return self.__commandPanel
+
+
+    def __init__(self,drawService:DrawService,token:Token) -> None:
         super().__init__()
-        
+        self.__drawService=drawService
+        self.__token=token
         self.settingView()
         self.settingGraphicsView()
+
+        self.__drawBoxes:list[DrawBox]= self.__drawService.getDrawBoxes()
+
+        self.getDrawBoxItems()
+
+        self.settingDrawBox()
+
+        self.btnAddDraw.clicked.connect(self.addDraw)
+        self.btnSaveDraw.clicked.connect(self.saveDraws)
 
     def settingGraphicsView(self):
         self.__drawScene = DrawScene(self)
@@ -22,43 +49,119 @@ class TabWidget(QtWidgets.QWidget):
 
     def mousePosition(self,pos):self.mousePositionSignal.emit(pos)
 
+    #region DrawScene
+
+    def showDraw(self):
+        self.twDrawBoxes.setVisible(False)
+        self.__graphicView.setVisible(True)
+        self.btnAddDraw.hide()
+        self.btnSaveDraw.hide()
+
+    #endregion
+
+    #region DrawBox
+
+    def saveDraws(self):
+        addList=list(filter(lambda d:d.state==StateTypes.added,self.__drawBoxes))
+        deleteList=list(filter(lambda d:d.state==StateTypes.delete,self.__drawBoxes))
+        updatelist=list(filter(lambda d:d.state==StateTypes.update,self.__drawBoxes))
+        deleteListIds=list(map(lambda d:d.id,deleteList))
+        list(filter(lambda d:self.__drawBoxes.remove(d),deleteList))
+        newDrawBoxes=self.__drawService.addDraw(addList)
+        self.__drawService.updateDrawBoxes(updatelist)
+        self.__drawService.deleteDrawBoxes(deleteListIds)
+
+        for i in addList:self.__drawBoxes.remove(i)
+        if newDrawBoxes!=None:
+            for i in newDrawBoxes:self.__drawBoxes.append(i) 
+        for i in updatelist:i.state=StateTypes.unchanged
+        
+        self.getDrawBoxItems()
+
+    def drawDoubleClicked(self, event):
+        __selectedIndex = self.twDrawBoxes.currentRow()
+        __selectedDrawBox=self.__drawBoxes[__selectedIndex]
+        
+        self.__commandPanel = CommandPanel(self.__drawScene,self.__token,__selectedDrawBox)
+        self.showDraw()
+        
+        self.selectDrawSignal.emit(__selectedDrawBox)
+
+    def settingDrawBox(self):
+        self.twDrawBoxes.doubleClicked.connect(self.drawDoubleClicked)
+        self.twDrawBoxes.setColumnWidth(0,300)
+        self.twDrawBoxes.setColumnWidth(1,80)
+        self.twDrawBoxes.setColumnWidth(2,80)
+        self.twDrawBoxes.setColumnWidth(3,80)
+        self.twDrawBoxes.setColumnWidth(4,180)
+        self.twDrawBoxes.setColumnWidth(5,180)
+
+    def addDrawBoxItem(self,drawBox:DrawBox,row:int):
+        self.twDrawBoxes.insertRow(row)
+        self.twDrawBoxes.setItem(row,0,QTableWidgetItem(str(f"{drawBox.name}"),QTableWidgetItem.ItemType.Type))
+        self.twDrawBoxes.setCellWidget(row,1,DrawBoxEditButton(drawBox,self.getDrawBoxItems))
+        self.twDrawBoxes.setCellWidget(row,2,DrawBoxDeleteButton(drawBox,self.getDrawBoxItems))
+        self.twDrawBoxes.setItem(row,3,QTableWidgetItem(str(drawBox.state.value),QTableWidgetItem.ItemType.Type))
+        self.twDrawBoxes.setItem(row,4,QTableWidgetItem(str(drawBox.editTime.strftime("%m-%d-%Y %H:%M:%S")),QTableWidgetItem.ItemType.Type))
+        self.twDrawBoxes.setItem(row,5,QTableWidgetItem(str(drawBox.createTime.strftime("%m-%d-%Y %H:%M:%S")),QTableWidgetItem.ItemType.Type))
+
+
+    def getDrawBoxItems(self):
+        self.__drawBoxes.sort(key=lambda x:x.editTime)
+        row=0
+        self.twDrawBoxes.setRowCount(0)
+        
+        for i in self.__drawBoxes :
+            self.addDrawBoxItem(i,row)
+            row =+ 1
+
+    def addDraw(self):
+        text, ok = QInputDialog.getText(self, 'Draw Name', 'Draw Name?')
+        if ok:
+            if text!="":
+                row=self.twDrawBoxes.rowCount()+1
+                drawBox=DrawBox(name=text)
+                self.__drawBoxes.append(drawBox)
+                if drawBox!=None:self.getDrawBoxItems()
+    
+    #endregion
 
     def settingView(self):
-        self.verticalLayout = QtWidgets.QVBoxLayout(self)
+        self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.btnAddDraw = QtWidgets.QPushButton(self)
-        self.btnAddDraw.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.btnAddDraw = QPushButton(self)
+        self.btnAddDraw.setMaximumSize(QSize(100, 16777215))
         self.btnAddDraw.setObjectName("btnAddDraw")
         self.horizontalLayout_3.addWidget(self.btnAddDraw)
-        self.btnSaveDraw = QtWidgets.QPushButton(self)
-        self.btnSaveDraw.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.btnSaveDraw = QPushButton(self)
+        self.btnSaveDraw.setMaximumSize(QSize(100, 16777215))
         self.btnSaveDraw.setObjectName("btnSaveDraw")
         self.horizontalLayout_3.addWidget(self.btnSaveDraw)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Expanding,QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
-        self.twDrawBoxes = QtWidgets.QTableWidget(self)
+        self.twDrawBoxes = QTableWidget(self)
         self.twDrawBoxes.setObjectName("twDrawBoxes")
         self.twDrawBoxes.setColumnCount(6)
         self.twDrawBoxes.setRowCount(0)
-        item = QtWidgets.QTableWidgetItem()
+        item = QTableWidgetItem()
         self.twDrawBoxes.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
+        item = QTableWidgetItem()
         self.twDrawBoxes.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
+        item = QTableWidgetItem()
         self.twDrawBoxes.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
+        item = QTableWidgetItem()
         self.twDrawBoxes.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
+        item = QTableWidgetItem()
         self.twDrawBoxes.setHorizontalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
+        item = QTableWidgetItem()
         self.twDrawBoxes.setHorizontalHeaderItem(5, item)
         self.verticalLayout.addWidget(self.twDrawBoxes)
         self.gvGraphicsView = GraphicsView(self)
         self.gvGraphicsView.setMouseTracking(False)
-        self.gvGraphicsView.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
+        self.gvGraphicsView.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.gvGraphicsView.setObjectName("gvGraphicsView")
         self.verticalLayout.addWidget(self.gvGraphicsView)
 

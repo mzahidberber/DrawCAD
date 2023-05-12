@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UI/QtDesignerUI/window.ui'
+# Form implementation generated from reading ui file 'UI/QtDesignerUI/window2.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -185,46 +185,6 @@ class Ui_DrawView(object):
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.tab)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.twDrawTabs.addTab(self.tab, "")
-        self.tab1 = QtWidgets.QWidget()
-        self.tab1.setObjectName("tab1")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.tab1)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.btnAddDraw = QtWidgets.QPushButton(self.tab1)
-        self.btnAddDraw.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.btnAddDraw.setObjectName("btnAddDraw")
-        self.horizontalLayout_3.addWidget(self.btnAddDraw)
-        self.btnSaveDraw = QtWidgets.QPushButton(self.tab1)
-        self.btnSaveDraw.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.btnSaveDraw.setObjectName("btnSaveDraw")
-        self.horizontalLayout_3.addWidget(self.btnSaveDraw)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem1)
-        self.verticalLayout.addLayout(self.horizontalLayout_3)
-        self.twDrawBoxes = QtWidgets.QTableWidget(self.tab1)
-        self.twDrawBoxes.setObjectName("twDrawBoxes")
-        self.twDrawBoxes.setColumnCount(6)
-        self.twDrawBoxes.setRowCount(0)
-        item = QtWidgets.QTableWidgetItem()
-        self.twDrawBoxes.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.twDrawBoxes.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.twDrawBoxes.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.twDrawBoxes.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.twDrawBoxes.setHorizontalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.twDrawBoxes.setHorizontalHeaderItem(5, item)
-        self.verticalLayout.addWidget(self.twDrawBoxes)
-        self.gvGraphicsView = GraphicsView(self.tab1)
-        self.gvGraphicsView.setMouseTracking(False)
-        self.gvGraphicsView.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
-        self.gvGraphicsView.setObjectName("gvGraphicsView")
-        self.verticalLayout.addWidget(self.gvGraphicsView)
-        self.twDrawTabs.addTab(self.tab1, "")
         self.gridLayout.addWidget(self.twDrawTabs, 1, 1, 1, 1)
         DrawView.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(DrawView)
@@ -634,7 +594,7 @@ class Ui_DrawView(object):
         self.toolBar_8.addAction(self.actionUserEmail)
 
         self.retranslateUi(DrawView)
-        self.twDrawTabs.setCurrentIndex(1)
+        self.twDrawTabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(DrawView)
 
     def retranslateUi(self, DrawView):
@@ -645,21 +605,6 @@ class Ui_DrawView(object):
         self.lblYcoordinate.setText(_translate("DrawView", "0000.0000"))
         self.lblPainText.setText(_translate("DrawView", "Angle :"))
         self.twDrawTabs.setTabText(self.twDrawTabs.indexOf(self.tab), _translate("DrawView", "+"))
-        self.btnAddDraw.setText(_translate("DrawView", "Add"))
-        self.btnSaveDraw.setText(_translate("DrawView", "Save"))
-        item = self.twDrawBoxes.horizontalHeaderItem(0)
-        item.setText(_translate("DrawView", "Name"))
-        item = self.twDrawBoxes.horizontalHeaderItem(1)
-        item.setText(_translate("DrawView", "Edit Name"))
-        item = self.twDrawBoxes.horizontalHeaderItem(2)
-        item.setText(_translate("DrawView", "Delete"))
-        item = self.twDrawBoxes.horizontalHeaderItem(3)
-        item.setText(_translate("DrawView", "State"))
-        item = self.twDrawBoxes.horizontalHeaderItem(4)
-        item.setText(_translate("DrawView", "Edit Time"))
-        item = self.twDrawBoxes.horizontalHeaderItem(5)
-        item.setText(_translate("DrawView", "Create Time"))
-        self.twDrawTabs.setTabText(self.twDrawTabs.indexOf(self.tab1), _translate("DrawView", "Draw Name"))
         self.mnFolder.setTitle(_translate("DrawView", "File"))
         self.menuEdit.setTitle(_translate("DrawView", "Edit"))
         self.menuSettings.setTitle(_translate("DrawView", "Settings"))
@@ -727,5 +672,4 @@ class Ui_DrawView(object):
         self.actionLogout.setText(_translate("DrawView", "Logout"))
         self.actionUserEmail.setText(_translate("DrawView", "useremail"))
 from Commands.CommandLine import CommandLine
-from UI.GraphicsView import GraphicsView
 from UI import ImagesSrc
