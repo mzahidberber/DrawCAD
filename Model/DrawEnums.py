@@ -27,6 +27,8 @@ class DBInfo(Enum):
     dname = "name"
     userId = "userId"
     layers = "layers"
+    createTime="createTime"
+    editTime="editTime"
 
 
 class LInfo(Enum):

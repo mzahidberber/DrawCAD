@@ -8,11 +8,12 @@ class CommandEnums(Enum):
     circleCenterRadius = 3
     circleTreePoint = 4
     rectangle = 5
-    arc = 6
+    arcThreePoint = 6
     spline = 7
     move = 8
     copy = 9
     ellipse=10
+    arcCenterTwoPoint = 11
 
 
 
@@ -31,6 +32,6 @@ getType={
     CommandEnums.circleCenterRadius:CommandTypes.circle,
     CommandEnums.circleTreePoint:CommandTypes.circle,
     CommandEnums.rectangle:CommandTypes.rectangle,
-    CommandEnums.arc:CommandTypes.arc,
+    CommandEnums.arcThreePoint:CommandTypes.arc,
     CommandEnums.spline:CommandTypes.spline
     }

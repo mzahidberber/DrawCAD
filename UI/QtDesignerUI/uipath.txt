@@ -8,12 +8,19 @@ pyuic5 UI/QtDesignerUI/DeleteElementBox.ui -o UI/QtUI/DeleteElementBoxUI.py
 
 pyuic5 UI/QtDesignerUI/LoginView.ui -o UI/QtUI/LoginViewUI.py
 
+pyuic5 UI/QtDesignerUI/RegisterView.ui -o UI/QtUI/RegisterViewUI.py
+
 pyuic5 UI/QtDesignerUI/DrawBox.ui -o UI/QtUI/DrawBoxUI.py
 
+pyuic5 UI/QtDesignerUI/tabWidget.ui -o UI/QtUI/TabWidgetUI.py
 
 ------Kaynak Cevirme
 pyrcc5 UI/ImagesSrc/ImagesSrc.qrc -o QtUI/ImagesSrc/ImagesSrc.py
 
 
 ------Exe Yapma
-pyinstaller Run.py --onefile --noconsole   
+pyinstaller Run.py --onefile --noconsole  
+
+from Commands.CommandLine import CommandLine
+from UI.GraphicsView import GraphicsView
+from UI import ImagesSrc

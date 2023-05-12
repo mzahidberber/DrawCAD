@@ -1,9 +1,11 @@
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QDialog,QLineEdit,QPushButton,QComboBox,QColorDialog,QTableWidgetItem
 from PyQt5.QtGui import QPixmap,QIcon,QPalette,QColor
 from PyQt5.QtCore import QSize
 from Commands.CommandPanel import CommandPanel
 from Model import Layer
 from Model.PenStyle import PenStyle
+from UI import DrawView
 from UI.QtUI.LayerBoxUI import Ui_LayerBox
 from UI.DeleteLayerBox import DeleteLayerBox
 
@@ -11,11 +13,12 @@ from UI.DeleteLayerBox import DeleteLayerBox
 class LayerBox(QDialog):
     __commandPanel:CommandPanel
 
-    def __init__(self):
+    def __init__(self,parent:DrawView):
         super().__init__()
         self.ui = Ui_LayerBox()
         self.ui.setupUi(self)
 
+        self.__parent=parent
 
         self.ui.LayerList.setColumnWidth(0,100)
         self.ui.LayerList.setColumnWidth(1,15)
@@ -58,10 +61,18 @@ class LayerBox(QDialog):
                 else:
                     for i in rowList:self.removeLine(i)
             else:
-                for i in selectedLayers:self.__commandPanel.removeLayer(i)
+                for i in selectedLayers:self.__commandPanel.removeLayerAndElements(i)
                 for i in rowList:self.removeLine(i)
 
         self.selectedLayers.clear()
+        self.updateLayers(self.__commandPanel)
+        self.__commandPanel.updateScene()
+        self.__parent.getLayers()
+
+    def closeEvent(self, a0) -> None:
+        self.__parent.updateLayerBox()
+        return super().closeEvent(a0)
+
 
     def startLayerDeleteBox(self,deleteLayers:list[Layer]):
         self.deleteBox=DeleteLayerBox(self.__commandPanel,deleteLayers)
@@ -83,6 +94,8 @@ class LayerBox(QDialog):
     def addLayer(self,ev):
         self.selectedLayer=self.__commandPanel.selectedLayer
         newLayer=self.selectedLayer.copy()
+        for i in self.__commandPanel.layers:
+            if(i.name==newLayer.name):newLayer.name=f"{newLayer.name}!"
         self.__commandPanel.addLayer(newLayer)
         line=self.ui.LayerList.rowCount()
         self.ui.LayerList.insertRow(line)
@@ -109,10 +122,14 @@ class LayerBox(QDialog):
 
     def updateLayers(self,commandPanel:CommandPanel):
         line=0
+        self.ui.LayerList.setRowCount(0)
+        for i in range(self.ui.LayerList.rowCount()):self.removeLine(i)
         for i in commandPanel.layers:
             self.addLine()
             self.addLineWithWidgets(line,i)
             line += 1
+        
+
 
 
 
@@ -136,10 +153,10 @@ class NameEdit(QLineEdit):
             self.__commandPanel.updateScene()
      
     def ChangeName(self,ev):
-        adListesi=[]
-        for i in self.__layerList:adListesi.append(i.name)
-        lastName=self.__layer.name
-        if ev in adListesi:
+        nameList=[]
+        for i in self.__layerList:nameList.append(i.name)
+        print(self.__layer.name)
+        if self.__layer.name=="0" or  ev=="" or ev in nameList:
             self.setStyleSheet(f"background-color: rgb(211,0,0);")
         else:
             self.setStyleSheet(f"background-color: rgb(255,255,255);")

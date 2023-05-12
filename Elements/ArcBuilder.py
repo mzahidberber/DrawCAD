@@ -18,7 +18,7 @@ class ArcBuilder(ElementBuilder):
             QPointF(self.__centerPoint.x+self.__radius,self.__centerPoint.y+self.__radius))
 
     def paint(self, painter):
-        painter.drawArc(self.__square,-int(self.__startAngle*16),-int(self.__stopAngle*16))
+        painter.drawArc(self.__square,int(self.__startAngle),int(self.__stopAngle))
         # painter.drawPath(self.shape())
         # painter.drawRect(self.shape().boundingRect())
 
@@ -28,7 +28,7 @@ class ArcBuilder(ElementBuilder):
         p = QPainterPath()
 
         p.moveTo(QPointF(self.__firstPoint.x,self.__firstPoint.y))
-        p.arcTo(self.__square,-int(self.__startAngle),-int(self.__stopAngle))
+        p.arcTo(self.__square,int(self.__startAngle),int(self.__stopAngle))
 
         path1 = painterStrock.createStroke(p)
         return path1

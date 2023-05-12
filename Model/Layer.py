@@ -86,7 +86,6 @@ class Layer(BaseModel):
             self.__thickness = self.__layerInfo[LInfo.thickness.value]
             self.__drawBoxId = self.__layerInfo[LInfo.drawBoxId.value]
             self.__penId = self.__layerInfo[LInfo.penId.value]
-            # self.__layerElements=MappingModel.mapDictToClass(self.__layerInfo[LInfo.elements.value],Element)
             self.__pen = Pen(self.__layerInfo[LInfo.pen.value])
 
         else:
@@ -97,7 +96,6 @@ class Layer(BaseModel):
             self.__thickness = thickness
             self.__drawBoxId = drawBoxId
             self.__penId = pen.id
-            # self.__layerElements=MappingModel.mapDictToClass(self.__layerInfo[LInfo.elements.value],Element)
             self.__pen = pen
 
 
@@ -105,31 +103,24 @@ class Layer(BaseModel):
         self.state=StateTypes.unchanged
         self.__elements=[]
 
-    
-
-
     def addElement(self,element:ElementObj):self.__elements.append(element)
 
     def copy(self):return Layer(
         id=None,name=self.name,
         lock=self.lock,thickness=self.thickness,visibility=self.visibility,
-        drawBoxId=self.drawBoxId,pen=self.pen)
+        drawBoxId=self.drawBoxId,pen=self.pen.copy())
 
     def lockElements(self):
-        for e in self.__elements:
-            e.elementSelectedOff()
+        for e in self.__elements:e.elementSelectedOff()
 
     def unlockElements(self):
-        for e in self.__elements:
-            e.elementSelectedOn()
+        for e in self.__elements:e.elementSelectedOn()
 
     def hideElements(self):
-        for e in self.__elements:
-            e.elementHide()
+        for e in self.__elements:e.elementHide()
 
     def showElements(self):
-        for e in self.__elements:
-            e.elementShow()
+        for e in self.__elements:e.elementShow()
 
     def to_dict(self) -> dict:
         return {

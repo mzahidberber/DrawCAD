@@ -124,9 +124,39 @@ class GeoMath:
             return "left"
         else:
             return "on"
+        
+    @staticmethod
+    def findStartAndStopAngleTwoPoint(center: QPointF,p1: QPointF,p2: QPointF):
+        startAngle=GeoMath.findLineAngleWithTwoPoint(center,p1)
+
+        if p1.x()>center.x():
+            if p1.y()>center.y():
+                startAngle=startAngle
+            else:
+                startAngle=startAngle
+        else:
+            if p1.y()>center.y():
+                startAngle=startAngle+180
+            else:
+                startAngle=startAngle-180
+
+        p2Aci=GeoMath.findLineAngleWithTwoPoint(center,p2)
+
+        if p2.x()>center.x():
+            if p2.y()>center.y():
+                p2Aci=p2Aci
+            else:
+                p2Aci=p2Aci+360
+        else:
+            if p2.y()>center.y():
+                p2Aci=p2Aci+180
+            else:
+                p2Aci=p2Aci+180
+
+        return [-startAngle*16,-(p2Aci-startAngle)*16]
 
     @staticmethod
-    def findStartAndStopAngle(center:QPointF,p1: QPointF,p2: QPointF,p3: QPointF) -> list[float,float]:
+    def findStartAndStopAngleThreePoint(center:QPointF,p1: QPointF,p2: QPointF,p3: QPointF) -> list[float,float]:
         startAngle=GeoMath.findLineAngleWithTwoPoint(center,p1)
 
         if p1.x()>center.x():
@@ -163,4 +193,4 @@ class GeoMath:
         else:
             stopAngle=p3Aci-startAngle
 
-        return [startAngle,stopAngle]
+        return [-startAngle*16,-stopAngle*16]

@@ -14,21 +14,19 @@ class AuthService:
     __url:str
     __userAndToken:UserAndToken
 
-    def __new__(cls,email:str,password:str):
+    def __new__(cls):
         if not hasattr(cls, "instance"):
             cls.instance = super(AuthService, cls).__new__(cls)
         return cls.instance
 
     @property
-    def userAndToken(self):return self.__userAndToken
+    def userAndToken(self) -> UserAndToken or None:return self.__userAndToken
     
-    def __init__(self,email:str,password:str) -> None:
-        self.email=email
-        self.password=password
+    def __init__(self) -> None:
         self.getUrl()
-        self.loggin(email,password)
         self.__userAndToken= self.readToken()
-        self.checkTokenExpiration(self.__userAndToken.token)
+        if self.__userAndToken!=None:
+            self.loggin(self.__userAndToken.email,self.__userAndToken.password)
         
         
 
@@ -63,15 +61,32 @@ class AuthService:
         if token.accessTokenExpiration < datetime.now().replace(tzinfo=timezone(offset=timedelta())):
             if token.refreshTokenExpiration > datetime.now().replace(
                 tzinfo=timezone(offset=timedelta())):
-                newToken = self.refreshToken(token.refreshToken)
+                newToken = self.refreshToken(token)
                 self.writeToken(newToken)
                 return newToken
             else:
                 return None
         else:
             return token
+        
+    def register(self,username: str,email: str,password: str) -> bool:
+        conString = (
+            UrlBuilder()
+            .urlBuild(self.__url)
+            .urlBuild("User")
+            .urlBuild("createuser")
+            .build()
+        )
+        body = {"userName": username,"email":email,"password": password}
+        data = requests.post(conString, json=body).json()
+        return True if data["statusCode"] == 200 else None
+        
+    def logout(self):
+        self.revokeToken(self.userAndToken.token)
+        open('user.json', 'w').close()
 
-    def loggin(self, email: str, password: str):
+
+    def loggin(self,email: str,password: str) -> bool:
         userAndToken = self.readToken()
         if userAndToken == None:
             self.__userAndToken=self.createToken(email=email, password=password)
@@ -80,9 +95,12 @@ class AuthService:
                 newToken = self.createToken(email, password)
                 self.__userAndToken.token = newToken
 
+        return False if self.__userAndToken==None else True
+
     def writeToken(self, tokenAndUser: UserAndToken) -> None:
         with open("user.json", "w") as json_file:
             json.dump(tokenAndUser.to_Dict(), json_file)
+
 
     def readToken(self) -> UserAndToken or None:
         with open("user.json") as f:
@@ -127,7 +145,7 @@ class AuthService:
         else:
             return None
 
-    def revokeToken(self, token: str) -> bool:
+    def revokeToken(self, token: Token) -> bool:
         conString = (
             UrlBuilder()
             .urlBuild(self.__url)
@@ -135,22 +153,22 @@ class AuthService:
             .urlBuild("revokerefreshtoken")
             .build()
         )
-        body = RefreshAndRovekeToken(token)
+        body = RefreshAndRovekeToken(token.refreshToken)
         data = requests.post(conString, json=body.to_Dict()).json()
         if data["statusCode"] == 200:
             return True
         else:
             return False
 
-    def refreshToken(self, refreshToken: str) -> Token or None:
+    def refreshToken(self, token: Token) -> Token or None:
         conString = (
             UrlBuilder()
             .urlBuild(self.__url)
             .urlBuild("auth")
-            .urlBuild("revokerefreshtoken")
+            .urlBuild("createtokenbyrefreshtoken")
             .build()
         )
-        body = RefreshAndRovekeToken(refreshToken)
+        body = RefreshAndRovekeToken(token.refreshToken)
         data = requests.post(conString, json=body.to_Dict()).json()
         if data["statusCode"] == 200:
             return Token(

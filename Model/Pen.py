@@ -77,31 +77,36 @@ class Pen(BaseModel):
     
 
 
-    def __init__(self, penInfo: dict) -> None:
-        self.__penInfo = penInfo
-        self._id = self.__penInfo[PenInfo.id.value]
-        self.__name = self.__penInfo[PenInfo.pname.value]
-        # self.__penColorId = self.__penInfo[PenInfo.penColorId.value]
-        self.__penStyleId = self.__penInfo[PenInfo.penStyleId.value]
-        self.__red=self.__penInfo[PenInfo.red.value]
-        self.__blue=self.__penInfo[PenInfo.blue.value]
-        self.__green=self.__penInfo[PenInfo.green.value]
+    def __init__(self, penInfo: dict=None,id:int=None,name: str=None,penStyleId:int=None,
+                 red:int=None,blue:int=None,green:int=None) -> None:
+        if(penInfo!=None):
+            self.__penInfo = penInfo
+            self._id = self.__penInfo[PenInfo.id.value]
+            self.__name = self.__penInfo[PenInfo.pname.value]
+            # self.__penColorId = self.__penInfo[PenInfo.penColorId.value]
+            self.__penStyleId = self.__penInfo[PenInfo.penStyleId.value]
+            self.__red=self.__penInfo[PenInfo.red.value]
+            self.__blue=self.__penInfo[PenInfo.blue.value]
+            self.__green=self.__penInfo[PenInfo.green.value]
 
-        # if self.__penInfo[PenInfo.penColor.value] != None:
-        #     self.__penColor = Color(self.__penInfo[PenInfo.penColor.value])
-        # else:
-        #     self.__penColor = None
+            if self.__penInfo[PenInfo.penStyle.value] != None:
+                self.__penStyle = PenStyle(self.__penInfo[PenInfo.penStyle.value])
+            else:
+                self.__penStyle = None
 
-
-
-        if self.__penInfo[PenInfo.penStyle.value] != None:
-            self.__penStyle = PenStyle(self.__penInfo[PenInfo.penStyle.value])
         else:
-            self.__penStyle = None
+            self._id = id
+            self.__name = name
+            self.__penStyleId = penStyleId
+            self.__red=red
+            self.__blue=blue
+            self.__green=green
 
-
-
+            self.__penStyle=None
+            
         self.state=StateTypes.unchanged
+
+    def copy(self):return Pen(id=None,name=self.name,penStyleId=self.penStyleId,red=self.red,blue=self.blue,green=self.green)
 
     def to_dict(self) -> dict:
         return {

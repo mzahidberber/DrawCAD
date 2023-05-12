@@ -4,13 +4,26 @@ from Model import Element
 
 
 class ElementDraw:
+
     def __init__(self, drawScene: DrawScene) -> None:
         self.__drawScene = drawScene
 
     def drawElement(self, elementObj: ElementObj) -> None:
-        # elementObject = ElementObj(element,self.__drawScene)
         self.__drawScene.addItem(elementObj)
         elementObj.elementUpdate.connect(self.__drawScene.updateScene)
-        # return elementObject
+    
+    def drawElements(self,elementObjs:list[ElementObj]) -> None:
+        for element in elementObjs:self.drawElement(element)
 
-    def previewElement(self) -> None:pass
+    def removeElement(self,elemntObj:ElementObj)-> None:
+        self.__drawScene.removeItem(elemntObj)
+
+    def removeElements(self,elemntObjs:list[ElementObj])-> None:
+        for i in elemntObjs:self.removeElement(i)
+
+    # def updateDrawElements(self,drawElements: list[ElementObj])->None:
+    #     for i in self.__drawElements:self.__drawScene.removeItem(i)
+    #     self.drawElements(drawElements)
+
+
+

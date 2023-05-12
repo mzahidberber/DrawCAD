@@ -12,6 +12,7 @@ import math
 class DrawScene(QGraphicsScene):
     ClickedMouse = pyqtSignal(object, object)
     MovedMouse = pyqtSignal(object)
+    EscOrEnterSignal=pyqtSignal()
 
     def __init__(self, view):
         super().__init__()
@@ -29,11 +30,14 @@ class DrawScene(QGraphicsScene):
 
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_Escape:
+            self.EscOrEnterSignal.emit()
             print("esc")
             for i in self.items():
                 i.setSelected(False)
                 if type(i) == ElementObj:
                     i.removeHandles()
+        elif event.key()==Qt.Key_Enter or event.key()==Qt.Key_Return:
+            self.EscOrEnterSignal.emit()
 
     def updateScene(self):
         # print("sceneUpdate")

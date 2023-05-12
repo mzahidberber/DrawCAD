@@ -15,8 +15,8 @@ class DeleteLayerBox(QDialog):
 
         self.ui.Transfer.setChecked(True)
 
-        self.ui.Transfer.toggle.connect(self.select)
-        self.ui.Delete.toggle.connect(self.select)
+        self.ui.Transfer.toggled.connect(self.select)
+        self.ui.Delete.toggled.connect(self.select)
         self.ui.LayerList.itemClicked.connect(self.selectedLayerInfo)
         self.ui.Result.clicked.connect(self.isTrue)
 
@@ -64,15 +64,17 @@ class DeleteLayerBox(QDialog):
                 itemList:list[ElementObj]=[]
                 for i in self.__deleteLayers:
                     itemList.extend(i.elements)
-                    self.__commandPanel.removeLayer(i)
-                for i in itemList:i.element.layer(self.selectedLayer)
+                    self.__commandPanel.removeLayer(i,False)
+                for i in itemList:
+                    i.element.layer=self.selectedLayer
+                    self.selectedLayer.elements.append(i)
 
             elif self.selectInfo=="Delete":
                 itemList:list[ElementObj]=[]
                 for i in self.__deleteLayers:
                     itemList.extend(i.elements)
                     self.__commandPanel.removeLayer(i)
-                for i in itemList:self.__commandPanel.removeElement(i)
+                # for i in itemList:self.__commandPanel.removeElement(i)
             else:
                 pass
         else:

@@ -7,8 +7,8 @@ class CircleCenterRadiusPreview(BasePreview):
     def findRect(self):
         centerPoint=self._mousePosition
         return QRectF(
-            QPointF(centerPoint.x()-self._radius/2,centerPoint.y()-self._radius/2),
-            QPointF(centerPoint.x()+self._radius/2,centerPoint.y()+self._radius/2))
+            QPointF(centerPoint.x()-self._radius,centerPoint.y()-self._radius),
+            QPointF(centerPoint.x()+self._radius,centerPoint.y()+self._radius))
     
     def boundaryBuild(self):
         if (self._mousePosition!=None):

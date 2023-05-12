@@ -25,9 +25,9 @@ class BasePreview(ABC):
                 if(i["isCancel"]==False):i["func"]()
         self._pointList.clear()
 
-    def addPoint(self,point:QPointF)-> None :self._pointList.append(point)
+    def addPoint(self,point:QPointF)-> None :self._pointList.append(QPointF(round(point.x(),4),round(point.y(),4)))
 
-    def setMousePosition(self,point:QPointF):self._mousePosition=point
+    def setMousePosition(self,point:QPointF):self._mousePosition=QPointF(round(point.x(),4),round(point.y(),4))
     
     def paint(self, painter:QPainter) -> None:
         painter.setPen(Setting.previewLinePen)
