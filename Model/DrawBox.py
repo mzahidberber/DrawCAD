@@ -1,4 +1,5 @@
 import pytz
+from Model.Pen import Pen
 from Model.Layer import Layer
 from Model.BaseModel import BaseModel
 from Model.MappingModel import MappingModel
@@ -8,9 +9,10 @@ import arrow
 class DrawBox(BaseModel):
     __name: str
     __userId: str
-    __layers: list[Layer] or None
+    __layers: list[Layer]=[]
     __createTime:datetime
     __editTime:datetime
+    __isStart:bool=False
 
     @property
     def name(self):
@@ -26,8 +28,7 @@ class DrawBox(BaseModel):
         return self.__userId
 
     @property
-    def layers(self):
-        return self.__layers
+    def layers(self):return self.__layers
     
     @property
     def createTime(self):
@@ -36,6 +37,11 @@ class DrawBox(BaseModel):
     @property
     def editTime(self):
         return self.__editTime
+
+    @property
+    def isStart(self):return self.__isStart
+    @isStart.setter
+    def isStart(self,start:bool):self.__isStart=start
 
     def __init__(self, drawBoxInfo: dict=None,drawId:int=None,name: str=None,userId: str=None) -> None:
         self.__drawBoxInfo = drawBoxInfo
@@ -55,10 +61,10 @@ class DrawBox(BaseModel):
             self.__createTime=datetime.now().replace(tzinfo=timezone(offset=timedelta()))
             self.__editTime=datetime.now().replace(tzinfo=timezone(offset=timedelta()))
 
+            self.layers.append(Layer.create0Layer())
+
             self.state=StateTypes.added
 
-
-        
 
     def to_dict(self) -> dict:
         return {

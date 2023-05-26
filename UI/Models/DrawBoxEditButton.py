@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QPushButton,QInputDialog
 from Model import DrawBox
 from Service import DrawService
-
+from PyQt5.QtWidgets import QTableWidgetItem
 class DrawBoxEditButton(QPushButton):
     def __init__(self,drawBox:DrawBox,updateFunc):
         super().__init__()

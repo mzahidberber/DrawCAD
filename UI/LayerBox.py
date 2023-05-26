@@ -22,8 +22,8 @@ class LayerBox(QDialog):
 
         self.ui.LayerList.setColumnWidth(0,100)
         self.ui.LayerList.setColumnWidth(1,15)
-        self.ui.LayerList.setColumnWidth(2,60)
-        self.ui.LayerList.setColumnWidth(3,60)
+        self.ui.LayerList.setColumnWidth(2,80)
+        self.ui.LayerList.setColumnWidth(3,80)
         self.ui.LayerList.setColumnWidth(4,15)
         self.ui.LayerList.setColumnWidth(5,100)
         self.ui.LayerList.setColumnWidth(6,80)
@@ -70,6 +70,7 @@ class LayerBox(QDialog):
         self.__parent.getLayers()
 
     def closeEvent(self, a0) -> None:
+        self.__parent.getLayers()
         self.__parent.updateLayerBox()
         return super().closeEvent(a0)
 

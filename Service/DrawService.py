@@ -1,24 +1,35 @@
 import requests
 import json
+import asyncio
+import aiohttp
+from enum import  Enum
 # from Commands import CommandEnums ##circular import error
 from Service.Model import Token, Response
 from Service.UrlBuilder import UrlBuilder
-from Model import Element, DrawBox, Layer,Pen, PenStyle
+from Model import Element, DrawBox, Layer,Pen, PenStyle,Point
 from CrossCuttingConcers.Handling import ErrorHandle
 from datetime import datetime,timezone
 
+
+class RequestType(Enum):
+    get = 1
+    post = 2
+    put = 3
+    delete = 4
 class DrawService:
-    __url:str
+    #region Property
+    __url: str
     __token: Token
-    
+
     @property
     def token(self) -> Token:
         return self.__token
-    
+
     @property
     def url(self) -> str:
         return self.__url
-    
+    #endregion
+
     def __call__(cls,*args, **kwargs):
         if not hasattr(cls, "instance"):
             cls.instance = super(DrawService, cls).__call__(cls,*args, **kwargs)
@@ -38,6 +49,20 @@ class DrawService:
 
     def getAuthorize(self) -> dict:
         return {"Authorization": f"Bearer {self.__token.accessToken}"}
+
+    #region Point
+
+    @ErrorHandle.Error_Handler
+    def updatePoints(self, points: list[Point])->None:
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Point").urlBuild("points").urlBuild("update")
+        ).build()
+        body = {"points": list(map(lambda x: x.to_dict(), points))}
+        response = Response(
+            requests.put(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+
+    #endregion
 
     #region PenStyle
 
@@ -73,8 +98,55 @@ class DrawService:
         return list(map(lambda x: Pen(x), response.data))
 
     #endregion
+
+    #region Async Request
+
+    # async def fetchAll(self,session,connectionString,body:str=None):
+    #     task=asyncio.create_task(self.fetch(session,connectionString,body))
+    #     return  await asyncio.gather(task)
+
+    # async def postResponseAsync(self, session, connectionString, body:str=None):
+    #     async with session.post(connectionString,data=body) as response:
+    #         result=await response.json()
+    #         return result
+
+    # async def postAsync(self, connectionString:str, body:str=None):
+    #     async with aiohttp.ClientSession(headers=self.getAuthorize()) as session:
+    #         task = asyncio.create_task(self.postResponseAsync(session, connectionString, body))
+    #         return await asyncio.gather(task)
+
+    async def responseAsync(self, requestType:RequestType,session, connectionString, body:str=None):
+        match requestType:
+            case RequestType.get:
+                async with session.get(connectionString, data=body) as response:
+                    result = await response.json()
+                    return result
+            case RequestType.post:
+                async with session.post(connectionString, data=body) as response:
+                    result = await response.json()
+                    return result
+            case RequestType.put:
+                async with session.put(connectionString, data=body) as response:
+                    result = await response.json()
+                    return result
+            case RequestType.delete:
+                async with session.delete(connectionString, data=body) as response:
+                    result = await response.json()
+                    return result
+
+    async def requestAsync(self,requestType:RequestType,connectionString:str,body:str=None):
+        async with aiohttp.ClientSession(headers=self.getAuthorize()) as session:
+            task = asyncio.create_task(self.responseAsync(requestType,session, connectionString, body))
+            return await asyncio.gather(task)
+
+    def response(self,requestType:RequestType,connectionString:str,body:str=None) -> Response:
+        result = asyncio.get_event_loop().run_until_complete(self.requestAsync(RequestType.post, connectionString,body))
+        return Response(result[0])
+
+    #endregion
     
     #region Layer
+
     @ErrorHandle.Error_Handler
     def getLayers(self, userDrawBoxId: int) -> list[Layer]:
         connectionString = (
@@ -85,10 +157,9 @@ class DrawService:
             .paramsBuild(f"drawId={userDrawBoxId}")
             .build()
         )
-        response = Response(
-            requests.post(connectionString, headers=self.getAuthorize()).json()
-        )
-        return list(map(lambda x: Layer(layerInfo=x), response.data))
+        return list(map(lambda x: Layer(layerInfo=x), self.response(RequestType.post,connectionString).data))
+
+
     #endregion
     
     #region Elements

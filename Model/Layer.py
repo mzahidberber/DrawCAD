@@ -73,7 +73,7 @@ class Layer(BaseModel):
 
     def __init__(self, layerInfo: dict=None,
                 id:int=None,name: str=None,
-                lock:bool=False,thickness: float=1,
+                lock:bool=True,thickness: float=1,
                 visibility: bool=True,drawBoxId: int=None,
                 pen:Pen=None) -> None:
         
@@ -121,6 +121,10 @@ class Layer(BaseModel):
 
     def showElements(self):
         for e in self.__elements:e.elementShow()
+
+    @staticmethod
+    def create0Layer():
+        return Layer(name="0",pen=Pen(name="pen",penStyleId=1,red=150,blue=150,green=150))
 
     def to_dict(self) -> dict:
         return {

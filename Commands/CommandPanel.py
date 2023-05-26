@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QPointF
+from PyQt5.QtCore import QPointF,pyqtSignal,QObject
 from Elements import ElementObj
 from Model import DrawBox, Element, Layer, Pen, PenStyle
 from Service.DrawService import DrawService
@@ -12,7 +12,11 @@ from Helpers.Snap import SnapElement, SnapSquare
 from Model.DrawEnums import StateTypes
 
 
-class CommandPanel:
+class CommandPanel(QObject):
+
+    stopCommandSignal=pyqtSignal(bool)
+    saveDrawSignal=pyqtSignal(bool)
+
     __selectedLayer:Layer
     __selectedPen:Pen
     __drawBox=DrawBox
@@ -27,7 +31,9 @@ class CommandPanel:
     @property
     def selectedLayer(self)-> Layer:return self.__selectedLayer
     @selectedLayer.setter
-    def selectedLayer(self,layer:Layer):self.__selectedLayer=layer
+    def selectedLayer(self,layer:Layer):
+        self.__drawObjs.selectedLayer=layer
+        self.__selectedLayer=layer
 
     @property
     def selectedPen(self)-> Pen:return self.__selectedPen
@@ -57,7 +63,8 @@ class CommandPanel:
 
 
 
-    def __init__(self, drawScene: DrawScene, token: Token,drawBox:DrawBox) -> None:
+    def __init__(self, drawScene: DrawScene,token: Token,drawBox:DrawBox) -> None:
+        super().__init__()
         self.__drawScene = drawScene
         self.__token = token
         self.__drawBox=drawBox
@@ -78,7 +85,13 @@ class CommandPanel:
         ##DrawObjs
         self.__drawObjs=DrawObjects(self.__drawScene)
 
-        self.__drawObjs.addLayers(self.__drawService.getLayers(self.__drawBox.id))
+        if len(drawBox.layers)==0:
+            layers=self.__drawService.getLayers(self.__drawBox.id)
+            if len(layers)!=0 and layers!=None:self.__drawObjs.addLayers(layers)
+            else:self.__drawObjs.addLayer(Layer.create0Layer())
+        else:
+            self.__drawObjs.addLayers(drawBox.layers)
+
         self.__drawObjs.addElements(self.__drawService.getElements(self.__drawBox.id),isService=True)
         self.__drawObjs.addPenStyles(self.__drawService.getPenStyles())
 
@@ -97,6 +110,8 @@ class CommandPanel:
         self.setRadius()
         self.radius: float = 10
 
+        self.selectedLayer=self.__drawObjs.layers[0]
+
 
     def mouseMove(self, scenePos):
         self.__preview.setMousePosition(scenePos)
@@ -112,34 +127,42 @@ class CommandPanel:
     def stopCommand(self):
         self.__drawService.stopCommand()
         self.__isStartCommand=False
+        self.stopCommandSignal.emit(False)
 
     def finishCommand(self):self.addElement(self.__drawService.isFinish())
     
     def addCoordinate(self, coordinate: QPointF):
         if self.__isStartCommand == True:
-            if self.__snap.getSnapPoint() != None:
-                self.__preview.addPoint(self.__snap.getSnapPoint())
-            else:
+            # if self.__snap.getSnapPoint() != None:
+            #     self.__preview.addPoint(self.__snap.getSnapPoint())
+            # else:
                 element = self.__drawService.addCoordinate(
                     round(coordinate.x(),4), round(coordinate.y(),4)
                 )
                 self.__preview.addPoint(coordinate)
                 self.addElement(element)
 
+
     def changeSelectedLayer(self,layerName:str):
         for i in self.__drawObjs.layers:
             if i.name==layerName:
                 self.selectedLayer=i
 
-    def removeElement(self,element:ElementObj):self.__drawObjs.removeElement(element)
+    def removeElement(self,element:ElementObj):
+        self.__drawObjs.removeElement(element)
+        self.saveDrawSignal.emit(False)
     def addElement(self,element:Element or None):
         if element !=None:
             self.__drawObjs.addElement(element)
             self.__elementDraw.drawElement(self.__drawObjs.getLastElementObj())
             self.__preview.stop()
             self.__isStartCommand = False
-    
-    def addLayer(self,layer: Layer):self.__drawObjs.addLayer(layer)
+            self.saveDrawSignal.emit(False)
+            self.stopCommandSignal.emit(False)
+    def addLayer(self,layer: Layer):
+        self.__drawObjs.addLayer(layer)
+        self.saveDrawSignal.emit(False)
+
     def removeLayer(self,layer: Layer,deleteElements: bool=True):
         if(deleteElements):
             self.__elementDraw.removeElements(layer.elements)
@@ -155,12 +178,24 @@ class CommandPanel:
         for i in self.layers:
             print("layer--",i.state)
             print("pen--",i.pen.state)
+
         
         ## Kaydettikten sonra kaydedilen nesnelerin idlerini kaydetmek gerekiyor
-        self.__drawService.saveElements(list(filter(lambda x:x.state==StateTypes.added,self.elements)))
+
+        self.__drawService.saveElements(list(filter(lambda x:x.state==StateTypes.added,self.__drawObjs.elements)))
+
+        for element in list(filter(lambda x:x.state==StateTypes.added,self.__drawObjs.elements)):
+            element.state=StateTypes.unchanged
 
         for i in self.__drawObjs.elementObjs:
             print("element--",i.element.state)
+            self.__drawService.updatePoints(list(filter(lambda x: x.state == StateTypes.update,i.element.points)))
+            for i in i.element.points:
+                print("points--",i.state)
+
+
+        self.saveDrawSignal.emit(True)
+
 
 
 

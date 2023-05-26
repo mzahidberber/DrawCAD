@@ -13,8 +13,8 @@ class StateTypes(Enum):
 
 class ETypes(Enum):
     "ElementTypes"
-    line = 0
-    circle = 1
+    line = 1
+    circle = 2
     rectangle = 3
     arc = 4
     ellips = 5

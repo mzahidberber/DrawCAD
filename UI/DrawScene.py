@@ -1,4 +1,6 @@
-from PyQt5.QtWidgets import QGraphicsScene,QGraphicsObject
+from typing import List
+
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsObject, QGraphicsItem
 from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import Qt, pyqtSignal, QLineF, QPointF,QRectF
 
@@ -6,8 +8,6 @@ from Elements import ElementObj
 from Helpers.Settings import Setting
 
 import math
-
-
 
 class DrawScene(QGraphicsScene):
     ClickedMouse = pyqtSignal(object, object)
@@ -22,7 +22,7 @@ class DrawScene(QGraphicsScene):
         self.setItemIndexMethod(QGraphicsScene.ItemIndexMethod.NoIndex)
 
     
-    def scanFieldObjects(self,field:QRectF) -> list[ElementObj]:return self.items(field,mode=Qt.IntersectsItemBoundingRect)
+    def scanFieldObjects(self,field:QRectF) -> list[QGraphicsItem]:return self.items(field, mode=Qt.IntersectsItemBoundingRect)
 
     def changed(self, region) -> None:
         print("regionnn")
@@ -67,7 +67,7 @@ class DrawScene(QGraphicsScene):
                 #  self.taramaAlani(event.scenePos())
                 #  self.secimObjesi.listeyeElemanEkle(self.selectedItems())
 
-                self.ClickedMouse.emit(event.scenePos(), self.__view.selectedCommandP.selectedLayer)
+                self.ClickedMouse.emit(event.scenePos(), self.__view.commandPanel.selectedLayer)
         elif event.button() == Qt.MidButton:
             pass
         elif event.button() == Qt.RightButton:

@@ -15,8 +15,6 @@ class Element(BaseModel):
     __ssAngles: list[SSAngle] or None
     __radiuses: list[Radius] or None
     __points: list[Point] or None
-
-
     @property
     def penId(self) -> int:
         return self.__penId
@@ -65,6 +63,8 @@ class Element(BaseModel):
         self.__points = MappingModel.mapDictToClass(
             self.__elementInfo[EInfo.points.value], Point
         )
+
+
 
 
         self.state=StateTypes.unchanged
