@@ -34,9 +34,8 @@ class TabWidget2(QWidget):
 
     @property
     def drawBox(self)-> DrawBox: return  self.__drawBox
-    def __init__(self,drawBox:DrawBox,drawService:DrawService,token:Token) -> None:
+    def __init__(self,drawBox:DrawBox,token:Token) -> None:
         super().__init__()
-        self.__drawService=drawService
         self.__token=token
         self.__drawBox=drawBox
 

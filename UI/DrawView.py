@@ -169,8 +169,6 @@ class DrawView(QMainWindow):
         __selectedIndex = self.ui.twDrawBoxes.currentRow()
         __selectedDrawBox = self.__drawBoxes[__selectedIndex]
         if not __selectedDrawBox.isStart:
-            drawScene = DrawScene(self)
-            self.__commandPanel = CommandPanel(drawScene, self.__token, __selectedDrawBox)
             self.addDrawLayer(__selectedDrawBox)
             __selectedDrawBox.isStart = True
 
@@ -179,7 +177,7 @@ class DrawView(QMainWindow):
 
 
     def addDrawLayer(self, selectedDrawBox: DrawBox):
-        drawLayer = TabWidget2(selectedDrawBox, self.__drawService, self.__token)
+        drawLayer = TabWidget2(selectedDrawBox, self.__token)
         drawLayer.mousePositionSignal.connect(self.mousePosition)
         drawLayer.stopCommanSignal.connect(self.stopCommand)
         tabId = self.ui.twDrawTabs.addTab(drawLayer, drawLayer.commandPanel.drawBox.name)

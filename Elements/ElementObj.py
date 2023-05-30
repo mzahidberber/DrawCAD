@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPointF, pyqtSignal
 
 from Model import Element
-from Helpers.Handles import Handle,HandleTypes,MoveHandle
+from Helpers.Handles import HandleBuilder,BaseHandle
 from Helpers.Pen.CreatePen import CreatePen
 from Elements.BuilderContext import BuilderContext
 from Elements.ElementBuilder import ElementBuilder
@@ -22,7 +22,7 @@ class ElementObj(QGraphicsObject):
     __elementBuilder: ElementBuilder
     __elementContext: BuilderContext
     __isSelected: bool = False
-    __handles: list[Handle]
+    __handles: list[BaseHandle]
     __pen: QPen
     __type: ETypes
 
@@ -39,7 +39,7 @@ class ElementObj(QGraphicsObject):
         self.__pen = pen
 
     @property
-    def handles(self) -> list[Handle]:
+    def handles(self) -> list[BaseHandle]:
         return self.__handles
 
     @property
@@ -131,10 +131,6 @@ class ElementObj(QGraphicsObject):
         for i in self.handles:self.drawScene.removeItem(i)
         self.handles.clear()
 
-    def updateHandles(self):
-        if(len(self.handles)!=0):
-            for i in self.handles:
-                i.updateHandle(self.element)
 
     def findMidPointLine(self) -> QPointF:
         return GeoMath.findLineCenterPoint(
@@ -142,23 +138,12 @@ class ElementObj(QGraphicsObject):
             QPointF(self.element.points[1].x,self.element.points[1].y))
 
     def addHandles(self):
+        handles=HandleBuilder(self.element,self.type).createHandles()
+        for handle in handles:
+            self.drawScene.addItem(handle)
+            handle.setZValue(1000)
+            self.handles.append(handle)
 
-        match self.type:
-            case ETypes.line:
-                for point in self.element.points: self.addPointMoveHandle(point.id)
-                handle=MoveHandle(self.findMidPointLine(),self.element)
-                self.drawScene.addItem(handle)
-                handle.setZValue(1000)
-                # self.handles.append(handle)
-            case ETypes.circle:
-                for point in self.element.points: self.addPointMoveHandle(point.id)
-
-
-    def addPointMoveHandle(self,pointId:int):
-        handle = Handle(HandleTypes.pointMove,self.element,pointId=pointId)
-        self.drawScene.addItem(handle)
-        handle.setZValue(1000)
-        self.handles.append(handle)
 
 
     def shape(self):return self.elementBuilder.shape()
@@ -168,7 +153,6 @@ class ElementObj(QGraphicsObject):
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
         self.pen:QPen=CreatePen.createPenAtLayer(self.element.layer)
         painter.setPen(self.pen)
-        self.updateHandles()
         self.elementBuilder.paint(painter)
 
         

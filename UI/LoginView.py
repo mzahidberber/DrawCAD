@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from UI.QtUI import Ui_LoginView
 from Service import DrawService, AuthService
 from UI import DrawView
-from CrossCuttingConcers.Logging import log
+from CrossCuttingConcers.Logging import Log
 import re
 
 class LoginView(QMainWindow):

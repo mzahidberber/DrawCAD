@@ -1,10 +1,10 @@
 import sys
 from PyQt5.QtWidgets import *
 from UI import LoginView,DrawView
-from CrossCuttingConcers.Logging import log
+from CrossCuttingConcers.Logging import Log
 from Service.AuthService import AuthService
 
-log("Run App")
+Log.log(Log.INFO,"Run App")
 app = QApplication(sys.argv)
 auth=AuthService()
 if auth.userAndToken!=None:window=DrawView(auth)

@@ -23,12 +23,60 @@ class GeoMath:
         return math.sqrt(((point2.x()-point1.x())**2)+((point2.y()-point1.y())**2))
     
     @staticmethod
+    @dispatch(QPointF, QPointF)
     def findLineCenterPoint(p1:QPointF,p2:QPointF) -> QPointF:
         "iki nokta arası orta noktayi bulmak icin fonksiyon"
         return QPointF((p1.x()+p2.x())/2,(p1.y()+p2.y())/2)
-    
 
     @staticmethod
+    @dispatch(Point, Point)
+    def findLineCenterPoint(p1: Point, p2: Point) -> QPointF:
+        "iki nokta arası orta noktayi bulmak icin fonksiyon"
+        return QPointF((p1.x + p2.x) / 2, (p1.y + p2.y) / 2)
+
+    @staticmethod
+    @dispatch(Point, Point,Point)
+    def findThreePointCenterAndRadius(p1: Point, p2: Point, p3: Point) -> RadiusAndPoint:
+        "üc noktası biline cemberin merkez ve yaricapını bulma fonksiyonu noktalar x,y,z olmalı z=1 olmalı"
+        a1 = -(p1.x ** 2) - (p1.y ** 2)
+        a2 = -(p2.x ** 2) - (p2.y ** 2)
+        a3 = -(p3.x ** 2) - (p3.y ** 2)
+        matris = np.array([
+            [p1.x, p1.y, 1],
+            [p2.x, p2.y, 1],
+            [p3.x, p3.y, 1]
+        ])
+        matris1 = np.array([
+            [a1, p1.y, 1],
+            [a2, p2.y, 1],
+            [a3, p3.y, 1]
+        ])
+        matris2 = np.array([
+            [p1.x, a1, 1],
+            [p2.x, a2, 1],
+            [p3.x, a3, 1]
+        ])
+        matris3 = np.array([
+            [p1.x, p1.y, a1],
+            [p2.x, p2.y, a2],
+            [p3.x, p3.y, a3]
+        ])
+        det = np.linalg.det(matris)
+        det1 = np.linalg.det(matris1)
+        det2 = np.linalg.det(matris2)
+        det3 = np.linalg.det(matris3)
+        D = det1 / det
+        E = det2 / det
+        F = det3 / det
+        Merkez = QPointF(-D / 2, -E / 2)
+        Yaricap = (math.sqrt((D ** 2) + (E ** 2) - (4 * F))) * 0.5
+        if (math.isnan(Yaricap) or math.isnan(Merkez.x()) or math.isnan(Merkez.y())):
+            return RadiusAndPoint()
+        else:
+            return RadiusAndPoint(Yaricap, Merkez)
+
+    @staticmethod
+    @dispatch(QPointF, QPointF,QPointF)
     def findThreePointCenterAndRadius(p1:QPointF,p2:QPointF,p3:QPointF) -> RadiusAndPoint:
         "üc noktası biline cemberin merkez ve yaricapını bulma fonksiyonu noktalar x,y,z olmalı z=1 olmalı"
         a1=-(p1.x()**2)-(p1.y()**2)
@@ -155,7 +203,10 @@ class GeoMath:
 
         return [-startAngle*16,-(p2Aci-startAngle)*16]
 
+
+
     @staticmethod
+    @dispatch(QPointF, QPointF, QPointF,QPointF)
     def findStartAndStopAngleThreePoint(center:QPointF,p1: QPointF,p2: QPointF,p3: QPointF) -> list[float,float]:
         startAngle=GeoMath.findLineAngleWithTwoPoint(center,p1)
 
@@ -194,3 +245,43 @@ class GeoMath:
             stopAngle=p3Aci-startAngle
 
         return [-startAngle*16,-stopAngle*16]
+
+    @staticmethod
+    @dispatch(Point, Point, Point, Point)
+    def findStartAndStopAngleThreePoint(center: Point, p1: Point, p2: Point, p3: Point) -> list[float, float]:
+        startAngle = GeoMath.findLineAngleWithTwoPoint(QPointF(center.x,center.y), QPointF(p1.x,p1.y))
+
+        if p1.x > center.x:
+            if p1.y > center.y:
+                startAngle = startAngle
+            else:
+                startAngle = startAngle
+        else:
+            if p1.y > center.y:
+                startAngle = startAngle + 180
+            else:
+                startAngle = startAngle - 180
+
+        p3Aci = GeoMath.findLineAngleWithTwoPoint(QPointF(center.x,center.y), QPointF(p3.x,p3.y))
+
+        if p3.x > center.x:
+            if p3.y > center.y:
+                p3Aci = p3Aci
+            else:
+                p3Aci = p3Aci + 360
+        else:
+            if p3.y > center.y:
+                p3Aci = p3Aci + 180
+            else:
+                p3Aci = p3Aci + 180
+
+        local = GeoMath.wherePointInLine(QPointF(p1.x,p1.y), QPointF(p3.x,p3.y), QPointF(p2.x,p2.y))
+
+        if local == "right":
+            stopAngle = p3Aci - startAngle
+        elif local == "left":
+            stopAngle = -(360 - (p3Aci - startAngle))
+        else:
+            stopAngle = p3Aci - startAngle
+
+        return [-startAngle * 16, -stopAngle * 16]

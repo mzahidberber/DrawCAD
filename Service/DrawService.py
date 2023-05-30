@@ -8,6 +8,7 @@ from Service.Model import Token, Response
 from Service.UrlBuilder import UrlBuilder
 from Model import Element, DrawBox, Layer,Pen, PenStyle,Point
 from CrossCuttingConcers.Handling import ErrorHandle
+from CrossCuttingConcers.Logging import LogAspect
 from datetime import datetime,timezone
 
 
@@ -52,7 +53,7 @@ class DrawService:
 
     #region Point
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def updatePoints(self, points: list[Point])->None:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Point").urlBuild("points").urlBuild("update")
@@ -66,7 +67,7 @@ class DrawService:
 
     #region PenStyle
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def getPenStyles(self) -> list[PenStyle]:
         connectionString = (
             UrlBuilder()
@@ -86,7 +87,7 @@ class DrawService:
     
     #region Pen
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def getPens(self) -> list[Pen]:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Pen").urlBuild("penswithatt")
@@ -147,7 +148,7 @@ class DrawService:
     
     #region Layer
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def getLayers(self, userDrawBoxId: int) -> list[Layer]:
         connectionString = (
             UrlBuilder()
@@ -164,7 +165,7 @@ class DrawService:
     
     #region Elements
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def getElements(self, drawBoxId: int) -> list[Element] or None:
         builder = (
             UrlBuilder()
@@ -178,7 +179,7 @@ class DrawService:
         )
         return list(map(lambda x: Element(x), response.data))
     
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def saveElements(self,elements:list[Element]):
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Element").urlBuild("elements").urlBuild("add")
@@ -193,7 +194,7 @@ class DrawService:
     
     #region Draw
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def startCommand(
         self,
         command,
@@ -217,7 +218,7 @@ class DrawService:
         response = Response(result)
         print(response.statusCode)
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def addCoordinate(self, x, y) -> Element or None:
         connectionString = (
             UrlBuilder()
@@ -237,7 +238,7 @@ class DrawService:
         else:
             return Element(response.data)
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def stopCommand(self):
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("stopCommand")
@@ -247,7 +248,7 @@ class DrawService:
         )
         print(response.statusCode)
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def isFinish(self) -> None or Element:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("setIsFinish")
@@ -257,7 +258,7 @@ class DrawService:
         )
         return Element(response.data) if response.data != None and response.statusCode==200 else None
         
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def setRadius(self,radius: float=50) -> None or Element:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("setRadius")
@@ -270,7 +271,7 @@ class DrawService:
 
     #region DrawBox
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def getDrawBoxes(self) -> list[DrawBox]:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("DrawBox").urlBuild("drawBoxes")
@@ -280,7 +281,7 @@ class DrawService:
         )
         return list(map(lambda x: DrawBox(x), response.data))
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def addDraw(self,drawBoxes:list[DrawBox]) -> list[DrawBox] or None:
         if len(drawBoxes)>0:
             connectionString = (
@@ -292,7 +293,7 @@ class DrawService:
             )
             return list(map(lambda d:DrawBox(drawBoxInfo=d),response.data)) if response.data != None and response.statusCode==200 else None
     
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def deleteDrawBoxes(self,drawBoxIdList:list[int]) -> None:
         if len(drawBoxIdList)>0:
             connectionString = (
@@ -302,7 +303,7 @@ class DrawService:
                 requests.delete(connectionString,json=drawBoxIdList, headers=self.getAuthorize()).json()
             )
 
-    @ErrorHandle.Error_Handler
+    @LogAspect.logAspect
     def updateDrawBoxes(self,drawBoxes:list[DrawBox]) -> None:
         if len(drawBoxes)>0:
             connectionString = (
