@@ -8,7 +8,7 @@ from Commands.CommandEnums import CommandEnums
 from Commands.ElementDraw import ElementDraw
 from Commands.DrawObjects import DrawObjects
 from Helpers.Preview import PreviewObject
-from Helpers.Snap import SnapElement, SnapSquare
+from Helpers.Snap import Snap
 from Model.DrawEnums import StateTypes
 
 
@@ -24,8 +24,7 @@ class CommandPanel(QObject):
     __drawScene:DrawScene
     __elementDraw:ElementDraw
     __drawService:DrawService
-    __snap:SnapElement
-    __snapObject:SnapSquare
+    __snap:Snap
     __preview:PreviewObject
 
     @property
@@ -63,7 +62,7 @@ class CommandPanel(QObject):
 
 
 
-    def __init__(self, drawScene: DrawScene,token: Token,drawBox:DrawBox) -> None:
+    def __init__(self, drawScene: DrawScene, token: Token, drawBox:DrawBox) -> None:
         super().__init__()
         self.__drawScene = drawScene
         self.__token = token
@@ -97,10 +96,7 @@ class CommandPanel(QObject):
 
         self.__elementDraw.drawElements(self.__drawObjs.elementObjs)
 
-        ##Snap
-        self.__snap = SnapElement(self.__drawScene)
-        self.__snapObject = SnapSquare(self.__drawScene)
-        self.__drawScene.addItem(self.__snapObject)
+
 
         ##Preview
         self.__preview = PreviewObject()
@@ -112,11 +108,15 @@ class CommandPanel(QObject):
 
         self.selectedLayer=self.__drawObjs.layers[0]
 
+        self.__snap=self.__drawScene.snap
+
 
     def mouseMove(self, scenePos):
-        self.__preview.setMousePosition(scenePos)
+        if self.__snap.snapPoint is not None:
+            self.__preview.setMousePosition(self.__snap.snapPoint)
+        else:
+            self.__preview.setMousePosition(scenePos)
         self.__drawScene.updateScene()
-        self.__snap.snapPoints(scenePos)
 
     def startCommand(self,command: CommandEnums):
         self.__drawService.startCommand(
@@ -128,14 +128,23 @@ class CommandPanel(QObject):
         self.__drawService.stopCommand()
         self.__isStartCommand=False
         self.stopCommandSignal.emit(False)
-
-    def finishCommand(self):self.addElement(self.__drawService.isFinish())
+        self.__snap.clickPoint = None
+        self.__preview.stop()
+    def finishCommand(self):
+        self.addElement(self.__drawService.isFinish())
     
     def addCoordinate(self, coordinate: QPointF):
         if self.__isStartCommand == True:
-            # if self.__snap.getSnapPoint() != None:
-            #     self.__preview.addPoint(self.__snap.getSnapPoint())
-            # else:
+
+            if self.__snap.snapPoint is not None:
+                self.__snap.clickPoint = self.__snap.snapPoint
+                element = self.__drawService.addCoordinate(
+                    round(self.__snap.snapPoint.x(), 4), round(self.__snap.snapPoint.y(), 4)
+                )
+                self.__preview.addPoint(self.__snap.snapPoint)
+                self.addElement(element)
+            else:
+                self.__snap.clickPoint=coordinate
                 element = self.__drawService.addCoordinate(
                     round(coordinate.x(),4), round(coordinate.y(),4)
                 )
@@ -159,6 +168,7 @@ class CommandPanel(QObject):
             self.__isStartCommand = False
             self.saveDrawSignal.emit(False)
             self.stopCommandSignal.emit(False)
+            self.__snap.clickPoint=None
     def addLayer(self,layer: Layer):
         self.__drawObjs.addLayer(layer)
         self.saveDrawSignal.emit(False)

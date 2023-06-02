@@ -45,13 +45,20 @@ class Point(BaseModel):
     def pointTypeId(self) -> int:
         return self.__pointTypeId
 
-    def __init__(self, pInfo: dict) -> None:
-        self.__pInfo = pInfo
-        self._id = self.__pInfo[PInfo.id.value]
-        self.__X = self.__pInfo[PInfo.x.value]
-        self.__Y = self.__pInfo[PInfo.y.value]
-        self.__elementId = self.__pInfo[PInfo.elementId.value]
-        self.__pointTypeId = self.__pInfo[PInfo.pointTypeId.value]
+    def __init__(self, pInfo: dict=None,id:int=None,x:float=None,y:float=None,elementId:int=None,pointTypeId:int=None) -> None:
+        if pInfo is not None:
+            self.__pInfo = pInfo
+            self._id = self.__pInfo[PInfo.id.value]
+            self.__X = self.__pInfo[PInfo.x.value]
+            self.__Y = self.__pInfo[PInfo.y.value]
+            self.__elementId = self.__pInfo[PInfo.elementId.value]
+            self.__pointTypeId = self.__pInfo[PInfo.pointTypeId.value]
+        else:
+            self._id=id
+            self.__X=x
+            self.__Y=y
+            self.__elementId=elementId
+            self.__pointTypeId=pointTypeId
 
         self.state=StateTypes.unchanged
 

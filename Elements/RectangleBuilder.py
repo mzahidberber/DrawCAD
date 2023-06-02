@@ -28,10 +28,10 @@ class RectangleBuilder(ElementBuilder):
         )
 
     def paint(self, painter):
-        painter.drawRect(self.shape().boundingRect())
-        painter.drawPath(self.shape())
+        # painter.drawRect(self.shape().boundingRect())
+        # painter.drawPath(self.shape())
 
-        painter.drawRect(QRectF(self.__p1, self.__p2))
+        painter.drawRect(QRectF(self.__p1, self.__p3))
 
     def shape(self) -> QPainterPath:
         painterStrock = QPainterPathStroker()

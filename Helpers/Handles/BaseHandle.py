@@ -5,10 +5,15 @@ from Helpers.Settings import Setting
 from abc import ABC, abstractmethod
 from Model import Point,Element
 from CrossCuttingConcers.Logging import  Log
+from Helpers.Snap import Snap
 class BaseHandle(QGraphicsObject):
     __position:QPointF
     __pen:QPen
     __element:Element
+    __snap:Snap
+
+    @property
+    def snap(self)->Snap:return self.__snap
 
     @property
     def position(self)->QPointF:return self.__position
@@ -29,8 +34,9 @@ class BaseHandle(QGraphicsObject):
     def element(self,element:Element):self.__element=element
 
 
-    def __init__(self):
+    def __init__(self,snap:Snap):
         super().__init__()
+        self.__snap=snap
         self.__pen: QPen = Setting.handlePen
 
         self.setFlag(QGraphicsObject.ItemIsMovable)

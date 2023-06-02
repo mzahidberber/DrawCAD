@@ -1,6 +1,5 @@
 from Helpers.Pen import CreatePen
 
-
 class Setting:
     # pixelSize info
     pixelSize: float
@@ -21,10 +20,27 @@ class Setting:
     lineBoundDistanceSetting = 10
 
     # Snap Setting
-    snapSize = 3
-    snapSizeSetting = 5
+    snapSize = 4
+    snapSizeSetting = 7
+
+    snapLineBoundDistance=0.1
 
     snapPen = CreatePen.createPen(211, 0, 0, 2, 1)
+
+    snapEnd=False
+    snapMiddle=False
+    snapCenter=False
+    snapGrid=False
+    snapNearest=False
+    snapIntersection=False
+
+    orthoMode=False
+    polarMode=False
+
+    snapAngle:float=30
+
+    gridDistance:float=10
+
 
     # Snap Degree Setting
     snapDegreePen = CreatePen.createPen(74, 128, 77, 1, 1)

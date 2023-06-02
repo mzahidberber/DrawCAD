@@ -34,6 +34,9 @@ class TabWidget2(QWidget):
 
     @property
     def drawBox(self)-> DrawBox: return  self.__drawBox
+
+    @property
+    def drawScene(self)->DrawScene:return self.__drawScene
     def __init__(self,drawBox:DrawBox,token:Token) -> None:
         super().__init__()
         self.__token=token
@@ -41,7 +44,6 @@ class TabWidget2(QWidget):
 
 
         self.settingView()
-
 
         self.__commandPanel = CommandPanel(self.__drawScene,self.__token,self.__drawBox)
         self.__commandPanel.stopCommandSignal.connect(self.runCommand)
@@ -60,6 +62,7 @@ class TabWidget2(QWidget):
         self.gvGraphicsView.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.verticalLayout.addWidget(self.gvGraphicsView)
         self.__drawScene = DrawScene(self)
+        self.__drawScene.EscOrEnterSignal.connect(self.stopCommanSignal)
         self.gvGraphicsView.setMouseTracking(True)
         self.gvGraphicsView.setScene(self.__drawScene)
         self.__drawScene.MovedMouse.connect(self.mousePosition)

@@ -3,14 +3,15 @@ from PyQt5.QtCore import QPointF, QRectF
 from Model import Element,Point,ETypes
 import copy
 from Helpers.GeoMath import GeoMath
-
+from Helpers.Snap import Snap
 class MoveHandle(BaseHandle):
     __firstPosition:QPointF
     __firstPoints:list[Point]
     __type:ETypes
-    def __init__(self,element:Element,elementType:ETypes):
-        super().__init__()
-        self.element=element
+    def __init__(self,elementObj,elementType:ETypes,snap:Snap):
+        super().__init__(snap)
+        self.__elementObj=elementObj
+        self.element=elementObj.element
         self.__type=elementType
         self.__firstPoints=[]
 
@@ -39,14 +40,22 @@ class MoveHandle(BaseHandle):
         for p in self.element.points:self.__firstPoints.append(copy.deepcopy(p))
         self.__firstPosition = self.findHandlePosition()
 
-        self.move(event.scenePos() - self.__firstPosition)
+        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
+            self.move(self.snap.snapPoint - self.__firstPosition)
+        else:
+            self.move(event.scenePos() - self.__firstPosition)
         self.position = self.findHandlePosition()
 
     def mouseReleaseEvent(self, event):
-        self.move(event.scenePos() - self.__firstPosition)
+        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
+            self.move(self.snap.snapPoint - self.__firstPosition)
+        else:self.move(event.scenePos() - self.__firstPosition)
         self.position=self.findHandlePosition()
 
     def mouseMoveEvent(self, event):
-        self.move(event.scenePos() - self.__firstPosition)
+        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
+            self.move(self.snap.snapPoint - self.__firstPosition)
+        else:
+            self.move(event.scenePos() - self.__firstPosition)
         self.position = self.findHandlePosition()
 

@@ -11,7 +11,7 @@ from UI import DrawScene
 from Helpers.Settings import Setting
 from Model.DrawEnums import ETypes
 from Helpers.GeoMath import GeoMath
-
+from Helpers.Snap import Snap
 
 class ElementObj(QGraphicsObject):
     elementUpdate = pyqtSignal(object)
@@ -73,9 +73,11 @@ class ElementObj(QGraphicsObject):
         QGraphicsObject.__init__(self, parent)
         self.__element: Element = element
         self.__drawScene=drawScene
+        self.__snap=drawScene.snap
         self.__elementContext = BuilderContext()
         self.__elementBuilder = self.elementContext.setElementBuilder(self.element.elementTypeId)
         self.elementBuilder.setElementInformation(self.element)
+
 
         self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
         self.setFlag(QGraphicsObject.ItemIsFocusable)
@@ -138,7 +140,7 @@ class ElementObj(QGraphicsObject):
             QPointF(self.element.points[1].x,self.element.points[1].y))
 
     def addHandles(self):
-        handles=HandleBuilder(self.element,self.type).createHandles()
+        handles=HandleBuilder(self,self.type,self.__snap).createHandles()
         for handle in handles:
             self.drawScene.addItem(handle)
             handle.setZValue(1000)

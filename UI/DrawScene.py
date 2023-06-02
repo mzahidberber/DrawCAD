@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QLineF, QPointF,QRectF
 
 from Elements import ElementObj
 from Helpers.Settings import Setting
+from Helpers.Snap.Snap import Snap
 
 import math
 
@@ -14,6 +15,11 @@ class DrawScene(QGraphicsScene):
     MovedMouse = pyqtSignal(object)
     EscOrEnterSignal=pyqtSignal()
 
+    __snap:Snap
+
+    @property
+    def snap(self)->Snap:return self.__snap
+
     def __init__(self, view):
         super().__init__()
         self.__view = view
@@ -21,8 +27,9 @@ class DrawScene(QGraphicsScene):
 
         self.setItemIndexMethod(QGraphicsScene.ItemIndexMethod.NoIndex)
 
+        self.__snap = Snap(self)
     
-    def scanFieldObjects(self,field:QRectF) -> list[QGraphicsItem]:return self.items(field, mode=Qt.IntersectsItemBoundingRect)
+    def scanFieldObjects(self,field:QRectF) -> list[QGraphicsItem]:return self.items(field, mode=Qt.IntersectsItemShape)
 
     def changed(self, region) -> None:
         print("regionnn")

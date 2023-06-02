@@ -2,12 +2,13 @@ from Helpers.Handles import BaseHandle
 from Model import Element, ETypes
 from PyQt5.QtCore import QPointF
 from Helpers.GeoMath import GeoMath
-
+from Helpers.Snap import Snap
 
 class PointMoveHandle(BaseHandle):
-    def __init__(self, element: Element, elementType: ETypes, pointPos: int):
-        super().__init__()
-        self.element = element
+    def __init__(self, elementObj, elementType: ETypes, pointPos: int,snap:Snap):
+        super().__init__(snap)
+        self.__elementObj = elementObj
+        self.element = elementObj.element
         self.__type = elementType
         self.__pointPos = pointPos
 
@@ -50,13 +51,22 @@ class PointMoveHandle(BaseHandle):
                     self.element.points[2].y = scenePos.y()
 
     def mousePressEvent(self, event):
-        self.__setPoint(event.scenePos())
+        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
+            self.__setRadius(self.snap.snapPoint)
+        else:
+            self.__setRadius(event.scenePos())
         self.position = event.scenePos()
 
     def mouseReleaseEvent(self, event):
-        self.__setPoint(event.scenePos())
+        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
+            self.__setRadius(self.snap.snapPoint)
+        else:
+            self.__setRadius(event.scenePos())
         self.position = event.scenePos()
 
     def mouseMoveEvent(self, event):
-        self.__setPoint(event.scenePos())
+        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
+            self.__setRadius(self.snap.snapPoint)
+        else:
+            self.__setRadius(event.scenePos())
         self.position = event.scenePos()

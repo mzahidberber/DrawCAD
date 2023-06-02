@@ -19,8 +19,8 @@ class ArcBuilder(ElementBuilder):
 
     def paint(self, painter):
         painter.drawArc(self.__square,int(self.__startAngle),int(self.__stopAngle))
-        painter.drawPath(self.shape())
-        painter.drawRect(self.shape().boundingRect())
+        # painter.drawPath(self.shape())
+        # painter.drawRect(self.shape().boundingRect())
 
     def shape(self) -> QPainterPath:
         painterStrock = QPainterPathStroker()
