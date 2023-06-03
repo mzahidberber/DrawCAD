@@ -7,6 +7,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QLineF, QPointF,QRectF
 from Elements import ElementObj
 from Helpers.Settings import Setting
 from Helpers.Snap.Snap import Snap
+from Helpers.Select import Select
 
 import math
 
@@ -17,8 +18,11 @@ class DrawScene(QGraphicsScene):
 
     __snap:Snap
 
+
     @property
     def snap(self)->Snap:return self.__snap
+
+    
 
     def __init__(self, view):
         super().__init__()
@@ -28,12 +32,13 @@ class DrawScene(QGraphicsScene):
         self.setItemIndexMethod(QGraphicsScene.ItemIndexMethod.NoIndex)
 
         self.__snap = Snap(self)
-    
-    def scanFieldObjects(self,field:QRectF) -> list[QGraphicsItem]:return self.items(field, mode=Qt.IntersectsItemShape)
 
-    def changed(self, region) -> None:
-        print("regionnn")
-        print(region)
+    
+    def scanFieldObjects(self,field:QRectF,mode=Qt.IntersectsItemShape) -> list[QGraphicsItem]:
+        if mode==Qt.IntersectsItemShape:return self.items(field, mode=Qt.IntersectsItemShape)
+        elif mode==Qt.ContainsItemShape:return self.items(field,mode=Qt.ContainsItemShape)
+
+
 
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_Escape:

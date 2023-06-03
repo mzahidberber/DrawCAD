@@ -296,7 +296,7 @@ class LayerLock(QPushButton):
     def click(self,ev):
         if ev==True:
             self.__layer.lock=False
-            self.__layer.showElements()
+            self.__layer.lockElements()
         else:
             self.__layer.lock=True
             self.__layer.unlockElements()

@@ -12,7 +12,6 @@ from Helpers.Settings import Setting
 from Model.DrawEnums import ETypes
 from Helpers.GeoMath import GeoMath
 from Helpers.Snap import Snap
-
 class ElementObj(QGraphicsObject):
     elementUpdate = pyqtSignal(object)
 
@@ -25,6 +24,14 @@ class ElementObj(QGraphicsObject):
     __handles: list[BaseHandle]
     __pen: QPen
     __type: ETypes
+    __lock:bool=False
+
+
+    @property
+    def lock(self)->bool: return  self.__lock
+
+    @lock.setter
+    def lock(self,lock:bool):self.__lock=lock
 
     @property
     def type(self) -> ETypes:
@@ -69,18 +76,22 @@ class ElementObj(QGraphicsObject):
 
 
 
-    def __init__(self, element: Element,drawScene:DrawScene, parent=None):
+    def __init__(self, element: Element,drawScene:DrawScene,select:'Select', parent=None):
         QGraphicsObject.__init__(self, parent)
         self.__element: Element = element
         self.__drawScene=drawScene
         self.__snap=drawScene.snap
+        self.__select=select
         self.__elementContext = BuilderContext()
         self.__elementBuilder = self.elementContext.setElementBuilder(self.element.elementTypeId)
         self.elementBuilder.setElementInformation(self.element)
 
+        self.pen = CreatePen.createPenAtLayer(self.element.layer)
 
         self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
         self.setFlag(QGraphicsObject.ItemIsFocusable)
+        self.setFlag(QGraphicsObject.ItemIsSelectable)
+
 
         self.__handles=[]
 
@@ -101,10 +112,31 @@ class ElementObj(QGraphicsObject):
         # self.setFlag(QGraphicsObject.ItemIsFocusable)
         # self.setFlag(QGraphicsObject.ItemIsSelectable, True)
 
-    def elementHide(self):self.hide()
-    def elementShow(self):self.show()
-    def elementSelectedOff(self):self.setFlag(QGraphicsObject.ItemIsSelectable,False)
-    def elementSelectedOn(self):self.setFlag(QGraphicsObject.ItemIsSelectable,True)
+
+
+    def elementHide(self):
+        self.elementSelectedOff()
+        self.hide()
+    def elementShow(self):
+        self.elementSelectedOn()
+        self.show()
+    def elementSelectedOff(self):
+        self.isSelected=False
+        self.lock=True
+        self.removeHandles()
+    def elementSelectedOn(self):
+        self.isSelected=True
+        self.lock = False
+
+    def select(self):
+        self.isSelected = True
+        self.pen = Setting.lineSelectedPen
+
+
+    def unSelect(self):
+        self.isSelected = False
+        self.pen=CreatePen.createPenAtLayer(self.element.layer)
+        self.removeHandles()
 
 
     def mouseMoveEvent(self, event) -> None:
@@ -113,34 +145,24 @@ class ElementObj(QGraphicsObject):
     
     def mousePressEvent(self, event) -> None:
         if(event.isAccepted()):
-            if self.isSelected == False:
-                # for i in self.handles:i.setVisible(True)
-                self.addHandles()
-                self.pen=Setting.lineSelectedPen
-                self.isSelected=True
-            else:
-                self.pen=QPen(QColor(
-                    self.element.layer.pen.red,
-                    self.element.layer.pen.green,
-                    self.element.layer.pen.blue),
-                    self.element.layer.thickness,
-                    Qt.SolidLine,)
-                self.isSelected=False
-                # for i in self.handles:i.setVisible(False)
-                self.removeHandles()
+            if not self.lock:
+                if not self.isSelected:
+                    self.select()
+                    self.__select.addObject(self)
+                    if self.__select.selectedObjectsLen<=5:
+                        self.addHandles()
+                else:
+                    self.unSelect()
+                    self.__select.removeObject(self)
+
 
     def removeHandles(self):
         for i in self.handles:self.drawScene.removeItem(i)
         self.handles.clear()
 
 
-    def findMidPointLine(self) -> QPointF:
-        return GeoMath.findLineCenterPoint(
-            QPointF(self.element.points[0].x,self.element.points[0].y),
-            QPointF(self.element.points[1].x,self.element.points[1].y))
-
     def addHandles(self):
-        handles=HandleBuilder(self,self.type,self.__snap).createHandles()
+        handles=HandleBuilder(self.element,self.type,self.__snap).createHandles()
         for handle in handles:
             self.drawScene.addItem(handle)
             handle.setZValue(1000)
@@ -153,7 +175,6 @@ class ElementObj(QGraphicsObject):
     def paint(self, painter, option, widget):
         self.elementBuilder.setElementInformation(self.element)
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
-        self.pen:QPen=CreatePen.createPenAtLayer(self.element.layer)
         painter.setPen(self.pen)
         self.elementBuilder.paint(painter)
 

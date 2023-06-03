@@ -8,10 +8,9 @@ class MoveHandle(BaseHandle):
     __firstPosition:QPointF
     __firstPoints:list[Point]
     __type:ETypes
-    def __init__(self,elementObj,elementType:ETypes,snap:Snap):
+    def __init__(self,element:Element,elementType:ETypes,snap:Snap):
         super().__init__(snap)
-        self.__elementObj=elementObj
-        self.element=elementObj.element
+        self.element=element
         self.__type=elementType
         self.__firstPoints=[]
 
@@ -40,20 +39,31 @@ class MoveHandle(BaseHandle):
         for p in self.element.points:self.__firstPoints.append(copy.deepcopy(p))
         self.__firstPosition = self.findHandlePosition()
 
-        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
-            self.move(self.snap.snapPoint - self.__firstPosition)
-        else:
-            self.move(event.scenePos() - self.__firstPosition)
+        if self.snap.snapPointElement == self.element:
+            self.snap.__continueSnapElement = self.element
+
+        if self.snap.snapPoint is not None:self.move(self.snap.snapPoint - self.__firstPosition)
+        else:self.move(event.scenePos() - self.__firstPosition)
+
         self.position = self.findHandlePosition()
 
     def mouseReleaseEvent(self, event):
-        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
+        if self.snap.snapPointElement == self.element:
+            self.snap.__continueSnapElement=self.element
+
+
+        if self.snap.snapPoint is not None:
             self.move(self.snap.snapPoint - self.__firstPosition)
         else:self.move(event.scenePos() - self.__firstPosition)
         self.position=self.findHandlePosition()
 
+
     def mouseMoveEvent(self, event):
-        if self.snap.snapPoint is not None and self.snap.snapPoint not in list(map(lambda x:x.position,self.__elementObj.handles)):
+        if self.snap.snapPointElement == self.element:
+            self.snap.__continueSnapElement=self.element
+
+
+        if self.snap.snapPoint is not None:
             self.move(self.snap.snapPoint - self.__firstPosition)
         else:
             self.move(event.scenePos() - self.__firstPosition)

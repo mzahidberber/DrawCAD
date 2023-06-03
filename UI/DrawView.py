@@ -68,6 +68,7 @@ class DrawView(QMainWindow):
         self.__auth = auth
         self.__userAndToken = self.__auth.userAndToken
         self.__token = self.__auth.userAndToken.token
+        
 
         self.settingService()
         self.settingButtons()

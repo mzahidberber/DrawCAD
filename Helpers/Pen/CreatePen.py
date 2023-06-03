@@ -18,9 +18,13 @@ class CreatePen:
             CreatePen.penStyles[layer.pen.penStyleId])
 
     @staticmethod
-    def createPen(r: int, g: int, b: int, width: float, penStyleId: int) -> QPen:
-        return QPen(QColor(r, g, b), width, CreatePen.penStyles[penStyleId])
+    def createPen(r: int, g: int, b: int, width: float, penStyleId: int,alpha:float=1) -> QPen:
+        color=QColor(r, g, b)
+        color.setAlphaF(alpha)
+        return QPen(color, width, CreatePen.penStyles[penStyleId])
 
     @staticmethod
-    def createHatch(r: int, g: int, b: int, penPattern: int) -> QBrush:
-        return QBrush(QColor(r, g, b), style=CreatePen.penHatches[penPattern])
+    def createHatch(r: int, g: int, b: int, penPattern: int,alpha:float=1) -> QBrush:
+        color = QColor(r, g, b)
+        color.setAlphaF(alpha)
+        return QBrush(color, style=CreatePen.penHatches[penPattern])

@@ -2,7 +2,7 @@ from Elements import ElementObj
 from Model import Element, Layer,PenStyle
 from Model.DrawEnums import StateTypes
 from UI import DrawScene
-
+from Helpers.Select.Select import Select
 
 class DrawObjects:
     __layers:list[Layer]
@@ -35,8 +35,9 @@ class DrawObjects:
     def penStyles(self) -> list[PenStyle]:return self.__penStyles
     
 
-    def __init__(self,drawScene:DrawScene) -> None:
+    def __init__(self,drawScene:DrawScene,select:Select) -> None:
         self.__drawScene=drawScene
+        self.__select=select
         self.__layers=[]
         self.__elementObjs=[]
         self.__penStyles=[]
@@ -50,7 +51,7 @@ class DrawObjects:
         else:element.state = StateTypes.added
         if not hasattr(element,"layer"):element.layer=self.selectedLayer
         self.elements.append(element)
-        elementObj=ElementObj(element,self.__drawScene)
+        elementObj=ElementObj(element,self.__drawScene,self.__select)
         self.__elementObjs.append(elementObj)
         element.layer.addElement(elementObj)
 

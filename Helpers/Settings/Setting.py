@@ -20,8 +20,8 @@ class Setting:
     lineBoundDistanceSetting = 10
 
     # Snap Setting
-    snapSize = 4
-    snapSizeSetting = 7
+    snapSize = 5
+    snapSizeSetting = 8
 
     snapLineBoundDistance=0.1
 
@@ -44,6 +44,14 @@ class Setting:
 
     # Snap Degree Setting
     snapDegreePen = CreatePen.createPen(74, 128, 77, 1, 1)
+
+    # Select Setting
+
+    selectLeftPen = CreatePen.createPen(174, 216, 225, 1, 1)
+    selectLeftHatch = CreatePen.createHatch(174, 216, 225, 1,alpha=0.3)
+
+    selectRightPen = CreatePen.createPen(74, 128, 77, 1, 1)
+    selectRightHatch = CreatePen.createHatch(74,128,77, 1,alpha=0.3)
 
     # Preview Line Setting
     previewLinePen = CreatePen.createPen(211, 0, 0, 1, 1)
