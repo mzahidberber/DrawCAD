@@ -33,6 +33,7 @@ class DrawScene(QGraphicsScene):
 
         self.__snap = Snap(self)
 
+
     
     def scanFieldObjects(self,field:QRectF,mode=Qt.IntersectsItemShape) -> list[QGraphicsItem]:
         if mode==Qt.IntersectsItemShape:return self.items(field, mode=Qt.IntersectsItemShape)
@@ -43,7 +44,7 @@ class DrawScene(QGraphicsScene):
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_Escape:
             self.EscOrEnterSignal.emit()
-            print("esc")
+            # print("esc")
             for i in self.items():
                 i.setSelected(False)
                 if type(i) == ElementObj:

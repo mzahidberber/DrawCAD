@@ -72,6 +72,7 @@ class LayerBox(QDialog):
     def closeEvent(self, a0) -> None:
         self.__parent.getLayers()
         self.__parent.updateLayerBox()
+        self.__parent.elementInfoView.refreshElementInfo()
         return super().closeEvent(a0)
 
 
@@ -156,7 +157,6 @@ class NameEdit(QLineEdit):
     def ChangeName(self,ev):
         nameList=[]
         for i in self.__layerList:nameList.append(i.name)
-        print(self.__layer.name)
         if self.__layer.name=="0" or  ev=="" or ev in nameList:
             self.setStyleSheet(f"background-color: rgb(211,0,0);")
         else:
@@ -229,9 +229,8 @@ class PenStyleSelect(QComboBox):
 
         for i in self.__penStyleList:
             self.addItem(i.name)
-            if i==self.layer.pen.penStyle:
-                self.setCurrentText(i.name)
-                
+            if i.name == self.layer.pen.penStyle.name:
+                self.setCurrentIndex(self.__penStyleList.index(i))
 
         self.currentTextChanged.connect(self.changePenStyle)
      
@@ -264,7 +263,7 @@ class VisibilityButton(QPushButton):
         self.clicked.connect(self.click)
 
     def click(self,ev):
-        if ev==True:
+        if ev:
             self.__layer.visibility=False
             self.__layer.hideElements()
         else:

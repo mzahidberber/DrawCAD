@@ -9,11 +9,11 @@ class SSAngle(BaseModel):
 
 
     @property
-    def type(self) -> int:
+    def type(self) -> str:
         return self.__type
 
     @property
-    def value(self) -> int:
+    def value(self) -> float:
         return self.__value
     @value.setter
     def value(self,value: float):

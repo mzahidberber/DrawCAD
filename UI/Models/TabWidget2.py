@@ -9,10 +9,11 @@ from Service.Model import Token
 from UI.GraphicsView import GraphicsView
 from UI.DrawScene import DrawScene
 from UI.Models import DrawBoxDeleteButton, DrawBoxEditButton
-
 class TabWidget2(QWidget):
     mousePositionSignal=pyqtSignal(object)
     stopCommanSignal=pyqtSignal()
+    changeSelectObjectsSignal=pyqtSignal(list)
+    updateElement=pyqtSignal(object)
     __drawBox:DrawBox
     __commandPanel:CommandPanel
     __isSaved:bool=True
@@ -48,6 +49,8 @@ class TabWidget2(QWidget):
         self.__commandPanel = CommandPanel(self.__drawScene,self.__token,self.__drawBox)
         self.__commandPanel.stopCommandSignal.connect(self.runCommand)
         self.__commandPanel.saveDrawSignal.connect(self.saveDraw)
+        self.__commandPanel.changeSelectObjectsSignal.connect(self.changeSelectObjectsSignal)
+        self.__commandPanel.updateElement.connect(self.updateElement)
 
 
     def saveDraw(self,save:bool):self.isSaved=save
@@ -58,6 +61,7 @@ class TabWidget2(QWidget):
     def mousePosition(self,pos):self.mousePositionSignal.emit(pos)
     def settingView(self):
         self.verticalLayout = QVBoxLayout(self)
+        self.verticalLayout.setContentsMargins(3,3,3,3)
         self.gvGraphicsView = GraphicsView(self)
         self.gvGraphicsView.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.verticalLayout.addWidget(self.gvGraphicsView)

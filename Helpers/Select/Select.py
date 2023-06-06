@@ -1,8 +1,10 @@
 from Helpers.Select.SelectObj import SelectObj
-from PyQt5.QtCore import QPointF,QRectF,Qt
+from PyQt5.QtCore import QPointF,QRectF,Qt,QObject,pyqtSignal
 from Helpers.Settings import Setting
 from Elements.ElementObj import ElementObj
-class Select:
+class Select(QObject):
+
+    changeSelectObjectsSignal=pyqtSignal(list)
 
     __selectObj:SelectObj
     __firstPoint:QPointF or None
@@ -17,6 +19,7 @@ class Select:
     @property
     def selectObj(self)->SelectObj or None:return self.__selectObj
     def __init__(self,commandPanel):
+        super().__init__()
         self.__commandPanel=commandPanel
         self.__drawScene=commandPanel.drawScene
 
@@ -35,12 +38,14 @@ class Select:
             for i in self.__selectedObjects:i.unSelect()
 
         self.__selectedObjects.clear()
+        self.changeSelectObjectsSignal.emit(self.__selectedObjects)
         self.__drawScene.updateScene()
 
     def removeObject(self,element:ElementObj):
         if element in self.__selectedObjects:
             self.__selectedObjects.remove(element)
             self.__selectedObjectsLen=len(self.__selectedObjects)
+            self.changeSelectObjectsSignal.emit(self.__selectedObjects)
 
         if self.__selectedObjectsLen<=5:
             for i in self.selectedObjects:i.addHandles()
@@ -48,9 +53,13 @@ class Select:
         if element not in self.__selectedObjects:
             self.__selectedObjects.append(element)
             self.__selectedObjectsLen = len(self.__selectedObjects)
+            self.changeSelectObjectsSignal.emit(self.__selectedObjects)
 
         if self.__selectedObjectsLen>5:
             for i in self.selectedObjects:i.removeHandles()
+
+
+
 
     def moveMouse(self,scenePos:QPointF):
         if self.__firstPoint is not None:
@@ -80,6 +89,8 @@ class Select:
 
                 self.__selectedObjects=list(filter(lambda x:type(x)==ElementObj and x.lock==False,items))
                 self.__selectedObjectsLen = len(self.__selectedObjects)
+
+                self.changeSelectObjectsSignal.emit(self.__selectedObjects)
 
                 for i in self.__selectedObjects:i.select()
 

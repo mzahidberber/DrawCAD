@@ -102,7 +102,7 @@ class Pen(BaseModel):
             self.__blue=blue
             self.__green=green
 
-            self.__penStyle=None
+            self.__penStyle=PenStyle(name="solid")
             
         self.state=StateTypes.unchanged
 

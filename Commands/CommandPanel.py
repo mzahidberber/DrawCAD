@@ -16,6 +16,8 @@ class CommandPanel(QObject):
 
     stopCommandSignal=pyqtSignal(bool)
     saveDrawSignal=pyqtSignal(bool)
+    changeSelectObjectsSignal=pyqtSignal(list)
+    updateElement=pyqtSignal(object)
 
     __selectedLayer:Layer
     __selectedPen:Pen
@@ -81,6 +83,10 @@ class CommandPanel(QObject):
 
         self.__isStartCommand: bool = False
 
+        ##Select
+        self.__select = Select(self)
+        self.__select.changeSelectObjectsSignal.connect(self.changeSelectObjectsSignal)
+
         ##DrawScene
         self.__drawScene.EscOrEnterSignal.connect(self.finishCommand)
         drawScene.ClickedMouse.connect(self.addCoordinate)
@@ -92,11 +98,10 @@ class CommandPanel(QObject):
         ##Service
         self.__drawService = DrawService(self.__token)
 
-        ##Select
-        self.__select = Select(self)
+
 
         ##DrawObjs
-        self.__drawObjs=DrawObjects(self.__drawScene,self.__select)
+        self.__drawObjs=DrawObjects(self,self.__drawScene,self.__select)
 
         if len(drawBox.layers)==0:
             layers=self.__drawService.getLayers(self.__drawBox.id)
@@ -150,8 +155,8 @@ class CommandPanel(QObject):
         self.addElement(self.__drawService.isFinish())
     
     def addCoordinate(self, coordinate: QPointF):
-        if self.__isStartCommand:
 
+        if self.__isStartCommand:
             if self.__snap.snapPoint is not None:
                 self.__snap.clickPoint = self.__snap.snapPoint
                 element = self.__drawService.addCoordinate(
@@ -168,6 +173,7 @@ class CommandPanel(QObject):
                 self.addElement(element)
 
 
+
     def changeSelectedLayer(self,layerName:str):
         for i in self.__drawObjs.layers:
             if i.name==layerName:
@@ -176,15 +182,18 @@ class CommandPanel(QObject):
     def removeElement(self,element:ElementObj):
         self.__drawObjs.removeElement(element)
         self.saveDrawSignal.emit(False)
+
     def addElement(self,element:Element or None):
         if element !=None:
             self.__drawObjs.addElement(element)
             self.__elementDraw.drawElement(self.__drawObjs.getLastElementObj())
             self.__preview.stop()
-            self.__isStartCommand = False
             self.saveDrawSignal.emit(False)
             self.stopCommandSignal.emit(False)
             self.__snap.clickPoint=None
+            self.__isStartCommand = False
+
+
     def addLayer(self,layer: Layer):
         self.__drawObjs.addLayer(layer)
         self.saveDrawSignal.emit(False)

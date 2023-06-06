@@ -86,7 +86,7 @@ class ElementObj(QGraphicsObject):
         self.__elementBuilder = self.elementContext.setElementBuilder(self.element.elementTypeId)
         self.elementBuilder.setElementInformation(self.element)
 
-        self.pen = CreatePen.createPenAtLayer(self.element.layer)
+
 
         self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
         self.setFlag(QGraphicsObject.ItemIsFocusable)
@@ -114,18 +114,11 @@ class ElementObj(QGraphicsObject):
 
 
 
-    def elementHide(self):
-        self.elementSelectedOff()
-        self.hide()
-    def elementShow(self):
-        self.elementSelectedOn()
-        self.show()
     def elementSelectedOff(self):
         self.isSelected=False
         self.lock=True
         self.removeHandles()
     def elementSelectedOn(self):
-        self.isSelected=True
         self.lock = False
 
     def select(self):
@@ -162,7 +155,7 @@ class ElementObj(QGraphicsObject):
 
 
     def addHandles(self):
-        handles=HandleBuilder(self.element,self.type,self.__snap).createHandles()
+        handles=HandleBuilder(self,self.type,self.__snap).createHandles()
         for handle in handles:
             self.drawScene.addItem(handle)
             handle.setZValue(1000)
@@ -175,11 +168,11 @@ class ElementObj(QGraphicsObject):
     def paint(self, painter, option, widget):
         self.elementBuilder.setElementInformation(self.element)
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
+        if self.isSelected:
+            self.pen = Setting.lineSelectedPen
+        else:
+            self.pen = CreatePen.createPenAtLayer(self.element.layer)
         painter.setPen(self.pen)
         self.elementBuilder.paint(painter)
-
-        
-        # print("elementpoint: ",self.__element.points[0].pointX,"-------",self.__element.points[0].pointY)
-        # print("elementpoint: ",self.__element.points[1].pointX,"-------",self.__element.points[1].pointY)
 
     def boundingRect(self):return self.elementBuilder.boundaryBuild()

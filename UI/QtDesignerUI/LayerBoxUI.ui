@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EditLayer</class>
- <widget class="QDialog" name="EditLayer">
+ <class>LayerBox</class>
+ <widget class="QDialog" name="LayerBox">
   <property name="geometry">
    <rect>
     <x>0</x>

@@ -3,11 +3,12 @@ from Model import Element, ETypes
 from PyQt5.QtCore import QPointF
 from Helpers.GeoMath import GeoMath
 from Helpers.Snap import Snap
-
+from Elements import ElementObj
 class PointMoveHandle(BaseHandle):
-    def __init__(self,element:Element, elementType: ETypes, pointPos: int,snap:Snap):
+    def __init__(self, elementObj:ElementObj, elementType: ETypes, pointPos: int, snap:Snap):
         super().__init__(snap)
-        self.element = element
+        self.elementObj=elementObj
+        self.element = elementObj.element
         self.__type = elementType
         self.__pointPos = pointPos
 
@@ -22,7 +23,7 @@ class PointMoveHandle(BaseHandle):
         self.__point.x = scenePos.x()
         self.__point.y = scenePos.y()
 
-        if self.__type == ETypes.arc:
+        if self.__type == ETypes.Arc:
             centerAndRadius = GeoMath.findThreePointCenterAndRadius(self.element.points[1], self.element.points[2],
                                                                     self.element.points[3])
             if centerAndRadius.centerPoint!=None or centerAndRadius.radius!=None:
@@ -34,7 +35,7 @@ class PointMoveHandle(BaseHandle):
             self.element.ssAngles[0].value = ssAngle[0]
             self.element.ssAngles[1].value = ssAngle[1]
 
-        if self.__type == ETypes.rectangle:
+        if self.__type == ETypes.Rectangle:
             match self.__pointPos:
                 case 0:
                     self.element.points[1].y = scenePos.y()
@@ -68,6 +69,7 @@ class PointMoveHandle(BaseHandle):
         else:
             self.__setPoint(event.scenePos())
         self.position = event.scenePos()
+        self.elementObj.elementUpdate.emit(self.elementObj)
 
     def mouseMoveEvent(self, event):
         if self.snap.snapPointElement == self.element:

@@ -15,7 +15,7 @@ from UI.Models.DrawBoxDeleteButton import DrawBoxDeleteButton
 from UI.TabWidgetBox import TabWidgetBox
 from Commands import CommandPanel, CommandEnums
 from Model import DrawBox
-from UI.Models import TabWidget2
+from UI.Models import TabWidget2,ElementInfo
 from Helpers.Snap.Snap import Snap
 from Helpers.Snap.SnapTypes import SnapTypes
 from Helpers.Settings import Setting
@@ -28,9 +28,8 @@ class DrawView(QMainWindow):
     __drawService: DrawService
     __drawLayers: list[TabWidget2] = []
     __isStartDraw: bool = False
-    __selectedDrawLayerId: int
+    __selectedDrawLayerId: int=0
     __selectedDrawLayer: TabWidget2 = None
-    __tabAndDrawBox: dict[int, TabWidget2] = {}
 
     @property
     def selectedCommandP(self) -> CommandPanel:
@@ -78,6 +77,7 @@ class DrawView(QMainWindow):
         self.settingLayerBoxAndLayerComboBox()
 
         self.setButtonsDisable(True)
+
 
         self.ui.gbxPainBox.hide()
         self.ui.gbxGridDistance.hide()
@@ -140,17 +140,24 @@ class DrawView(QMainWindow):
         self.getDrawBoxItems()
 
     def tabClose(self, ev):
-        if self.__tabAndDrawBox[ev].isSaved:
+        print("close--------->", ev)
+        if self.drawLayers[ev].isSaved:
             self.ui.twDrawTabs.removeTab(ev)
             self.closeDraw(ev)
+            self.tabChange(self.ui.twDrawTabs.currentIndex())
         else:
             result = self.showMessageBox("Will you save the drawing?")
             if result:
-                index = self.__drawBoxes.index(self.__tabAndDrawBox[ev].commandPanel.drawBox)
-                self.saveDrawBox(self.__tabAndDrawBox[ev].commandPanel.drawBox, index)
-                self.__tabAndDrawBox[ev].commandPanel.saveDraw()
+                index = self.__drawBoxes.index(self.drawLayers[ev].commandPanel.drawBox)
+                self.saveDrawBox(self.drawLayers[ev].commandPanel.drawBox, index)
+                self.drawLayers[ev].commandPanel.saveDraw()
                 self.ui.twDrawTabs.removeTab(ev)
                 self.closeDraw(ev)
+                self.tabChange(self.ui.twDrawTabs.currentIndex())
+
+
+
+        if self.ui.twDrawTabs.count()==1:self.elementInfoView.clearElementInfo()
 
     def showMessageBox(self, message: str) -> bool:
         msg = QMessageBox()
@@ -162,18 +169,22 @@ class DrawView(QMainWindow):
         return returnValue == QMessageBox.Ok if True else False
 
     def closeDraw(self, index: int):
-        self.__tabAndDrawBox[index].drawBox.isStart = False
+        self.drawLayers[index-1].drawBox.isStart = False
+        self.drawLayers.remove(self.drawLayers[index-1])
         self.getDrawBoxItems()
 
     def tabChange(self, ev):
-        if ev != 0 and self.__tabAndDrawBox[self.__selectedDrawLayerId].isStartCommand != True:
-            self.selectedDrawLayerId = ev
-            self.selectedDrawLayer = self.__tabAndDrawBox[ev]
-            # print(self.__tabAndDrawBox[ev].commandPanel.layers.index(self.__tabAndDrawBox[ev].commandPanel.selectedLayer))
+        if ev != 0 and self.drawLayers[self.selectedDrawLayerId].isStartCommand != True:
+            self.selectedDrawLayer = self.drawLayers[ev-1]
+            self.selectedDrawLayerId = ev-1
+            self.selectedDrawLayer.commandPanel.select.cancelSelect()
+            self.elementInfoView.commandPanel=self.selectedDrawLayer.commandPanel
+            self.elementInfoView.clearElementInfo()
             self.getLayers()
 
+
     def enableTabs(self, enable: bool, index: int):
-        for i in range(0, len(self.__tabAndDrawBox) + 1):
+        for i in range(0, len(self.drawLayers) + 1):
             if i == index: continue
             self.ui.twDrawTabs.setTabEnabled(i, enable)
 
@@ -189,17 +200,14 @@ class DrawView(QMainWindow):
 
             self.getDrawBoxItems()
             self.setButtonsDisable(False)
-
     def addDrawLayer(self, selectedDrawBox: DrawBox):
         drawLayer = TabWidget2(selectedDrawBox, self.__token)
+        drawLayer.changeSelectObjectsSignal.connect(self.elementInfoView.changeSelectObjects)
         drawLayer.mousePositionSignal.connect(self.mousePosition)
         drawLayer.stopCommanSignal.connect(self.stopCommand)
+        drawLayer.updateElement.connect(self.elementInfoView.refreshElementInfo)
         tabId = self.ui.twDrawTabs.addTab(drawLayer, drawLayer.commandPanel.drawBox.name)
-        # self.ui.twDrawTabs.setCurrentIndex(tabId)
-        self.selectedDrawLayerId = tabId
-        self.selectedDrawLayer = drawLayer
         self.drawLayers.append(drawLayer)
-        self.__tabAndDrawBox[tabId] = drawLayer
 
     def addDrawBoxItems(self, drawBox: DrawBox, row: int):
         self.ui.twDrawBoxes.insertRow(row)
@@ -279,6 +287,12 @@ class DrawView(QMainWindow):
     def settingElementInformation(self):
         self.ui.ElementsImformation.hide()
 
+        self.elementInfoView=ElementInfo(self.ui.treewElementInfo)
+
+    def elementInfo(self,ev):
+        if ev  and self.__selectedDrawLayer is not None:self.ui.ElementsImformation.show()
+        else:self.ui.ElementsImformation.hide()
+
     # endregion
 
     # region Email Login
@@ -292,6 +306,8 @@ class DrawView(QMainWindow):
     def settingLayerBoxAndLayerComboBox(self):
         self.layerBox = LayerBox(self)
         self.ui.cbxLayers.currentTextChanged.connect(self.changeLayer)
+
+
 
     def setSelectedLayerAndPen(self, index: int):
         self.selectedDrawLayer.commandPanel.selectedLayer = self.selectedDrawLayer.commandPanel.layers[index]
@@ -325,6 +341,7 @@ class DrawView(QMainWindow):
 
     # endregion
 
+
     # region Buttons
 
     def settingButtons(self):
@@ -357,6 +374,8 @@ class DrawView(QMainWindow):
 
         self.ui.actionPolarMode.triggered.connect(self.polarMode)
         self.ui.actionOrthoMode.triggered.connect(self.orthoMode)
+        
+        self.ui.actionOpenElementInformationBox.triggered.connect(self.elementInfo)
 
 
     def setButtonsDisable(self, isDisable: bool):

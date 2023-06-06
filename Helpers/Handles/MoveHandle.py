@@ -4,13 +4,15 @@ from Model import Element,Point,ETypes
 import copy
 from Helpers.GeoMath import GeoMath
 from Helpers.Snap import Snap
+from Elements import ElementObj
 class MoveHandle(BaseHandle):
     __firstPosition:QPointF
     __firstPoints:list[Point]
     __type:ETypes
-    def __init__(self,element:Element,elementType:ETypes,snap:Snap):
+    def __init__(self,elementObj:ElementObj,elementType:ETypes,snap:Snap):
         super().__init__(snap)
-        self.element=element
+        self.elementObj=elementObj
+        self.element=elementObj.element
         self.__type=elementType
         self.__firstPoints=[]
 
@@ -20,11 +22,11 @@ class MoveHandle(BaseHandle):
 
     def findHandlePosition(self) -> QPointF:
         match self.__type:
-            case ETypes.line:return GeoMath.findLineCenterPoint(self.element.points[0],self.element.points[1])
-            case ETypes.circle:return QPointF(self.element.points[0].x,self.element.points[0].y)
-            case ETypes.rectangle:return GeoMath.findLineCenterPoint(self.element.points[0],self.element.points[2])
-            case ETypes.arc:return QPointF(self.element.points[0].x,self.element.points[0].y)
-            case ETypes.ellips:return QPointF(self.element.points[0].x,self.element.points[0].y)
+            case ETypes.Line:return GeoMath.findLineCenterPoint(self.element.points[0], self.element.points[1])
+            case ETypes.Circle:return QPointF(self.element.points[0].x, self.element.points[0].y)
+            case ETypes.Rectangle:return GeoMath.findLineCenterPoint(self.element.points[0], self.element.points[2])
+            case ETypes.Arc:return QPointF(self.element.points[0].x, self.element.points[0].y)
+            case ETypes.Ellipse:return QPointF(self.element.points[0].x, self.element.points[0].y)
             # case ETypes.spline:return QPointF(self.__element.points[0].x,self.__element.points[0].y)
 
     def move(self, difference:QPointF):
@@ -56,6 +58,7 @@ class MoveHandle(BaseHandle):
             self.move(self.snap.snapPoint - self.__firstPosition)
         else:self.move(event.scenePos() - self.__firstPosition)
         self.position=self.findHandlePosition()
+        self.elementObj.elementUpdate.emit(self.elementObj)
 
 
     def mouseMoveEvent(self, event):

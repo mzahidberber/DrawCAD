@@ -117,10 +117,10 @@ class Layer(BaseModel):
         for e in self.__elements:e.elementSelectedOn()
 
     def hideElements(self):
-        for e in self.__elements:e.elementHide()
+        for e in self.__elements:e.hide()
 
     def showElements(self):
-        for e in self.__elements:e.elementShow()
+        for e in self.__elements:e.show()
 
     @staticmethod
     def create0Layer():
