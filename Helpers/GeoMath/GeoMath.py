@@ -451,3 +451,58 @@ class GeoMath:
             stopAngle = p3Aci - startAngle
 
         return [-startAngle * 16, -stopAngle * 16]
+
+    @staticmethod
+    def findPointsToDistance(point:QPointF, distance:float, slope:float):
+        "Baslagic Noktasina Aynı Dogru Uzerindeki Eşit Uzunluktaki iki Noktayi Bulur"
+
+        pointA = QPointF()
+        pointB = QPointF()
+
+        if slope == 0:
+            pointA.setX(point.x() + distance)
+            pointA.setY(point.y())
+
+            pointB.setX(point.x() - distance)
+            pointB.setY(point.y())
+
+        elif math.isinf(slope):
+            pointA.setX(point.x())
+            pointA.setY(point.y() + distance)
+
+            pointB.setX(point.x())
+            pointB.setY(point.y() - distance)
+
+        else:
+            dx = distance / math.sqrt(1 + (slope * slope))
+            dy = slope * dx
+
+            pointA.setX(point.x() + dx)
+            pointA.setY(point.y() + dy)
+
+            pointB.setX(point.x() - dx)
+            pointB.setY(point.y() - dy)
+        return pointA, pointB
+    @staticmethod
+    def findPointToDistance(startPoint:QPointF, distance:float, mousePos:QPointF)->QPointF:
+        "Mousenin Konumuna Gore Belli Uzunluktali Mesafedeki Noktayi Bulur"
+
+        slope = GeoMath.findLineSlope(startPoint, mousePos)
+
+        a = GeoMath.findPointsToDistance(startPoint, distance, slope)
+        b = GeoMath.findPointsToDistance(startPoint, distance, -slope)
+
+        points = GeoMath.wherePointInLine(startPoint, b[1], a[0])
+        mouseCoorinate = GeoMath.wherePointInLine(startPoint, b[1], mousePos)
+
+        if points == "on":
+            xDifference = mousePos.x() - startPoint.x()
+            yDifference = mousePos.y() - startPoint.y()
+            if xDifference < 0 or yDifference < 0:
+                return a[1]
+            else:
+                return a[0]
+        elif points == mouseCoorinate:
+            return a[0]
+        else:
+            return a[1]

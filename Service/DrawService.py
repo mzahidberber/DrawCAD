@@ -233,10 +233,7 @@ class DrawService:
                 connectionString, json=body, headers=self.getAuthorize()
             ).json()
         )
-        if response.data == None:
-            return None
-        else:
-            return Element(response.data)
+        return response.data if response.data is None else Element(response.data)
 
     @LogAspect.logAspect
     def stopCommand(self):

@@ -11,14 +11,13 @@ class PreviewObject(QGraphicsObject):
 
     cancelSignal=pyqtSignal()
     _preivew:BasePreview
-    _radius:float=50
 
-    def __init__(self, parent=None):
+    def __init__(self,commandPanel ,parent=None):
         QGraphicsObject.__init__(self, parent)
-        
+        self.__commandPanel=commandPanel
         self._previewContext = PreviewContext()
         self._preivew=self._previewContext.setDefaultPreview()
-    
+
 
     # def refreshTime(self):self._time=datetime.now()
 
@@ -26,13 +25,13 @@ class PreviewObject(QGraphicsObject):
     #     if datetime.now().second-self._time.second >= self._timeSetting:return True
     #     else:return False
 
-    def setRadius(self,radius:float=50):self._radius=radius
+
 
     def setElementType(self, elementType: int):
         self._preivew = self._previewContext.setPreviewBuilder(elementType)
-        self._preivew.setRadius(self._radius)
         self._preivew.connectStop(self.stopPreview,False)
         self._preivew.connectStop(self.cancelPreview,True)
+        self._preivew.setCommandPanel(self.__commandPanel)
 
     def stopPreview(self):self._preivew=self._previewContext.setDefaultPreview()
     

@@ -59,7 +59,7 @@ class BaseHandle(QGraphicsObject):
             QPointF(self.position.x()+Setting.handleSize,self.position.y()+Setting.handleSize))
 
     def paint(self, painter, option, widget):
-        painter.setPen(self.pen)
+        painter.setPen(Setting.handlePen)
         painter.drawRect(self.createSquare())
 
     def boundingRect(self):

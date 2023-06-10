@@ -2,18 +2,18 @@ from enum import Enum
 
 
 class CommandEnums(Enum):
-    line = 0
-    circleTwoPoint = 1
-    circleCenterPoint = 2
-    circleCenterRadius = 3
-    circleTreePoint = 4
-    rectangle = 5
-    arcThreePoint = 6
-    spline = 7
-    move = 8
-    copy = 9
-    ellipse=10
-    arcCenterTwoPoint = 11
+    Line = 0
+    CircleTwoPoint = 1
+    CircleCenterPoint = 2
+    CircleCenterRadius = 3
+    CircleTreePoint = 4
+    Rectangle = 5
+    ArcThreePoint = 6
+    Polyline = 7
+    Move = 8
+    Copy = 9
+    Ellipse=10
+    ArcCenterTwoPoint = 11
 
 
 
@@ -26,12 +26,12 @@ class CommandTypes(Enum):
     spline=5
 
 getType={
-    CommandEnums.line:CommandTypes.line,
-    CommandEnums.circleTwoPoint:CommandTypes.circle,
-    CommandEnums.circleCenterPoint:CommandTypes.circle,
-    CommandEnums.circleCenterRadius:CommandTypes.circle,
-    CommandEnums.circleTreePoint:CommandTypes.circle,
-    CommandEnums.rectangle:CommandTypes.rectangle,
-    CommandEnums.arcThreePoint:CommandTypes.arc,
-    CommandEnums.spline:CommandTypes.spline
+    CommandEnums.Line:CommandTypes.line,
+    CommandEnums.CircleTwoPoint:CommandTypes.circle,
+    CommandEnums.CircleCenterPoint:CommandTypes.circle,
+    CommandEnums.CircleCenterRadius:CommandTypes.circle,
+    CommandEnums.CircleTreePoint:CommandTypes.circle,
+    CommandEnums.Rectangle:CommandTypes.rectangle,
+    CommandEnums.ArcThreePoint:CommandTypes.arc,
+    CommandEnums.Polyline:CommandTypes.spline
     }

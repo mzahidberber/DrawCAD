@@ -12,13 +12,15 @@ from UI.LayerBox import LayerBox
 from UI.DrawScene import DrawScene
 from UI.Models.DrawBoxEditButton import DrawBoxEditButton
 from UI.Models.DrawBoxDeleteButton import DrawBoxDeleteButton
+from UI.Models.CommandLineUI import CommandLineUI
 from UI.TabWidgetBox import TabWidgetBox
 from Commands import CommandPanel, CommandEnums
 from Model import DrawBox
-from UI.Models import TabWidget2,ElementInfo
+from UI.Models import TabWidget2, ElementInfo
 from Helpers.Snap.Snap import Snap
 from Helpers.Snap.SnapTypes import SnapTypes
 from Helpers.Settings import Setting
+import json
 
 
 class DrawView(QMainWindow):
@@ -28,7 +30,7 @@ class DrawView(QMainWindow):
     __drawService: DrawService
     __drawLayers: list[TabWidget2] = []
     __isStartDraw: bool = False
-    __selectedDrawLayerId: int=0
+    __selectedDrawLayerId: int = 0
     __selectedDrawLayer: TabWidget2 = None
 
     @property
@@ -50,6 +52,7 @@ class DrawView(QMainWindow):
     @selectedDrawLayer.setter
     def selectedDrawLayer(self, drawLayer: TabWidget2) -> None:
         self.__selectedDrawLayer = drawLayer
+        self.selectedCommandP=self.__selectedDrawLayer.commandPanel
 
     @property
     def selectedDrawLayerId(self) -> int:
@@ -67,22 +70,85 @@ class DrawView(QMainWindow):
         self.__auth = auth
         self.__userAndToken = self.__auth.userAndToken
         self.__token = self.__auth.userAndToken.token
-        
 
+        self.getSettings()
         self.settingService()
         self.settingButtons()
         self.settingElementInformation()
         self.settingEmailLogin()
         self.settingTabWidget()
         self.settingLayerBoxAndLayerComboBox()
+        self.settingCommandLine()
 
         self.setButtonsDisable(True)
 
+        if Setting.polarMode:
+            self.ui.gbxPainBox.show()
+        else:
+            self.ui.gbxPainBox.hide()
 
-        self.ui.gbxPainBox.hide()
-        self.ui.gbxGridDistance.hide()
-        self.ui.dsbCatchPainDegree.valueChanged.connect(self.angleChange)
-        self.ui.dsbGridDistance.valueChanged.connect(self.gridDistanceChange)
+        if Setting.snapGrid:
+            self.ui.gbxGridDistance.show()
+        else:
+            self.ui.gbxGridDistance.hide()
+
+        self.ui.gbxRadiusBox.hide()
+        self.ui.dsbCatchPainDegree.editingFinished.connect(self.angleChange)
+        self.ui.dsbGridDistance.editingFinished.connect(self.gridDistanceChange)
+        self.ui.dsbRadius.editingFinished.connect(self.setRadius)
+
+
+
+    #region SaveSettingFile
+    def closeEvent(self, a0) -> None:
+        with open("setting.json", "w") as jsonFile:
+            json.dump({
+                "snap": {
+                    "snapEnd": Setting.snapEnd,
+                    "snapMiddle": Setting.snapMiddle,
+                    "snapCenter": Setting.snapCenter,
+                    "snapGrid": Setting.snapGrid,
+                    "snapNearest": Setting.snapNearest,
+                    "snapIntersection": Setting.snapIntersection,
+                    "lineWidth": Setting.lineWidth,
+                    "orthoMode": Setting.orthoMode,
+                    "polarMode": Setting.polarMode,
+                    "snapAngle": Setting.snapAngle,
+                    "gridDistance": Setting.gridDistance,
+                    "elementInfo":Setting.elementInfo,
+                    "commandLine":Setting.commandLine
+                }
+            }, jsonFile)
+
+
+    def getSettings(self):
+        f = open("setting.json")
+        settings = json.load(f)
+        Setting.snapEnd = settings["snap"]["snapEnd"]
+        Setting.snapMiddle = settings["snap"]["snapMiddle"]
+        Setting.snapCenter = settings["snap"]["snapCenter"]
+        Setting.snapGrid = settings["snap"]["snapGrid"]
+        Setting.snapNearest = settings["snap"]["snapNearest"]
+        Setting.snapIntersection = settings["snap"]["snapIntersection"]
+        Setting.lineWidth = settings["snap"]["lineWidth"]
+        Setting.orthoMode = settings["snap"]["orthoMode"]
+        Setting.polarMode = settings["snap"]["polarMode"]
+        Setting.snapAngle = settings["snap"]["snapAngle"]
+        Setting.gridDistance = settings["snap"]["gridDistance"]
+        Setting.elementInfo = settings["snap"]["elementInfo"]
+        Setting.commandLine = settings["snap"]["commandLine"]
+
+    #endregion
+
+    # region CommandLine
+    def settingCommandLine(self):
+        self.__commandLineUI = CommandLineUI(self.ui.lwCommandText, self.ui.tbxCommandLine)
+        self.__commandLineUI.commandSignal.connect(lambda x:self.startCommand(x))
+        self.__commandLineUI.coordinateSignal.connect(lambda x:self.selectedCommandP.addCoordinate(x,snap=False))
+        self.__commandLineUI.distanceSignal.connect(lambda x:self.selectedCommandP.addCoordinateDistance(x))
+        self.__commandLineUI.escapeSignal.connect(self.stopCommand)
+
+    # endregion
 
     # region TabWidget
     def addDraw(self):
@@ -140,8 +206,7 @@ class DrawView(QMainWindow):
         self.getDrawBoxItems()
 
     def tabClose(self, ev):
-        print("close--------->", ev)
-        if self.drawLayers[ev].isSaved:
+        if self.drawLayers[ev-1].isSaved:
             self.ui.twDrawTabs.removeTab(ev)
             self.closeDraw(ev)
             self.tabChange(self.ui.twDrawTabs.currentIndex())
@@ -155,9 +220,7 @@ class DrawView(QMainWindow):
                 self.closeDraw(ev)
                 self.tabChange(self.ui.twDrawTabs.currentIndex())
 
-
-
-        if self.ui.twDrawTabs.count()==1:self.elementInfoView.clearElementInfo()
+        if self.ui.twDrawTabs.count() == 1: self.elementInfoView.clearElementInfo()
 
     def showMessageBox(self, message: str) -> bool:
         msg = QMessageBox()
@@ -169,19 +232,22 @@ class DrawView(QMainWindow):
         return returnValue == QMessageBox.Ok if True else False
 
     def closeDraw(self, index: int):
-        self.drawLayers[index-1].drawBox.isStart = False
-        self.drawLayers.remove(self.drawLayers[index-1])
+        self.drawLayers[index - 1].drawBox.isStart = False
+        self.drawLayers.remove(self.drawLayers[index - 1])
         self.getDrawBoxItems()
 
     def tabChange(self, ev):
         if ev != 0 and self.drawLayers[self.selectedDrawLayerId].isStartCommand != True:
-            self.selectedDrawLayer = self.drawLayers[ev-1]
-            self.selectedDrawLayerId = ev-1
-            self.selectedDrawLayer.commandPanel.select.cancelSelect()
-            self.elementInfoView.commandPanel=self.selectedDrawLayer.commandPanel
+            self.selectedDrawLayer = self.drawLayers[ev - 1]
+            self.selectedDrawLayerId = ev - 1
+            self.selectedCommandP.select.cancelSelect()
+            self.elementInfoView.commandPanel = self.selectedCommandP
             self.elementInfoView.clearElementInfo()
             self.getLayers()
+        else:
+            self.__commandLineUI.commandLine =None
 
+        self.ui.tbxCommandLine.setFocus()
 
     def enableTabs(self, enable: bool, index: int):
         for i in range(0, len(self.drawLayers) + 1):
@@ -200,12 +266,14 @@ class DrawView(QMainWindow):
 
             self.getDrawBoxItems()
             self.setButtonsDisable(False)
+
     def addDrawLayer(self, selectedDrawBox: DrawBox):
         drawLayer = TabWidget2(selectedDrawBox, self.__token)
         drawLayer.changeSelectObjectsSignal.connect(self.elementInfoView.changeSelectObjects)
         drawLayer.mousePositionSignal.connect(self.mousePosition)
         drawLayer.stopCommanSignal.connect(self.stopCommand)
         drawLayer.updateElement.connect(self.elementInfoView.refreshElementInfo)
+        drawLayer.clickMouse.connect(self.mouseClick)
         tabId = self.ui.twDrawTabs.addTab(drawLayer, drawLayer.commandPanel.drawBox.name)
         self.drawLayers.append(drawLayer)
 
@@ -252,7 +320,7 @@ class DrawView(QMainWindow):
         self.setButtonsDisable(False)
 
         self.ui.cbxLayers.clear()
-        for i in self.__selectedDrawLayer.commandPanel.layers:
+        for i in self.selectedCommandP.layers:
             px = QPixmap(12, 12)
             px.fill(QColor(i.pen.red, i.pen.green, i.pen.blue))
             self.ui.cbxLayers.addItem(QIcon(px), i.name)
@@ -268,14 +336,18 @@ class DrawView(QMainWindow):
         self.__drawService: DrawService = DrawService(self.__token)
 
     def saveDraw(self, event):
-        self.__selectedDrawLayer.commandPanel.saveDraw()
+        self.selectedCommandP.saveDraw()
 
     def startCommand(self, command: CommandEnums):
         self.enableTabs(False, self.ui.twDrawTabs.currentIndex())
-        self.__selectedDrawLayer.commandPanel.startCommand(command)
+        if command.value==3:self.ui.gbxRadiusBox.show()
+        self.selectedCommandP.startCommand(command)
 
     def stopCommand(self):
         self.enableTabs(True, self.ui.twDrawTabs.currentIndex())
+        self.ui.gbxRadiusBox.hide()
+        self.selectedCommandP.select.cancelSelect()
+        self.selectedCommandP.stopCommand(view=True)
 
     def logout(self):
         self.__auth.logout()
@@ -287,11 +359,13 @@ class DrawView(QMainWindow):
     def settingElementInformation(self):
         self.ui.ElementsImformation.hide()
 
-        self.elementInfoView=ElementInfo(self.ui.treewElementInfo)
+        self.elementInfoView = ElementInfo(self.ui.treewElementInfo)
 
-    def elementInfo(self,ev):
-        if ev  and self.__selectedDrawLayer is not None:self.ui.ElementsImformation.show()
-        else:self.ui.ElementsImformation.hide()
+    def elementInfo(self, ev):
+        if ev and self.__selectedDrawLayer is not None:
+            self.ui.ElementsImformation.show()
+        else:
+            self.ui.ElementsImformation.hide()
 
     # endregion
 
@@ -305,32 +379,31 @@ class DrawView(QMainWindow):
 
     def settingLayerBoxAndLayerComboBox(self):
         self.layerBox = LayerBox(self)
-        self.ui.cbxLayers.currentTextChanged.connect(self.changeLayer)
-
-
+        self.ui.cbxLayers.currentIndexChanged.connect(self.changeLayer)
 
     def setSelectedLayerAndPen(self, index: int):
-        self.selectedDrawLayer.commandPanel.selectedLayer = self.selectedDrawLayer.commandPanel.layers[index]
-        self.selectedDrawLayer.commandPanel.selectedPen = self.selectedDrawLayer.commandPanel.layers[index].pen
+        self.selectedCommandP.changeSelectedLayer(self.selectedCommandP.layers[index].name)
+        self.__commandLineUI.commandLine=self.selectedCommandP.commandLine
 
     def layerBoxShow(self):
-        self.layerBox.show(self.selectedDrawLayer.commandPanel)
-        self.layerBox.updateLayers(self.selectedDrawLayer.commandPanel)
+        self.layerBox.show(self.selectedCommandP)
+        self.layerBox.updateLayers(self.selectedCommandP)
+
+
 
     def getLayers(self):
         self.ui.cbxLayers.clear()
-        for i in self.selectedDrawLayer.commandPanel.layers:
+        for i in self.selectedCommandP.layers:
             px = QPixmap(12, 12)
             px.fill(QColor(i.pen.red, i.pen.green, i.pen.blue))
             self.ui.cbxLayers.addItem(QIcon(px), i.name)
         self.updateLayerBox()
 
     def updateLayerBox(self):
-        index = self.selectedDrawLayer.commandPanel.layers.index(self.selectedDrawLayer.commandPanel.selectedLayer)
-        self.ui.cbxLayers.setCurrentIndex(index)
+        self.ui.cbxLayers.setCurrentIndex(self.selectedCommandP.layers.index(self.selectedCommandP.selectedLayer))
 
-    def changeLayer(self, event):
-        self.setSelectedLayerAndPen(self.ui.cbxLayers.currentIndex())
+    def changeLayer(self, index):
+        if index!=-1:self.setSelectedLayerAndPen(index)
 
     # endregion
 
@@ -338,9 +411,12 @@ class DrawView(QMainWindow):
     def mousePosition(self, pos):
         self.ui.lblXCoordinate.setText(f"{round(pos.x(), 4)}")
         self.ui.lblYcoordinate.setText(f"{round(pos.y(), 4)}")
+        self.ui.lblZoom.setText(f"{round(Setting.zoom, 2)}x")
+
+    def mouseClick(self,pos):
+        self.ui.tbxCommandLine.setFocus()
 
     # endregion
-
 
     # region Buttons
 
@@ -349,21 +425,37 @@ class DrawView(QMainWindow):
 
         self.ui.actionSave.triggered.connect(self.saveDraw)
 
-        self.ui.actionLine.triggered.connect(lambda: self.startCommand(CommandEnums.line))
-        self.ui.actionPolyLine.triggered.connect(lambda: self.startCommand(CommandEnums.spline))
-        self.ui.actionTwoPointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleTwoPoint))
-        self.ui.actionCenterRadiusCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterRadius))
-        self.ui.actionCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleCenterPoint))
-        self.ui.actionTreePointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.circleTreePoint))
-        self.ui.actionRectangle.triggered.connect(lambda: self.startCommand(CommandEnums.rectangle))
-        self.ui.actionEllipse.triggered.connect(lambda: self.startCommand(CommandEnums.ellipse))
-        self.ui.actionArc.triggered.connect(lambda: self.startCommand(CommandEnums.arcThreePoint))
-        self.ui.actionTwoPointCenterArc.triggered.connect(lambda: self.startCommand(CommandEnums.arcCenterTwoPoint))
+        self.ui.actionLine.triggered.connect(lambda: self.startCommand(CommandEnums.Line))
+        self.ui.actionPolyLine.triggered.connect(lambda: self.startCommand(CommandEnums.Polyline))
+        self.ui.actionTwoPointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleTwoPoint))
+        self.ui.actionCenterRadiusCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleCenterRadius))
+        self.ui.actionCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleCenterPoint))
+        self.ui.actionTreePointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleTreePoint))
+        self.ui.actionRectangle.triggered.connect(lambda: self.startCommand(CommandEnums.Rectangle))
+        self.ui.actionEllipse.triggered.connect(lambda: self.startCommand(CommandEnums.Ellipse))
+        self.ui.actionArc.triggered.connect(lambda: self.startCommand(CommandEnums.ArcThreePoint))
+        self.ui.actionTwoPointCenterArc.triggered.connect(lambda: self.startCommand(CommandEnums.ArcCenterTwoPoint))
 
         self.ui.actionLogout.triggered.connect(self.logout)
 
         self.ui.btnAddDraw.clicked.connect(self.addDraw)
         self.ui.btnSaveDraw.clicked.connect(self.saveDrawBoxes)
+
+        self.ui.actionEndPointSnap.setChecked(Setting.snapEnd)
+        self.ui.actionMidPointSnap.setChecked(Setting.snapMiddle)
+        self.ui.actionCenterPointSnap.setChecked(Setting.snapCenter)
+        self.ui.actionGridSnap.setChecked(Setting.snapGrid)
+        self.ui.actionIntersectionPointSnap.setChecked(Setting.snapIntersection)
+        self.ui.actionNearestPointSnap.setChecked(Setting.snapNearest)
+        self.ui.actionPolarMode.setChecked(Setting.polarMode)
+        self.ui.actionOrthoMode.setChecked(Setting.orthoMode)
+        self.ui.actionLineWidth.setChecked(Setting.lineWidth)
+        self.ui.actionOpenElementInformationBox.setChecked(Setting.elementInfo)
+        self.ui.actionOpenCommandBox.setChecked(Setting.commandLine)
+
+
+        self.ui.dsbCatchPainDegree.setValue(Setting.snapAngle)
+        self.ui.dsbGridDistance.setValue(Setting.gridDistance)
 
         self.ui.actionEndPointSnap.triggered.connect(self.setEndSnap)
         self.ui.actionMidPointSnap.triggered.connect(self.setMiddleSnap)
@@ -374,8 +466,11 @@ class DrawView(QMainWindow):
 
         self.ui.actionPolarMode.triggered.connect(self.polarMode)
         self.ui.actionOrthoMode.triggered.connect(self.orthoMode)
-        
+
         self.ui.actionOpenElementInformationBox.triggered.connect(self.elementInfo)
+
+        self.ui.actionLineWidth.triggered.connect(self.lineWidth)
+
 
 
     def setButtonsDisable(self, isDisable: bool):
@@ -423,12 +518,31 @@ class DrawView(QMainWindow):
         self.ui.actionExport.setDisabled(isDisable)
         self.ui.actionNew.setDisabled(isDisable)
         self.ui.actionOpen.setDisabled(isDisable)
+        self.ui.actionLineWidth.setDisabled(isDisable)
 
     # endregion
 
     # region Snap
-    def angleChange(self,ev):Setting.snapAngle=ev
-    def gridDistanceChange(self,ev):Setting.gridDistance=ev
+    def lineWidth(self, ev):
+        Setting.lineWidth = ev
+        self.selectedCommandP.updateScene()
+        self.selectedCommandP.commandLine.addCustomCommand(f"Line Width : {ev}")
+
+    def angleChange(self):
+        Setting.snapAngle = self.ui.dsbCatchPainDegree.value()
+        self.selectedCommandP.commandLine.addCustomCommand(f"Angle Value : {Setting.snapAngle}")
+        self.ui.tbxCommandLine.setFocus()
+
+    def gridDistanceChange(self):
+        Setting.gridDistance = self.ui.dsbGridDistance.value()
+        self.selectedCommandP.commandLine.addCustomCommand(f"Grid Distance : {Setting.gridDistance}")
+        self.ui.tbxCommandLine.setFocus()
+
+    def setRadius(self):
+        Setting.radius=self.ui.dsbRadius.value()
+        self.selectedCommandP.setRadius(Setting.radius)
+        self.ui.tbxCommandLine.setFocus()
+
     def polarMode(self, ev):
         Setting.polarMode = ev
 
@@ -442,6 +556,8 @@ class DrawView(QMainWindow):
         if ev == False:
             self.ui.gbxPainBox.hide()
 
+        self.selectedCommandP.commandLine.addCustomCommand(f"Polar Mode : {ev}")
+
     def orthoMode(self, ev):
         Setting.orthoMode = ev
         if ev or self.ui.actionPolarMode.isChecked() or self.ui.actionGridSnap.isChecked():
@@ -451,6 +567,7 @@ class DrawView(QMainWindow):
             Setting.snapGrid = False
             self.ui.gbxPainBox.hide()
             self.ui.gbxGridDistance.hide()
+        self.selectedCommandP.commandLine.addCustomCommand(f"Ortho Mode : {ev}")
 
     def setGridSnap(self, ev):
         if ev or self.ui.actionPolarMode.isChecked() or self.ui.actionOrthoMode.isChecked():
@@ -463,23 +580,26 @@ class DrawView(QMainWindow):
         else:
             self.ui.gbxGridDistance.hide()
         Setting.snapGrid = ev
-
+        self.selectedCommandP.commandLine.addCustomCommand(f"Grid Snap : {ev}")
 
     def setEndSnap(self, ev):
         Setting.snapEnd = ev
+        self.selectedCommandP.commandLine.addCustomCommand(f"End Snap : {ev}")
 
     def setMiddleSnap(self, ev):
         Setting.snapMiddle = ev
+        self.selectedCommandP.commandLine.addCustomCommand(f"Middle Snap : {ev}")
 
     def setCenterSnap(self, ev):
         Setting.snapCenter = ev
-
-
+        self.selectedCommandP.commandLine.addCustomCommand(f"Center Snap : {ev}")
 
     def setIntersectionSnap(self, ev):
         Setting.snapIntersection = ev
+        self.selectedCommandP.commandLine.addCustomCommand(f"Intersection Snap : {ev}")
 
     def setNearestSnap(self, ev):
         Setting.snapNearest = ev
+        self.selectedCommandP.commandLine.addCustomCommand(f"Nearest Snap : {ev}")
 
     # endregion

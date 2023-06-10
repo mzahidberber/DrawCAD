@@ -23,7 +23,7 @@ class Select(QObject):
         self.__commandPanel=commandPanel
         self.__drawScene=commandPanel.drawScene
 
-        self.__drawScene.ClickedMouse.connect(self.clickMouse)
+        self.__drawScene.LeftClickMouse.connect(self.clickMouse)
         self.__drawScene.MovedMouse.connect(self.moveMouse)
         self.__drawScene.EscOrEnterSignal.connect(self.cancelSelect)
 

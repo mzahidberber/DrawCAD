@@ -14,6 +14,7 @@ class TabWidget2(QWidget):
     stopCommanSignal=pyqtSignal()
     changeSelectObjectsSignal=pyqtSignal(list)
     updateElement=pyqtSignal(object)
+    clickMouse=pyqtSignal(object)
     __drawBox:DrawBox
     __commandPanel:CommandPanel
     __isSaved:bool=True
@@ -67,6 +68,7 @@ class TabWidget2(QWidget):
         self.verticalLayout.addWidget(self.gvGraphicsView)
         self.__drawScene = DrawScene(self)
         self.__drawScene.EscOrEnterSignal.connect(self.stopCommanSignal)
+        self.__drawScene.ClickedMouse.connect(self.clickMouse)
         self.gvGraphicsView.setMouseTracking(True)
         self.gvGraphicsView.setScene(self.__drawScene)
         self.__drawScene.MovedMouse.connect(self.mousePosition)

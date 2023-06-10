@@ -11,7 +11,7 @@ class GraphicsView(QGraphicsView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.scale(1.0, -1.0)
+        self.scale(Setting.zoom, -Setting.zoom)
 
         self.zoomInFactor = 1.05
         self.zoomOutFactor = 0.95
@@ -27,29 +27,20 @@ class GraphicsView(QGraphicsView):
 
         # self.setMouseTracking(True)
 
-    def setSettinInfo(self, pixelSize: float):
-        Setting.pixelSize = pixelSize
-        Setting.lineBoundDistance = int(pixelSize * Setting.lineBoundDistanceSetting)
-        Setting.handleSize = int(pixelSize * Setting.handleSizeSetting)
-        Setting.snapSize = int(pixelSize * Setting.snapSizeSetting)
-        self.scene().update()
 
-    def findPixelSize(self) -> float:
-        pos1 = QPoint(0, 0)
-        pos2 = QPoint(1, 0)
-        p1 = self.mapToScene(pos1)
-        p2 = self.mapToScene(pos2)
-        pixelSize = GeoMath.findLengthLine(p1,p2)
-        self.setSettinInfo(pixelSize)
+    def findPixelSize(self):
+        Setting.pixelSize = GeoMath.findLengthLine(self.mapToScene(QPoint(0, 0)),self.mapToScene(QPoint(1, 0)))
+        Setting.refreshValues()
+        self.scene().update()
 
     def wheelEvent(self, event):
         if event.angleDelta().y() > 0:
             zoomFactor = self.zoomInFactor
         else:
             zoomFactor = self.zoomOutFactor
-        self.t1 = threading.Thread(target=self.findPixelSize)
-        self.t1.start()
-        self.scale(zoomFactor, zoomFactor)
+        Setting.zoom=Setting.zoom*zoomFactor
+        self.findPixelSize()
+        self.scale(zoomFactor , zoomFactor)
 
     def mousePressEvent(self, event):
         QGraphicsView.mousePressEvent(self, event)

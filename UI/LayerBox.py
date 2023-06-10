@@ -29,15 +29,16 @@ class LayerBox(QDialog):
         self.ui.LayerList.setColumnWidth(6,80)
           
         self.ui.LayerList.itemPressed.connect(self.pressSelectedLayers)
-        self.ui.LayerList.doubleClicked.connect(self.doubleClicklayer)
+        self.ui.LayerList.doubleClicked.connect(self.doubleClickLayer)
         self.ui.AddLayer.clicked.connect(self.addLayer)
         self.ui.RemoveLayer.clicked.connect(self.removeLayer)
 
-    def doubleClicklayer(self,ev):
+    def doubleClickLayer(self, ev):
         row=ev.row()
         lineEdit=self.ui.LayerList.cellWidget(row,0)
         name=lineEdit.text()
         self.__commandPanel.changeSelectedLayer(name)
+        self.__parent.updateLayerBox()
         self.selectedLayer=self.__commandPanel.selectedLayer
 
     def removeLayer(self,ev):
@@ -70,8 +71,6 @@ class LayerBox(QDialog):
         self.__parent.getLayers()
 
     def closeEvent(self, a0) -> None:
-        self.__parent.getLayers()
-        self.__parent.updateLayerBox()
         self.__parent.elementInfoView.refreshElementInfo()
         return super().closeEvent(a0)
 
