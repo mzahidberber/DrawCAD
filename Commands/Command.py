@@ -1,11 +1,14 @@
-
-
-
+from Commands.CommandEnums import CommandEnums,CommandTypes
 class Command:
-    __message:str
+    __command:CommandEnums
+    __type:CommandTypes
 
-    def __init__(self,message:str):
-        self.__message=message
     @property
-    def message(self)->str:return self.__message
+    def command(self)->CommandEnums:return self.__command
 
+    @property
+    def type(self)->CommandTypes:return self.__type
+
+    def __init__(self,command:CommandEnums,type:CommandTypes):
+        self.__command=command
+        self.__type=type

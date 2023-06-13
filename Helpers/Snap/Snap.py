@@ -14,7 +14,7 @@ import time
 class Snap:
     # region Property
     __snapPoint: QPointF or None
-    __continueSnapElement: Element or None
+    __continueSnapElements: list[Element] or None
     __snapPointElement: Element or None
     __clickPoint: QPointF or None
     __snapAngle: float
@@ -35,12 +35,12 @@ class Snap:
         return self.__snapPoint
 
     @property
-    def continueSnapElement(self) -> Element:
-        return self.__continueSnapElement
+    def continueSnapElements(self) -> list[Element]:
+        return self.__continueSnapElements
 
-    @continueSnapElement.setter
-    def continueSnapElement(self, element: Element):
-        self.__continueSnapElement = element
+    @continueSnapElements.setter
+    def continueSnapElements(self, elements: list[Element]):
+        self.__continueSnapElements = elements
 
     @property
     def snapPointElement(self) -> SnapPoint or None:
@@ -152,7 +152,7 @@ class Snap:
         self.__snapObject.setZValue(1000)
         self.__drawScene.addItem(self.__snapObject)
 
-        self.__continueSnapElement = None
+        self.__continueSnapElements = None
         self.__snapPointElement = None
 
     def __setSetting(self):
@@ -176,7 +176,10 @@ class Snap:
     # region Intersection
     def __intersectionLineToLine(self, e1: Element, e2: Element):
         p = GeoMath.findIntersectionPointLines(e1.points[0], e1.points[1], e2.points[0], e2.points[1])
-        if p is not None: self.__pointList.append(
+        if p is not None and type(p) is list:
+            for i in p:self.__pointList.append(
+            SnapPoint(None, Point(x=i.x(), y=i.y(), pointTypeId=1), SnapTypes.intersection))
+        elif p is not None: self.__pointList.append(
             SnapPoint(None, Point(x=p.x(), y=p.y(), pointTypeId=1), SnapTypes.intersection))
 
     def __intersectionLineToCircle(self, e1: Element, e2: Element):
@@ -252,9 +255,13 @@ class Snap:
         objects = self.__drawScene.scanFieldObjects(self.__getSnapRect(scenePos))
         elementObjects = list(filter(lambda x: hasattr(x, "element"), objects))
 
-        if self.__continueSnapElement is not None and self.__continueSnapElement in list(
-                map(lambda x: x.element, elementObjects)):
-            elementObjects.remove(next(e for e in elementObjects if e.element == self.__continueSnapElement))
+        elements=list(map(lambda x: x.element, elementObjects))
+        if self.__continueSnapElements is not None:
+            for continueElement in self.__continueSnapElements:
+                if continueElement in elements:
+                    elementObjects.remove(next(e for e in elementObjects if e.element == continueElement))
+
+
 
         if len(elementObjects) != 0:
             for elementObj in elementObjects:
@@ -298,7 +305,7 @@ class Snap:
         self.__drawScene.updateScene()
         self.pointList.clear()
 
-        self.__continueSnapElement = None
+        self.__continueSnapElements = None
 
     def __addPoints(self, elementObj: ElementObj, scenePos: QPointF):
         match elementObj.element.elementTypeId:

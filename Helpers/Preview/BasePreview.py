@@ -6,14 +6,14 @@ from Service.GeoService import GeoService
 from datetime import datetime
 from Commands import CommandPanel
 from Helpers.Pen.CreatePen import CreatePen
-
+from Elements import ElementObj
 
 class BasePreview(ABC):
     _pointList: list[QPointF] = []
     _mousePosition: QPointF or None = None
-    _geoService: GeoService = GeoService()
     _stopDelegates: list[dict] = []
     _commandPanel: CommandPanel = None
+    _editManyElements:list[ElementObj] =None
 
     def setCommandPanel(self, commandPanel: CommandPanel):
         self._commandPanel = commandPanel
@@ -21,10 +21,12 @@ class BasePreview(ABC):
     def connectStop(self, func, isCancel: bool):
         self._stopDelegates.append({"func": func, "isCancel": isCancel})
 
+    def setEditManyObjects(self,elements:list[ElementObj] or None):self._editManyElements=elements
+
 
     def stop(self, isCancel: bool = False) -> None:
         for i in self._stopDelegates:
-            if (isCancel == True):
+            if isCancel:
                 i["func"]()
             else:
                 if (i["isCancel"] == False): i["func"]()

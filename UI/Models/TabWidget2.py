@@ -72,3 +72,5 @@ class TabWidget2(QWidget):
         self.gvGraphicsView.setMouseTracking(True)
         self.gvGraphicsView.setScene(self.__drawScene)
         self.__drawScene.MovedMouse.connect(self.mousePosition)
+
+

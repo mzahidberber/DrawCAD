@@ -10,6 +10,10 @@ class Select(QObject):
     __firstPoint:QPointF or None
     __selectedObjects:list[ElementObj]
     __selectedObjectsLen:int=0
+    __isSelect:bool=False
+
+    @property
+    def isSelect(self)->bool:return self.__isSelect
 
     @property
     def selectedObjectsLen(self)->int:return self.__selectedObjectsLen
@@ -63,6 +67,7 @@ class Select(QObject):
 
     def moveMouse(self,scenePos:QPointF):
         if self.__firstPoint is not None:
+
             self.selectObj.setPoints(self.__firstPoint,scenePos)
 
             if self.__firstPoint.x() <= scenePos.x():
@@ -77,15 +82,19 @@ class Select(QObject):
             scenePos+QPointF(-Setting.snapSize,Setting.snapSize),
             scenePos+QPointF(Setting.snapSize,-Setting.snapSize)))
 
-        if self.__commandPanel.isStartCommand==False and (len(items)==0 or (len(items)==1 and self.__selectObj in items)):
+        elements= list(filter(lambda x:type(x)==ElementObj,items))
 
-            if self.__firstPoint is None:self.__firstPoint=scenePos
+        if self.__commandPanel.isStartCommand==False and len(elements)==0:
+
+            if self.__firstPoint is None:
+                self.__isSelect=True
+                self.__firstPoint=scenePos
             else:
                 self.cancelSelect()
                 if self.__firstPoint.x()<=scenePos.x():
-                    items = self.__drawScene.scanFieldObjects(QRectF(self.__firstPoint, scenePos), mode=Qt.IntersectsItemShape)
-                else:
                     items = self.__drawScene.scanFieldObjects(QRectF(self.__firstPoint,scenePos),mode=Qt.ContainsItemShape)
+                else:
+                    items = self.__drawScene.scanFieldObjects(QRectF(self.__firstPoint, scenePos), mode=Qt.IntersectsItemShape)
 
                 self.__selectedObjects=list(filter(lambda x:type(x)==ElementObj and x.lock==False,items))
                 self.__selectedObjectsLen = len(self.__selectedObjects)
@@ -97,6 +106,7 @@ class Select(QObject):
                 self.__firstPoint=None
 
                 self.selectObj.close()
-
+                self.__isSelect = False
                 self.__drawScene.updateScene()
+
 

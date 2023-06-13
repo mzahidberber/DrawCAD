@@ -49,7 +49,7 @@ class RadiusHandle(BaseHandle):
 
     def mousePressEvent(self, event):
         if self.snap.snapPointElement == self.element:
-            self.snap.__continueSnapElement=self.element
+            self.snap.continueSnapElements = [self.element]
 
         if self.snap.snapPoint is not None:
             self.__setRadius(self.snap.snapPoint)
@@ -59,7 +59,7 @@ class RadiusHandle(BaseHandle):
 
     def mouseReleaseEvent(self, event):
         if self.snap.snapPointElement == self.element:
-            self.snap.__continueSnapElement=self.element
+            self.snap.continueSnapElements = [self.element]
 
         if self.snap.snapPoint is not None:
             self.__setRadius(self.snap.snapPoint)
@@ -70,7 +70,7 @@ class RadiusHandle(BaseHandle):
 
     def mouseMoveEvent(self, event):
         if self.snap.snapPointElement == self.element:
-            self.snap.__continueSnapElement=self.element
+            self.snap.continueSnapElements = [self.element]
 
         if self.snap.snapPoint is not None:
             self.__setRadius(self.snap.snapPoint)

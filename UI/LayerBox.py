@@ -62,7 +62,7 @@ class LayerBox(QDialog):
                 else:
                     for i in rowList:self.removeLine(i)
             else:
-                for i in selectedLayers:self.__commandPanel.removeLayerAndElements(i)
+                for i in selectedLayers:self.__commandPanel.removeLayer(i,False)
                 for i in rowList:self.removeLine(i)
 
         self.selectedLayers.clear()

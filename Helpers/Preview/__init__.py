@@ -12,3 +12,4 @@ from .CircleCenterPointPreview import CircleCenterPointPreview
 from .CircleTreePointPreivew import CircleTreePointPreivew
 from .CircleCenterRadiusPreview import CircleCenterRadiusPreview
 from .DefaultPreview import DefaultPreview
+from .MovePreview import MovePreview

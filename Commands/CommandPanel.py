@@ -4,16 +4,17 @@ from Model import DrawBox, Element, Layer, Pen, PenStyle
 from Service.DrawService import DrawService
 from Service.Model import Token,Response
 from UI import DrawScene
-from Commands.CommandEnums import CommandEnums
+from Commands.CommandEnums import CommandEnums,CommandTypes
 from Commands.CommandLine import CommandLine
-from Commands.Command import Command
-from Commands.ElementDraw import ElementDraw
+from Commands.CommandLog import CommandLog
+from Commands.DrawElement import DrawElement
 from Commands.DrawObjects import DrawObjects
 from Helpers.Preview import PreviewObject
 from Helpers.Snap import Snap
 from Model.DrawEnums import StateTypes
 from Helpers.Select.Select import Select
 from Helpers.GeoMath import GeoMath
+from Edit.EditContext import EditContext
 
 class CommandPanel(QObject):
     stopCommandSignal = pyqtSignal(bool)
@@ -21,19 +22,30 @@ class CommandPanel(QObject):
     changeSelectObjectsSignal = pyqtSignal(list)
     updateElement = pyqtSignal(object)
 
+    #region Property and Fields
+
     __selectedLayer: Layer
     __selectedPen: Pen
     __drawBox = DrawBox
     __drawObjs: DrawObjects
     __drawScene: DrawScene
-    __elementDraw: ElementDraw
+    __elementDraw: DrawElement
     __drawService: DrawService
     __snap: Snap
     __preview: PreviewObject
     __select: Select
     __isStartCommand: bool
+    __startCommand:CommandEnums or None=None
     __commandLine: CommandLine
     __mousePos:QPointF=QPointF()
+
+    @property
+    def drawObjs(self)->DrawObjects:return self.__drawObjs
+
+    @property
+    def startCommand(self)->CommandEnums:return self.__startCommand
+    @startCommand.setter
+    def startCommand(self,command:CommandEnums):self.__startCommand=command
 
     @property
     def commandLine(self) -> CommandLine:
@@ -42,6 +54,9 @@ class CommandPanel(QObject):
     @property
     def isStartCommand(self) -> bool:
         return self.__isStartCommand
+
+    @property
+    def snap(self)->Snap:return self.__snap
 
     @property
     def select(self) -> Select:
@@ -100,6 +115,8 @@ class CommandPanel(QObject):
     def drawScene(self) -> DrawScene:
         return self.__drawScene
 
+    #endregion
+
     def __init__(self, drawScene: DrawScene, token: Token, drawBox: DrawBox) -> None:
         super().__init__()
         self.__drawScene = drawScene
@@ -115,13 +132,16 @@ class CommandPanel(QObject):
         self.__select = Select(self)
         self.__select.changeSelectObjectsSignal.connect(self.changeSelectObjectsSignal)
 
+        ##EditContext
+        self.__editContext=EditContext()
+
         ##DrawScene
         self.__drawScene.EscOrEnterSignal.connect(self.finishCommand)
         drawScene.LeftClickMouse.connect(self.addCoordinate)
         drawScene.MovedMouse.connect(self.mouseMove)
 
         ##ElementDraw
-        self.__elementDraw = ElementDraw(self.__drawScene)
+        self.__elementDraw = DrawElement(self.__drawScene)
 
         ##Service
         self.__drawService = DrawService(self.__token)
@@ -164,21 +184,41 @@ class CommandPanel(QObject):
         self.__mousePos=scenePos
         self.__drawScene.updateScene()
 
-    def startCommand(self, command: CommandEnums):
+    def startDrawCommand(self, command: CommandEnums):
         if not self.__isStartCommand:
+            self.__drawObjs.lockElements()
+            self.startCommand=command
             self.__drawService.startCommand(command, self.__drawBox.id, self.__selectedLayer.id, self.__selectedPen.id)
-            self.__preview.setElementType(command.value)
+            self.__preview.setElementType(command.value[0])
             self.__isStartCommand = True
             self.commandLine.startCommand(command)
+
+    def startEditCommand(self, command: CommandEnums):
+        if not self.__isStartCommand:
+            if len(self.select.selectedObjects)>0:
+                self.__drawObjs.lockElements()
+                self.startCommand = command
+                self.__editContext.setEditCommand(command.value[0],self)
+                self.__isStartCommand = True
+                self.commandLine.startCommand(command)
+            else:
+                self.commandLine.addCustomCommand("You must select the elements first!")
+
+
 
     def stopCommand(self,view:bool=False):
         if self.isStartCommand:
             self.__drawService.stopCommand()
             self.commandLine.stopCommand()
             self.__preview.stop()
+            self.startCommand = None
+            cmd=self.__editContext.getEditCommand()
+            if cmd is not None : cmd.cancelEdit()
         self.__isStartCommand = False
         self.__snap.clickPoint = None
         if not view:self.stopCommandSignal.emit(False)
+        self.__drawObjs.unlockElements()
+        self.drawScene.updateScene()
 
     def finishCommand(self):
         self.addElement(self.__drawService.isFinish())
@@ -198,12 +238,22 @@ class CommandPanel(QObject):
 
     def addCoordinate(self, coordinate: QPointF,snap:bool=True):
         if self.__isStartCommand:
-            self.__snap.clickPoint=self.__snap.snapPoint if self.__snap.snapPoint is not None and snap else coordinate
-            element = self.__drawService.addCoordinate(round(self.__snap.clickPoint.x(), 4),
-                                                       round(self.__snap.clickPoint.y(), 4))
-            self.__preview.addPoint(self.__snap.clickPoint)
-            self.commandLine.addPoint(self.__snap.clickPoint)
-            self.addElement(element)
+            if self.startCommand.value[1]==CommandTypes.Draw:
+                self.__snap.clickPoint=self.__snap.snapPoint if self.__snap.snapPoint is not None and snap else coordinate
+                element = self.__drawService.addCoordinate(round(self.__snap.clickPoint.x(), 4),
+                                                           round(self.__snap.clickPoint.y(), 4))
+                self.__preview.addPoint(self.__snap.clickPoint)
+                self.commandLine.addPoint(self.__snap.clickPoint)
+                self.addElement(element)
+
+            elif self.startCommand.value[1]==CommandTypes.Edit:
+                self.__snap.clickPoint = self.__snap.snapPoint if self.__snap.snapPoint is not None and snap else coordinate
+                self.__snap.clickPoint.setX(round(self.__snap.clickPoint.x(), 4))
+                self.__snap.clickPoint.setY(round(self.__snap.clickPoint.y(), 4))
+                cmd=self.__editContext.getEditCommand()
+                self.drawScene.MovedMouse.connect(cmd.moveMouse)
+                result=cmd.addPoint(self.__snap.clickPoint)
+                if result:self.stopCommand()
 
     def changeSelectedLayer(self, layerName: str):
         for i in self.__drawObjs.layers:
@@ -212,9 +262,13 @@ class CommandPanel(QObject):
                 self.selectedPen=self.selectedLayer.pen
                 self.commandLine.changeLayer(i)
 
-    def removeElement(self, element: ElementObj):
-        self.__drawObjs.removeElement(element)
-        self.saveDrawSignal.emit(False)
+    def removeSelectedElement(self):
+        for element in self.select.selectedObjects:
+            element.removeHandles()
+            self.__drawObjs.removeElement(element)
+        self.select.cancelSelect()
+
+
 
     def addElement(self, element: Element or None):
         if element != None:
@@ -225,15 +279,16 @@ class CommandPanel(QObject):
             self.stopCommandSignal.emit(False)
             self.__snap.clickPoint = None
             self.__isStartCommand = False
+            self.startCommand = None
+            self.__drawObjs.unlockElements()
 
     def addLayer(self, layer: Layer):
         self.__drawObjs.addLayer(layer)
         self.saveDrawSignal.emit(False)
 
+
     def removeLayer(self, layer: Layer, deleteElements: bool = True):
-        if (deleteElements):
-            self.__elementDraw.removeElements(layer.elements)
-        self.__drawObjs.removeLayer(layer, deleteElements)
+        self.__drawObjs.removeLayer(layer,deleteElements)
 
     def updateScene(self):
         self.__drawScene.updateScene()
@@ -242,22 +297,39 @@ class CommandPanel(QObject):
         self.__drawService.setRadius(radius)
         self.commandLine.setRadius(radius)
 
+    def lockElements(self):self.__drawObjs.lockElements()
+    def unLockElements(self):self.__drawObjs.unlockElements()
+
     def saveDraw(self):
-        for i in self.layers:
-            print("layer--", i.state)
-            print("pen--", i.pen.state)
 
-        ## Kaydettikten sonra kaydedilen nesnelerin idlerini kaydetmek gerekiyor
+        updatePens = list(filter(lambda e: e.state == StateTypes.update, self.__drawObjs.pens))
+        if len(updatePens) > 0: self.__drawService.updatePens(updatePens)
 
-        self.__drawService.saveElements(list(filter(lambda x: x.state == StateTypes.added, self.__drawObjs.elements)))
+        dltPens = list(filter(lambda e: e.state == StateTypes.delete, self.__drawObjs.pens))
+        if len(dltPens) > 0: self.__drawService.deletePens(dltPens)
 
-        for element in list(filter(lambda x: x.state == StateTypes.added, self.__drawObjs.elements)):
-            element.state = StateTypes.unchanged
+        savePens = list(filter(lambda e: e.state == StateTypes.added, self.__drawObjs.pens))
+        if len(savePens) > 0: self.__drawService.savePens(savePens)
 
-        for i in self.__drawObjs.elementObjs:
-            print("element--", i.element.state)
-            self.__drawService.updatePoints(list(filter(lambda x: x.state == StateTypes.update, i.element.points)))
-            for i in i.element.points:
-                print("points--", i.state)
+
+        updateElements = list(filter(lambda e: e.state == StateTypes.update, self.__drawObjs.elements))
+        if len(updateElements) > 0: self.__drawService.updateElements(updateElements)
+
+        dltElements=list(filter(lambda e:e.state==StateTypes.delete,self.__drawObjs.elements))
+        if len(dltElements)>0:self.__drawService.deleteElements(dltElements)
+
+        saveElements = list(filter(lambda e: e.state == StateTypes.added, self.__drawObjs.elements))
+        if len(saveElements) > 0: self.__drawService.saveElements(saveElements)
+
+
+        saveLayers=list(filter(lambda l:l.state==StateTypes.added,self.__drawObjs.layers))
+        if len(saveLayers) > 0: self.__drawService.saveLayers(saveLayers)
+
+        updateLayers = list(filter(lambda l: l.state == StateTypes.update, self.__drawObjs.layers))
+        if len(updateLayers) > 0: self.__drawService.updateLayers(updateLayers)
+
+        dltLayers = list(filter(lambda l: l.state == StateTypes.delete, self.__drawObjs.layers))
+        if len(dltLayers) > 0: self.__drawService.deleteLayers(dltLayers)
+
 
         self.saveDrawSignal.emit(True)

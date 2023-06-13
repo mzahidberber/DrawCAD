@@ -25,16 +25,37 @@
      <item>
       <widget class="QPushButton" name="AddLayer">
        <property name="text">
-        <string>Add</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../ImagesSrc.qrc">
+         <normaloff>:/Image/Images/addBtn.png</normaloff>:/Image/Images/addBtn.png</iconset>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="RemoveLayer">
        <property name="text">
-        <string>Remove</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../ImagesSrc.qrc">
+         <normaloff>:/Image/Images/deleteBtn.png</normaloff>:/Image/Images/deleteBtn.png</iconset>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -157,6 +178,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../ImagesSrc.qrc"/>
+ </resources>
  <connections/>
 </ui>

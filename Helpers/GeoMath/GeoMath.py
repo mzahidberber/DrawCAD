@@ -17,6 +17,9 @@ class GeoMath:
         line1 = geometry.LineString([(p1.x, p1.y), (p2.x, p2.y)])
         line2 = geometry.LineString([(p3.x, p3.y), (p4.x, p4.y)])
         intersectionPoint = line1.intersection(line2)
+        if type(intersectionPoint) is geometry.LineString:
+            return list(
+                map(lambda p: QPointF(p[0], p[1]), intersectionPoint.coords)) if not intersectionPoint.is_empty else None
         return QPointF(intersectionPoint.x, intersectionPoint.y) if not intersectionPoint.is_empty else None
 
     @staticmethod
@@ -314,6 +317,28 @@ class GeoMath:
     def findLineAngleWithTwoPoint(p1: QPointF, p2: QPointF) -> float:
         "iki noktası bilinen dogrunun acısını bulmak icin fonksiyon"
         slope = GeoMath.findLineSlope(p1, p2)
+        delta_x = p2.x() - p1.x()
+        delta_y = p2.y() - p1.y()
+
+        if delta_x == 0:
+            if delta_y > 0:
+                return 90.0
+            elif delta_y < 0:
+                return -90.0
+            else:
+                return 0.0
+        elif delta_y == 0:
+            if delta_x > 0:
+                return 0.0
+            elif delta_x < 0:
+                return 180.0
+
+        radian = math.atan2(delta_y, delta_x)
+        derece = math.degrees(radian)
+
+        if derece < 0:
+            derece += 360.0
+        # return derece
         return GeoMath.findLineAngleWithSlope(slope)
 
     "İki Noktanın İc Carpim Bulmak icin Fonksiyon"
@@ -506,3 +531,39 @@ class GeoMath:
             return a[0]
         else:
             return a[1]
+
+    @staticmethod
+    def noktaHangiBolgedeBul(origin: QPointF, p1: QPointF) -> int:
+        "Origin noktasi koordinat sistemin 0,0 kabul edilerek p1 noktasının hangi bölgede oldugnu bulur"
+        originx, originy = origin.x(), origin.y()
+        p1x, p1y = p1.x(), p1.y()
+        if p1x > originx and p1y > originy:
+            return 1
+        elif p1x < originx and p1y > originy:
+            return 2
+        elif p1x < originx and p1y < originy:
+            return 3
+        elif p1x > originx and p1y < originy:
+            return 4
+        else:
+            # üzerinde
+            return 5
+
+
+    @staticmethod
+    def findPointSymmetricalLine(point:QPointF, p1:QPointF, p2:QPointF):
+        #dogrunun çizimlenden daha uzun olması ve yönün bişey ifade etmemesi için eklendi
+        dist1=GeoMath.findLengthLine(p1,p2)
+        p3=GeoMath.findPointToDistance(p2,dist1*100,p1)
+        p4=GeoMath.findPointToDistance(p1,dist1*100,p2)
+
+        p = geometry.Point(point.x(), point.y())
+        line = geometry.LineString([(p3.x(), p3.y()), (p4.x(), p4.y())])
+
+        projectionPoint = line.interpolate(line.project(p))
+
+        dist=GeoMath.findLengthLine(point,QPointF(projectionPoint.x,projectionPoint.y))
+
+        return GeoMath.findPointToDistance(point,dist*2,QPointF(projectionPoint.x,projectionPoint.y))
+
+

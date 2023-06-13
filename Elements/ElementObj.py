@@ -1,3 +1,5 @@
+import copy
+
 from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem
 from PyQt5.QtGui import QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPointF, pyqtSignal
@@ -27,6 +29,7 @@ class ElementObj(QGraphicsObject):
     __pen: QPen
     __type: ETypes
     __lock: bool = False
+    __isEdit:bool=False
 
     @property
     def lock(self) -> bool:
@@ -76,6 +79,13 @@ class ElementObj(QGraphicsObject):
     def isSelected(self, isSelected: bool):
         self.__isSelected = isSelected
 
+    @property
+    def isEdit(self)->bool:return  self.__isEdit
+
+    @isEdit.setter
+    def isEdit(self, isEdit: bool):
+        self.__isEdit = isEdit
+
     # endregion
 
     def __init__(self, element: Element, drawScene: DrawScene, select: 'Select', parent=None):
@@ -97,18 +107,6 @@ class ElementObj(QGraphicsObject):
         for type in ETypes:
             if type.value == self.element.elementTypeId: self.__type = type
 
-        # self.setAcceptDrops(True)
-        # self.setBoundingRegionGranularity(1) 
-
-        # self.setFlag(QGraphicsObject.ItemIsMovable)
-        # self.setCacheMode(QGraphicsItem.NoCache)
-        # self.addHanles()
-        # for i in self.handles:i.setVisible(False)
-        # self.setFlag(QGraphicsObject.ItemIsMovable)
-        # self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
-        # self.setFlag(QGraphicsObject.ItemIsFocusable)
-        # self.setFlag(QGraphicsObject.ItemIsSelectable, True)
-
     def elementSelectedOff(self):
         self.isSelected = False
         self.lock = True
@@ -126,13 +124,9 @@ class ElementObj(QGraphicsObject):
         self.pen = self.createPenLayer()
         self.removeHandles()
 
-    def mouseMoveEvent(self, event) -> None:
-        QGraphicsObject.mouseMoveEvent(self, event)
-        # print(event.scenePos())
-
     def mousePressEvent(self, event) -> None:
-        if (event.isAccepted()):
-            if not self.lock:
+        if event.isAccepted():
+            if not self.lock and not self.__select.isSelect:
                 if not self.isSelected:
                     self.select()
                     self.__select.addObject(self)
@@ -156,11 +150,15 @@ class ElementObj(QGraphicsObject):
     def createPenLayer(self) -> QPen:
         layer = self.element.layer
         if Setting.lineWidth:
-            return CreatePen.createPen(layer.pen.red, layer.pen.green, layer.pen.blue, layer.thickness, layer.pen.penStyleId)
+            return CreatePen.createPen(layer.pen.red, layer.pen.green, layer.pen.blue,
+                                       layer.thickness, layer.pen.penStyleId)
         else:
             return CreatePen.createPen(layer.pen.red, layer.pen.green, layer.pen.blue,
                                        Setting.pixelSize * layer.thickness,
                                        layer.pen.penStyleId)
+
+    def __copy__(self):
+        return ElementObj(self.element.copy(), self.drawScene, self.__select)
 
     def shape(self):
         return self.elementBuilder.shape()
@@ -168,10 +166,9 @@ class ElementObj(QGraphicsObject):
     def paint(self, painter, option, widget):
         self.elementBuilder.setElementInformation(self.element)
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
-        if self.isSelected:
-            self.pen = Setting.lineSelectedPen
-        else:
-            self.pen = self.createPenLayer()
+        if self.isSelected:self.pen = Setting.lineSelectedPen
+        elif self.isEdit:self.pen=Setting.movePen
+        else:self.pen=self.createPenLayer()
         painter.setPen(self.pen)
         self.elementBuilder.paint(painter)
 

@@ -98,6 +98,49 @@ class DrawService:
         print(response.data)
         return list(map(lambda x: Pen(x), response.data))
 
+
+    @LogAspect.logAspect
+    def savePens(self, pens: list[Pen]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Pen").urlBuild("pens").urlBuild("add")
+        ).build()
+        body = {"pens": list(map(lambda x: x.to_dict(), pens))}
+        response = Response(
+            requests.post(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+        print("savePens")
+        print(response.data)
+        print(response.statusCode)
+        print(response.error)
+
+    @LogAspect.logAspect
+    def deletePens(self, pens: list[Pen]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Pen").urlBuild("pens").urlBuild("delete")
+        ).build()
+        body = list(map(lambda x: x.id, pens))
+        response = Response(
+            requests.delete(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+        print("deletePens")
+        print(response.data)
+        print(response.statusCode)
+        print(response.error)
+
+    @LogAspect.logAspect
+    def updatePens(self, pens: list[Pen]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Pen").urlBuild("pens").urlBuild("update")
+        ).build()
+        body = {"pens": list(map(lambda x: x.to_dict(), layers))}
+        response = Response(
+            requests.put(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+        print("updatePens")
+        print(response.data)
+        print(response.statusCode)
+        print(response.error)
+
     #endregion
 
     #region Async Request
@@ -161,6 +204,49 @@ class DrawService:
         return list(map(lambda x: Layer(layerInfo=x), self.response(RequestType.post,connectionString).data))
 
 
+    @LogAspect.logAspect
+    def saveLayers(self, layers: list[Layer]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Layer").urlBuild("layers").urlBuild("add")
+        ).build()
+        body = {"layers": list(map(lambda x: x.to_dict(), layers))}
+        response = Response(
+            requests.post(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+        print("saveLayers")
+        print(response.data)
+        print(response.statusCode)
+        print(response.error)
+
+    @LogAspect.logAspect
+    def deleteLayers(self, layers: list[Layer]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Layer").urlBuild("layers").urlBuild("delete")
+        ).build()
+        body = list(map(lambda x: x.id, layers))
+        response = Response(
+            requests.delete(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+        print("deleteLayers")
+        print(response.data)
+        print(response.statusCode)
+        print(response.error)
+
+    @LogAspect.logAspect
+    def updateLayers(self, layers: list[Layer]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Layer").urlBuild("layers").urlBuild("update")
+        ).build()
+        body = {"layers": list(map(lambda x: x.to_dict(), layers))}
+        response = Response(
+            requests.put(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+        print("updateLayers")
+        print(response.data)
+        print(response.statusCode)
+        print(response.error)
+
+
     #endregion
     
     #region Elements
@@ -188,7 +274,30 @@ class DrawService:
         response = Response(
             requests.post(connectionString,json=body, headers=self.getAuthorize()).json()
         )
+
+    @LogAspect.logAspect
+    def deleteElements(self, elements: list[Element]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Element").urlBuild("elements").urlBuild("delete")
+        ).build()
+        body = list(map(lambda x: x.id, elements))
+        response = Response(
+            requests.delete(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+
+    @LogAspect.logAspect
+    def updateElements(self, elements: list[Element]):
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Element").urlBuild("elements").urlBuild("update")
+        ).build()
+        body = {"elements":list(map(lambda x:x.to_dict(),elements))}
+        response = Response(
+            requests.put(connectionString, json=body, headers=self.getAuthorize()).json()
+        )
+        print("updateElements")
+        print(response.data)
         print(response.statusCode)
+        print(response.error)
 
     #endregion
     
@@ -207,7 +316,7 @@ class DrawService:
         ).build()
 
         body = {
-            "command": command.value,
+            "command": command.value[0],
             "drawId": userDrawBoxId,
             "layerId": userLayerId,
             "penId": userPenId,

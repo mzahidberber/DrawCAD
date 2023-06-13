@@ -20,7 +20,7 @@ class GraphicsView(QGraphicsView):
         self.panY: float
         self.pan: bool = False
 
-        self.setCursor(Qt.CrossCursor)
+        self.setCursor(Qt.BlankCursor)
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

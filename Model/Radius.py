@@ -20,13 +20,20 @@ class Radius(BaseModel):
     def elementId(self) -> int:
         return self.__elementId
 
-    def __init__(self, radiusInfo: dict) -> None:
+    def __init__(self, radiusInfo: dict=None,id:int=None,value:float=None,elementId:int=None) -> None:
         self.__radiusInfo = radiusInfo
-        self._id = self.__radiusInfo[RInfo.id.value]
-        self.__value = self.__radiusInfo[RInfo.rvalue.value]
-        self.__elementId = self.__radiusInfo[RInfo.elementId.value]
+        if self.__radiusInfo is not None:
+            self._id = self.__radiusInfo[RInfo.id.value]
+            self.__value = self.__radiusInfo[RInfo.rvalue.value]
+            self.__elementId = self.__radiusInfo[RInfo.elementId.value]
+        else:
+            self._id=id
+            self.__value=value
+            self.__elementId=elementId
 
         self.state=StateTypes.unchanged
+
+    def copy(self): return Radius(value=self.value,elementId=self.elementId)
 
     def to_dict(self) -> dict:
         return {

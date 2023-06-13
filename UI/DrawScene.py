@@ -35,6 +35,10 @@ class DrawScene(QGraphicsScene):
 
         self.setItemIndexMethod(QGraphicsScene.ItemIndexMethod.NoIndex)
 
+        self.__croos=CrossObj()
+        self.addItem(self.__croos)
+        self.MovedMouse.connect(self.__croos.setPoint)
+
         self.__snap = Snap(self)
 
 
@@ -124,4 +128,21 @@ class DrawScene(QGraphicsScene):
             pixelboyut = self.pixelBoyutBul()
         self.scale(zoomFactor, zoomFactor)
 
+class CrossObj(QGraphicsObject):
 
+    __point:QPointF
+    def __init__(self):
+        super().__init__()
+        self.__point=QPointF()
+        self.setZValue(999999999)
+    def setPoint(self,point:QPointF):self.__point=point
+
+    def rect(self)->QRectF:return QRectF(
+            QPointF(self.__point.x()-Setting.snapSize,self.__point.y()-Setting.snapSize),
+            QPointF(self.__point.x()+Setting.snapSize,self.__point.y()+Setting.snapSize))
+
+    def paint(self, painter:QPainter, option, widget) -> None:
+        painter.setPen(Setting.croosPen)
+        painter.drawRect(self.rect())
+
+    def boundingRect(self) -> QRectF:return self.rect()

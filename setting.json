@@ -1,1 +1,1 @@
-{"snap": {"snapEnd": true, "snapMiddle": false, "snapCenter": false, "snapGrid": false, "snapNearest": false, "snapIntersection": false, "lineWidth": true, "orthoMode": true, "polarMode": false, "snapAngle": 45.0, "gridDistance": 40.0, "elementInfo": false, "commandLine": false}}
+{"snap": {"snapEnd": true, "snapMiddle": false, "snapCenter": false, "snapGrid": false, "snapNearest": false, "snapIntersection": true, "lineWidth": false, "orthoMode": false, "polarMode": true, "snapAngle": 45.0, "gridDistance": 40.0, "elementInfo": false, "commandLine": false}}

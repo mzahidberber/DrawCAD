@@ -14,7 +14,7 @@ from UI.Models.DrawBoxEditButton import DrawBoxEditButton
 from UI.Models.DrawBoxDeleteButton import DrawBoxDeleteButton
 from UI.Models.CommandLineUI import CommandLineUI
 from UI.TabWidgetBox import TabWidgetBox
-from Commands import CommandPanel, CommandEnums
+from Commands import CommandPanel, CommandEnums,Command,CommandTypes
 from Model import DrawBox
 from UI.Models import TabWidget2, ElementInfo
 from Helpers.Snap.Snap import Snap
@@ -64,7 +64,7 @@ class DrawView(QMainWindow):
 
     # endregion
     def __init__(self, auth: AuthService):
-        super(DrawView, self).__init__()
+        super().__init__()
         self.ui = Ui_DrawView()
         self.ui.setupUi(self)
         self.__auth = auth
@@ -93,14 +93,27 @@ class DrawView(QMainWindow):
             self.ui.gbxGridDistance.hide()
 
         self.ui.gbxRadiusBox.hide()
+        self.ui.actionSPLine.setDisabled(False)
+        self.ui.actionPolygon.setDisabled(False)
         self.ui.dsbCatchPainDegree.editingFinished.connect(self.angleChange)
         self.ui.dsbGridDistance.editingFinished.connect(self.gridDistanceChange)
         self.ui.dsbRadius.editingFinished.connect(self.setRadius)
 
+        self.closeEvent=self.closeEventt
+    def closeEventt(self, a0) -> None:
+        save=False
+        for i in self.__drawBoxes:
+            if i.state!=StateTypes.unchanged:
+                save=True
+        for i in self.drawLayers:
+            if not i.isSaved:save=True
+        if save:
+            result=self.showMessageBox("You have unsaved drawings, do you want to save them?")
+            if result==1:
+                self.saveDrawBoxes()
+                [i.commandPanel.saveDraw() for i in self.drawLayers]
+            elif result==3:a0.ignore()
 
-
-    #region SaveSettingFile
-    def closeEvent(self, a0) -> None:
         with open("setting.json", "w") as jsonFile:
             json.dump({
                 "snap": {
@@ -119,6 +132,11 @@ class DrawView(QMainWindow):
                     "commandLine":Setting.commandLine
                 }
             }, jsonFile)
+
+
+
+    #region SaveSettingFile
+
 
 
     def getSettings(self):
@@ -147,6 +165,7 @@ class DrawView(QMainWindow):
         self.__commandLineUI.coordinateSignal.connect(lambda x:self.selectedCommandP.addCoordinate(x,snap=False))
         self.__commandLineUI.distanceSignal.connect(lambda x:self.selectedCommandP.addCoordinateDistance(x))
         self.__commandLineUI.escapeSignal.connect(self.stopCommand)
+        self.__commandLineUI.deleteSignal.connect(lambda :self.selectedCommandP.removeSelectedElement())
 
     # endregion
 
@@ -190,12 +209,12 @@ class DrawView(QMainWindow):
         self.ui.twDrawTabs.tabBar().setTabButton(0, QTabBar.RightSide, None)
 
         self.ui.twDrawBoxes.setColumnWidth(0, 300)
-        self.ui.twDrawBoxes.setColumnWidth(1, 80)
-        self.ui.twDrawBoxes.setColumnWidth(2, 80)
+        self.ui.twDrawBoxes.setColumnWidth(1, 55)
+        self.ui.twDrawBoxes.setColumnWidth(2, 55)
         self.ui.twDrawBoxes.setColumnWidth(3, 80)
-        self.ui.twDrawBoxes.setColumnWidth(4, 80)
-        self.ui.twDrawBoxes.setColumnWidth(5, 180)
-        self.ui.twDrawBoxes.setColumnWidth(6, 180)
+        self.ui.twDrawBoxes.setColumnWidth(4, 55)
+        self.ui.twDrawBoxes.setColumnWidth(5, 160)
+        self.ui.twDrawBoxes.setColumnWidth(6, 160)
 
         self.ui.twDrawBoxes.doubleClicked.connect(self.drawDoubleClicked)
         self.ui.twDrawTabs.currentChanged.connect(self.tabChange)
@@ -212,24 +231,32 @@ class DrawView(QMainWindow):
             self.tabChange(self.ui.twDrawTabs.currentIndex())
         else:
             result = self.showMessageBox("Will you save the drawing?")
-            if result:
-                index = self.__drawBoxes.index(self.drawLayers[ev].commandPanel.drawBox)
-                self.saveDrawBox(self.drawLayers[ev].commandPanel.drawBox, index)
-                self.drawLayers[ev].commandPanel.saveDraw()
+            if result==1:
+                index = self.__drawBoxes.index(self.drawLayers[ev-1].commandPanel.drawBox)
+                self.saveDrawBox(self.drawLayers[ev-1].commandPanel.drawBox, index)
+                self.drawLayers[ev-1].commandPanel.saveDraw()
+                self.ui.twDrawTabs.removeTab(ev)
+                self.closeDraw(ev)
+                self.tabChange(self.ui.twDrawTabs.currentIndex())
+            elif result==2:
                 self.ui.twDrawTabs.removeTab(ev)
                 self.closeDraw(ev)
                 self.tabChange(self.ui.twDrawTabs.currentIndex())
 
+
         if self.ui.twDrawTabs.count() == 1: self.elementInfoView.clearElementInfo()
 
-    def showMessageBox(self, message: str) -> bool:
+    def showMessageBox(self, message: str) -> int:
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.setText(message)
         msg.setWindowTitle("MessageBox")
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.addButton("Dont Save",QMessageBox.NoRole)
         returnValue = msg.exec_()
-        return returnValue == QMessageBox.Ok if True else False
+        if returnValue == QMessageBox.Ok:return 1
+        elif returnValue==0:return 2
+        else:return 3
 
     def closeDraw(self, index: int):
         self.drawLayers[index - 1].drawBox.isStart = False
@@ -340,8 +367,11 @@ class DrawView(QMainWindow):
 
     def startCommand(self, command: CommandEnums):
         self.enableTabs(False, self.ui.twDrawTabs.currentIndex())
-        if command.value==3:self.ui.gbxRadiusBox.show()
-        self.selectedCommandP.startCommand(command)
+        if command.value[1]==CommandTypes.Draw:
+            if command.value[0]==3:self.ui.gbxRadiusBox.show()
+            self.selectedCommandP.startDrawCommand(command)
+        elif command.value[1]==CommandTypes.Edit:
+            self.selectedCommandP.startEditCommand(command)
 
     def stopCommand(self):
         self.enableTabs(True, self.ui.twDrawTabs.currentIndex())
@@ -429,12 +459,18 @@ class DrawView(QMainWindow):
         self.ui.actionPolyLine.triggered.connect(lambda: self.startCommand(CommandEnums.Polyline))
         self.ui.actionTwoPointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleTwoPoint))
         self.ui.actionCenterRadiusCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleCenterRadius))
-        self.ui.actionCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleCenterPoint))
+        self.ui.actionCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleCenterRadius))
         self.ui.actionTreePointsCircle.triggered.connect(lambda: self.startCommand(CommandEnums.CircleTreePoint))
         self.ui.actionRectangle.triggered.connect(lambda: self.startCommand(CommandEnums.Rectangle))
         self.ui.actionEllipse.triggered.connect(lambda: self.startCommand(CommandEnums.Ellipse))
         self.ui.actionArc.triggered.connect(lambda: self.startCommand(CommandEnums.ArcThreePoint))
         self.ui.actionTwoPointCenterArc.triggered.connect(lambda: self.startCommand(CommandEnums.ArcCenterTwoPoint))
+
+        self.ui.actionMove.triggered.connect(lambda :self.startCommand(CommandEnums.Move))
+        self.ui.actionCopy.triggered.connect(lambda :self.startCommand(CommandEnums.Copy))
+        self.ui.actionRotate.triggered.connect(lambda :self.startCommand(CommandEnums.Rotate))
+        self.ui.actionScale.triggered.connect(lambda :self.startCommand(CommandEnums.Scale))
+        self.ui.actionMirror.triggered.connect(lambda :self.startCommand(CommandEnums.Mirror))
 
         self.ui.actionLogout.triggered.connect(self.logout)
 
@@ -480,8 +516,8 @@ class DrawView(QMainWindow):
         self.ui.actionCircle.setDisabled(isDisable)
         self.ui.actionPolyLine.setDisabled(isDisable)
         self.ui.actionRectangle.setDisabled(isDisable)
-        self.ui.actionPolygon.setDisabled(isDisable)
-        self.ui.actionSPLine.setDisabled(isDisable)
+        # self.ui.actionPolygon.setDisabled(isDisable)
+        # self.ui.actionSPLine.setDisabled(isDisable)
         self.ui.actionGridSnap.setDisabled(isDisable)
         self.ui.actionNearestPointSnap.setDisabled(isDisable)
         self.ui.actionIntersectionPointSnap.setDisabled(isDisable)
@@ -496,22 +532,23 @@ class DrawView(QMainWindow):
         self.ui.actionCopy.setDisabled(isDisable)
         self.ui.actionRotate.setDisabled(isDisable)
         self.ui.actionScale.setDisabled(isDisable)
-        self.ui.actionOffset.setDisabled(isDisable)
-        self.ui.actionExtend.setDisabled(isDisable)
-        self.ui.actionTrim.setDisabled(isDisable)
-        self.ui.actionStrech.setDisabled(isDisable)
-        self.ui.actionExplode.setDisabled(isDisable)
+        # self.ui.actionOffset.setDisabled(isDisable)
+        # self.ui.actionExtend.setDisabled(isDisable)
+        # self.ui.actionTrim.setDisabled(isDisable)
+        # self.ui.actionStrech.setDisabled(isDisable)
+        # self.ui.actionExplode.setDisabled(isDisable)
         self.ui.actionMirror.setDisabled(isDisable)
         self.ui.actionArc.setDisabled(isDisable)
         self.ui.actionTwoPointCenterArc.setDisabled(isDisable)
         self.ui.actionEllipse.setDisabled(isDisable)
-        self.ui.actionJoin.setDisabled(isDisable)
+        # self.ui.actionJoin.setDisabled(isDisable)
         self.ui.actionTreePointsCircle.setDisabled(isDisable)
         self.ui.pbLayerButton.setDisabled(isDisable)
-        self.ui.actionDimension.setDisabled(isDisable)
-        self.ui.actionPainDimension.setDisabled(isDisable)
-        self.ui.actionText.setDisabled(isDisable)
-        self.ui.actionHatch.setDisabled(isDisable)
+        # self.ui.actionDimension.setDisabled(isDisable)
+        # self.ui.actionPainDimension.setDisabled(isDisable)
+        # self.ui.actionText.setDisabled(isDisable)
+        # self.ui.actionHatch.setDisabled(isDisable)
+
 
         self.ui.actionSaveAs.setDisabled(isDisable)
         self.ui.actionImport.setDisabled(isDisable)

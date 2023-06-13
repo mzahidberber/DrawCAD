@@ -1,5 +1,5 @@
 from Elements import ElementObj
-from Model import Element, Layer,PenStyle
+from Model import Element, Layer,PenStyle,Pen
 from Model.DrawEnums import StateTypes
 from UI import DrawScene
 from Helpers.Select.Select import Select
@@ -33,6 +33,9 @@ class DrawObjects:
 
     @property
     def penStyles(self) -> list[PenStyle]:return self.__penStyles
+
+    @property
+    def pens(self)->list[Pen]:return list(map(lambda x:x.pen,self.layers))
     
 
     def __init__(self,commandPanel,drawScene:DrawScene,select:Select) -> None:
@@ -44,26 +47,33 @@ class DrawObjects:
         self.__penStyles=[]
         self.__elements=[]
         
-    def addElement(self,element:Element,isService: bool=False)-> None:
+    def addElement(self,element:Element,isService: bool=False)-> ElementObj:
 
         for layer in self.layers:
             if(element.layerId==layer.id):element.layer=layer
-        if (isService):element.state = StateTypes.unchanged
+        if isService:element.state = StateTypes.unchanged
         else:element.state = StateTypes.added
         if not hasattr(element,"layer"):element.layer=self.selectedLayer
         self.elements.append(element)
         elementObj=ElementObj(element,self.__drawScene,self.__select)
         elementObj.elementUpdate.connect(self.__commandPanel.updateElement)
+        self.__drawScene.addItem(elementObj)
         self.__elementObjs.append(elementObj)
         element.layer.addElement(elementObj)
+        return elementObj
 
     def addElements(self,elements:list[Element],isService: bool=False) -> None:
         if elements is not None:
             for element in elements:self.addElement(element,isService=isService)
 
-    def removeElement(self,element:ElementObj) ->None:
-        element.element.layer.elements.remove(element)
-        self.__elementObjs.remove(element)
+    def removeElement(self, elementObj:ElementObj) ->None:
+        elementObj.element.layer.elements.remove(elementObj)
+        if elementObj.element.id is None:
+            self.__elementObjs.remove(elementObj)
+        else:
+            elementObj.element.state = StateTypes.delete
+
+        self.__drawScene.removeItem(elementObj)
 
     def getLastElementObj(self)-> ElementObj:return self.elementObjs[-1]
 
@@ -74,12 +84,19 @@ class DrawObjects:
     def addLayer(self,layer:Layer)-> None :self.__layers.append(layer)
     
     def removeLayer(self,layer: Layer,removeElements: bool=True) -> None:
-        if(removeElements):
+        ##Elementin Layeri degişirse silinmeyecek düzelt
+        if removeElements:
             for element in layer.elements:self.removeElement(element)
-        self.__layers.remove(layer)
+        if layer.id is not None:
+            layer.state=StateTypes.delete
+        else:
+            self.__layers.remove(layer)
     
     
     
     def addPenStyles(self,penStyles: list[PenStyle])->None:self.__penStyles.extend(penStyles)
+
+    def lockElements(self):[l.lockElements() for l in self.layers]
+    def unlockElements(self):[l.unlockElements() for l in self.layers]
 
 

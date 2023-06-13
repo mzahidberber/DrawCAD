@@ -1,6 +1,13 @@
 from Helpers.Pen import CreatePen
 
 class Setting:
+
+    #Move
+    movePen = CreatePen.createPen(150, 150, 150, 1, 1)
+
+    #crooss
+    croosPen = CreatePen.createPen(255, 255, 255, 1, 1)
+
     # pixelSize info
     pixelSize: float=1
     # Handle Setting
@@ -88,8 +95,10 @@ class Setting:
         Setting.lineSelectedPen = CreatePen.createPen(99, 184, 255, Setting.pixelSize, 1)
         Setting.previewLinePen = CreatePen.createPen(211, 0, 0, Setting.pixelSize, 1)
 
+        Setting.movePen = CreatePen.createPen(150, 150, 150, Setting.pixelSize, 1)
         Setting.gridPen=CreatePen.createPen(153, 153, 153,Setting.gridPenThickness, 1)
         Setting.XYAxlePen = CreatePen.createPen(255, 127, 0, Setting.XYPenThickness, 1)
+        Setting.croosPen = CreatePen.createPen(255, 255, 255, Setting.pixelSize, 1)
         Setting.selectLeftPen = CreatePen.createPen(174, 216, 225, Setting.pixelSize, 1)
         Setting.selectRightPen = CreatePen.createPen(74, 128, 77, Setting.pixelSize, 1)
         Setting.snapPen = CreatePen.createPen(211, 0, 0, Setting.pixelSize, 1)

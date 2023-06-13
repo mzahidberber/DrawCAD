@@ -62,6 +62,8 @@ class Point(BaseModel):
 
         self.state=StateTypes.unchanged
 
+    def copy(self):return Point(x=self.x,y=self.y,elementId=self.elementId,pointTypeId=self.pointTypeId)
+
     def to_dict_geo(self) -> dict:
         return {"X": self.__X, "Y": self.__Y, "Z": self.__Z}
 

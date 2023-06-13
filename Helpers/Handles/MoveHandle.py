@@ -42,7 +42,7 @@ class MoveHandle(BaseHandle):
         self.__firstPosition = self.findHandlePosition()
 
         if self.snap.snapPointElement == self.element:
-            self.snap.__continueSnapElement = self.element
+            self.snap.continueSnapElements = [self.element]
 
         if self.snap.snapPoint is not None:self.move(self.snap.snapPoint - self.__firstPosition)
         else:self.move(event.scenePos() - self.__firstPosition)
@@ -51,7 +51,7 @@ class MoveHandle(BaseHandle):
 
     def mouseReleaseEvent(self, event):
         if self.snap.snapPointElement == self.element:
-            self.snap.__continueSnapElement=self.element
+            self.snap.continueSnapElements = [self.element]
 
 
         if self.snap.snapPoint is not None:
@@ -63,7 +63,7 @@ class MoveHandle(BaseHandle):
 
     def mouseMoveEvent(self, event):
         if self.snap.snapPointElement == self.element:
-            self.snap.__continueSnapElement=self.element
+            self.snap.continueSnapElements = [self.element]
 
 
         if self.snap.snapPoint is not None:

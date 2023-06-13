@@ -24,14 +24,22 @@ class SSAngle(BaseModel):
     def elementId(self) -> int:
         return self.__elementId
 
-    def __init__(self, ssangleInfo: dict) -> None:
+    def __init__(self, ssangleInfo: dict=None,id:int=None,type:str=None,value:float=None,elementId:int=None) -> None:
         self.__ssangeInfo = ssangleInfo
-        self._id = self.__ssangeInfo[SSAInfo.id.value]
-        self.__type = self.__ssangeInfo[SSAInfo.type.value]
-        self.__value = self.__ssangeInfo[SSAInfo.ssvalue.value]
-        self.__elementId = self.__ssangeInfo[SSAInfo.elementId.value]
+        if self.__ssangeInfo is not None:
+            self._id = self.__ssangeInfo[SSAInfo.id.value]
+            self.__type = self.__ssangeInfo[SSAInfo.type.value]
+            self.__value = self.__ssangeInfo[SSAInfo.ssvalue.value]
+            self.__elementId = self.__ssangeInfo[SSAInfo.elementId.value]
+        else:
+            self._id=id
+            self.__type=type
+            self.__value=value
+            self.__elementId=elementId
 
         self.state=StateTypes.unchanged
+
+    def copy(self) : return SSAngle(type=self.type,value=self.value,elementId=self.elementId)
 
     def to_dict(self) -> dict:
         return {

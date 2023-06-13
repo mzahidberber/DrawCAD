@@ -13,11 +13,7 @@ class CircleCenterPointPreview(BasePreview):
             QPointF(centerPoint.x()-radius,centerPoint.y()-radius),
             QPointF(centerPoint.x()+radius,centerPoint.y()+radius))
     
-    def boundaryBuild(self):
-        if (self._mousePosition!=None and len(self._pointList)==1):
-            return self.findRect()
-        else:
-            return QRectF()
+    def boundaryBuild(self):return self.findRect() if self._mousePosition!=None and len(self._pointList)==1 else QRectF()
 
     def paintPreview(self, painter):
         if (self._mousePosition!=None and len(self._pointList)==1):
