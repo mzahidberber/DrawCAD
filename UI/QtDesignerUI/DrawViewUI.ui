@@ -10,15 +10,15 @@
     <x>0</x>
     <y>0</y>
     <width>1206</width>
-    <height>812</height>
+    <height>813</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Draw Program</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/Sembol/Semboller/icon.png</normaloff>:/Sembol/Semboller/icon.png</iconset>
+   <iconset resource="../ImagesSrc.qrc">
+    <normaloff>:/images/Images/icon.png</normaloff>:/images/Images/icon.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -363,7 +363,7 @@
          </property>
          <property name="icon">
           <iconset resource="../ImagesSrc.qrc">
-           <normaloff>:/Image/Images/Layer.png</normaloff>:/Image/Images/Layer.png</iconset>
+           <normaloff>:/images/Images/Layer.png</normaloff>:/images/Images/Layer.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -651,6 +651,9 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>Add Draw</string>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -659,7 +662,7 @@
               </property>
               <property name="icon">
                <iconset resource="../ImagesSrc.qrc">
-                <normaloff>:/Image/Images/addBtn.png</normaloff>:/Image/Images/addBtn.png</iconset>
+                <normaloff>:/images/Images/addBtn.png</normaloff>:/images/Images/addBtn.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -688,12 +691,15 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="btnSaveDraw">
+             <widget class="QPushButton" name="btnOpen">
               <property name="maximumSize">
                <size>
                 <width>100</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="toolTip">
+               <string>Open Draw</string>
               </property>
               <property name="autoFillBackground">
                <bool>false</bool>
@@ -703,7 +709,83 @@
               </property>
               <property name="icon">
                <iconset resource="../ImagesSrc.qrc">
-                <normaloff>:/Image/Images/saveBtn.png</normaloff>:/Image/Images/saveBtn.png</iconset>
+                <normaloff>:/images/Images/openfile.png</normaloff>:/images/Images/openfile.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="autoDefault">
+               <bool>false</bool>
+              </property>
+              <property name="default">
+               <bool>false</bool>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnSaveCloudDraw">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Push Cloud</string>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../ImagesSrc.qrc">
+                <normaloff>:/images/Images/saveCloud.png</normaloff>:/images/Images/saveCloud.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="autoDefault">
+               <bool>false</bool>
+              </property>
+              <property name="default">
+               <bool>false</bool>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnGetCloud">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Pull Cloud</string>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../ImagesSrc.qrc">
+                <normaloff>:/images/Images/getCloud.png</normaloff>:/images/Images/getCloud.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -800,12 +882,8 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
-    <addaction name="actionSaveAs"/>
-    <addaction name="actionImport"/>
-    <addaction name="actionExport"/>
+    <addaction name="actionSaveCloud"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -919,6 +997,9 @@
    <addaction name="actionSPLine"/>
   </widget>
   <widget class="QToolBar" name="toolBar_2">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="windowTitle">
     <string>toolBar_2</string>
    </property>
@@ -955,8 +1036,8 @@
    <addaction name="actionPolarMode"/>
    <addaction name="actionOrthoMode"/>
    <addaction name="separator"/>
-   <addaction name="actionOpenCommandBox"/>
    <addaction name="actionOpenElementInformationBox"/>
+   <addaction name="actionOpenCommandBox"/>
   </widget>
   <widget class="QToolBar" name="toolBar_3">
    <property name="windowTitle">
@@ -1292,7 +1373,7 @@
     <enum>Qt::RightToLeft</enum>
    </property>
    <property name="movable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="allowedAreas">
     <set>Qt::TopToolBarArea</set>
@@ -1308,6 +1389,7 @@
    </attribute>
    <addaction name="actionLogout"/>
    <addaction name="actionUserEmail"/>
+   <addaction name="actionping"/>
   </widget>
   <action name="actionImport">
    <property name="text">
@@ -1327,7 +1409,7 @@
   <action name="actionSave">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/saveBtn.png</normaloff>:/Image/Images/saveBtn.png</iconset>
+     <normaloff>:/images/Images/saveBtn.png</normaloff>:/images/Images/saveBtn.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -1347,7 +1429,7 @@
   <action name="actionLine">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Line.png</normaloff>:/Image/Images/Line.png</iconset>
+     <normaloff>:/images/Images/Line.png</normaloff>:/images/Images/Line.png</iconset>
    </property>
    <property name="text">
     <string>Line</string>
@@ -1356,7 +1438,7 @@
   <action name="actionPolyLine">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/polyline.png</normaloff>:/Image/Images/polyline.png</iconset>
+     <normaloff>:/images/Images/polyline.png</normaloff>:/images/Images/polyline.png</iconset>
    </property>
    <property name="text">
     <string>Polyline</string>
@@ -1365,7 +1447,7 @@
   <action name="actionRectangle">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Rectangle.png</normaloff>:/Image/Images/Rectangle.png</iconset>
+     <normaloff>:/images/Images/Rectangle.png</normaloff>:/images/Images/Rectangle.png</iconset>
    </property>
    <property name="text">
     <string>Rectangle</string>
@@ -1374,7 +1456,7 @@
   <action name="actionCircle">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Circle.png</normaloff>:/Image/Images/Circle.png</iconset>
+     <normaloff>:/images/Images/CenterPointCircle.png</normaloff>:/images/Images/CenterPointCircle.png</iconset>
    </property>
    <property name="text">
     <string>Center Point Circle</string>
@@ -1383,7 +1465,7 @@
   <action name="actionEllipse">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Ellips.png</normaloff>:/Image/Images/Ellips.png</iconset>
+     <normaloff>:/images/Images/Ellips.png</normaloff>:/images/Images/Ellips.png</iconset>
    </property>
    <property name="text">
     <string>Ellips</string>
@@ -1392,7 +1474,7 @@
   <action name="actionArc">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/arc.png</normaloff>:/Image/Images/arc.png</iconset>
+     <normaloff>:/images/Images/treepointarc.png</normaloff>:/images/Images/treepointarc.png</iconset>
    </property>
    <property name="text">
     <string>Tree Point Arc</string>
@@ -1404,8 +1486,8 @@
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/closeendpoint.png</normaloff>
-     <normalon>:/Image/Images/openendpoint.png</normalon>:/Image/Images/closeendpoint.png</iconset>
+     <normaloff>:/images/Images/closeendpoint.png</normaloff>
+     <normalon>:/images/Images/openendpoint.png</normalon>:/images/Images/closeendpoint.png</iconset>
    </property>
    <property name="text">
     <string>End Point Snap</string>
@@ -1420,8 +1502,8 @@
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/CloseMidPoint.png</normaloff>
-     <normalon>:/Image/Images/OpenMidPoint.png</normalon>:/Image/Images/CloseMidPoint.png</iconset>
+     <normaloff>:/images/Images/CloseMidPoint.png</normaloff>
+     <normalon>:/images/Images/OpenMidPoint.png</normalon>:/images/Images/CloseMidPoint.png</iconset>
    </property>
    <property name="text">
     <string>
@@ -1437,8 +1519,8 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/CloseCenter.png</normaloff>
-     <normalon>:/Image/Images/OpenCenter.png</normalon>:/Image/Images/CloseCenter.png</iconset>
+     <normaloff>:/images/Images/CloseCenter.png</normaloff>
+     <normalon>:/images/Images/OpenCenter.png</normalon>:/images/Images/CloseCenter.png</iconset>
    </property>
    <property name="text">
     <string>Center Point Snap</string>
@@ -1455,10 +1537,10 @@ Middle Point Snap</string>
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>:/Sembol/Semboller/kesisim.png</normaloff>
-     <normalon>:/Image/Images/CloseIntersection.png</normalon>
-     <disabledoff>:/Image/Images/OpenIntersection.png</disabledoff>:/Sembol/Semboller/kesisim.png</iconset>
+    <iconset resource="../ImagesSrc.qrc">
+     <normaloff>:/images/Images/CloseIntersection.png</normaloff>
+     <normalon>:/images/Images/OpenIntersection.png</normalon>
+     <disabledoff>:/Image/Images/OpenIntersection.png</disabledoff>:/images/Images/CloseIntersection.png</iconset>
    </property>
    <property name="text">
     <string>Intersection Point Snap</string>
@@ -1473,8 +1555,8 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/CloseNearest.png</normaloff>
-     <normalon>:/Image/Images/OpenNearest.png</normalon>:/Image/Images/CloseNearest.png</iconset>
+     <normaloff>:/images/Images/CloseNearest.png</normaloff>
+     <normalon>:/images/Images/OpenNearest.png</normalon>:/images/Images/CloseNearest.png</iconset>
    </property>
    <property name="text">
     <string>Nearest Point Snap</string>
@@ -1489,8 +1571,8 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/CloseGrid.png</normaloff>
-     <normalon>:/Image/Images/OpenGrid.png</normalon>:/Image/Images/CloseGrid.png</iconset>
+     <normaloff>:/images/Images/CloseGrid.png</normaloff>
+     <normalon>:/images/Images/OpenGrid.png</normalon>:/images/Images/CloseGrid.png</iconset>
    </property>
    <property name="text">
     <string>Grid Snap</string>
@@ -1502,7 +1584,7 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/move.png</normaloff>:/Image/Images/move.png</iconset>
+     <normaloff>:/images/Images/move.png</normaloff>:/images/Images/move.png</iconset>
    </property>
    <property name="text">
     <string>Move</string>
@@ -1513,9 +1595,9 @@ Middle Point Snap</string>
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>:/Sembol/Semboller/Cokgen.png</normaloff>
-     <normalon>:/Image/Images/Polygon.png</normalon>:/Sembol/Semboller/Cokgen.png</iconset>
+    <iconset resource="../ImagesSrc.qrc">
+     <normaloff>:/images/Images/Polygon.png</normaloff>
+     <normalon>:/Image/Images/Polygon.png</normalon>:/images/Images/Polygon.png</iconset>
    </property>
    <property name="text">
     <string>Polygon</string>
@@ -1526,9 +1608,9 @@ Middle Point Snap</string>
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>:/Sembol/Semboller/spline.png</normaloff>
-     <normalon>:/Image/Images/spline.png</normalon>:/Sembol/Semboller/spline.png</iconset>
+    <iconset resource="../ImagesSrc.qrc">
+     <normaloff>:/images/Images/spline.png</normaloff>
+     <normalon>:/Image/Images/spline.png</normalon>:/images/Images/spline.png</iconset>
    </property>
    <property name="text">
     <string>SPLine</string>
@@ -1537,7 +1619,7 @@ Middle Point Snap</string>
   <action name="actionTreePointsCircle">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/treepointcircle.png</normaloff>:/Image/Images/treepointcircle.png</iconset>
+     <normaloff>:/images/Images/treepointcircle.png</normaloff>:/images/Images/treepointcircle.png</iconset>
    </property>
    <property name="text">
     <string>Tree Points Circle</string>
@@ -1546,7 +1628,7 @@ Middle Point Snap</string>
   <action name="actionTwoPointsCircle">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/TwoPointCircle.png</normaloff>:/Image/Images/TwoPointCircle.png</iconset>
+     <normaloff>:/images/Images/TwoPointCircle.png</normaloff>:/images/Images/TwoPointCircle.png</iconset>
    </property>
    <property name="text">
     <string>Two Points Circle</string>
@@ -1555,7 +1637,7 @@ Middle Point Snap</string>
   <action name="actionCenterRadiusCircle">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/CenterPointCircle.png</normaloff>:/Image/Images/CenterPointCircle.png</iconset>
+     <normaloff>:/images/Images/CenterPointCircle.png</normaloff>:/images/Images/CenterPointCircle.png</iconset>
    </property>
    <property name="text">
     <string>Center Radius Circle</string>
@@ -1564,7 +1646,7 @@ Middle Point Snap</string>
   <action name="actionTwoPointCenterArc">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/TwoPointCenterArc.png</normaloff>:/Image/Images/TwoPointCenterArc.png</iconset>
+     <normaloff>:/images/Images/TwoPointCenterArc.png</normaloff>:/images/Images/TwoPointCenterArc.png</iconset>
    </property>
    <property name="text">
     <string>Two Point Center Arc</string>
@@ -1573,7 +1655,7 @@ Middle Point Snap</string>
   <action name="actionDimension">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Dimension.png</normaloff>:/Image/Images/Dimension.png</iconset>
+     <normaloff>:/images/Images/distance.png</normaloff>:/images/Images/distance.png</iconset>
    </property>
    <property name="text">
     <string>Dimension</string>
@@ -1582,7 +1664,7 @@ Middle Point Snap</string>
   <action name="actionPainDimension">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/angle.png</normaloff>:/Image/Images/angle.png</iconset>
+     <normaloff>:/images/Images/angledistance.png</normaloff>:/images/Images/angledistance.png</iconset>
    </property>
    <property name="text">
     <string>Paint Dimension</string>
@@ -1591,7 +1673,7 @@ Middle Point Snap</string>
   <action name="actionText">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/text.png</normaloff>:/Image/Images/text.png</iconset>
+     <normaloff>:/images/Images/text.png</normaloff>:/images/Images/text.png</iconset>
    </property>
    <property name="text">
     <string>Text</string>
@@ -1600,7 +1682,7 @@ Middle Point Snap</string>
   <action name="actionHatch">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/hatch.png</normaloff>:/Image/Images/hatch.png</iconset>
+     <normaloff>:/images/Images/hatch.png</normaloff>:/images/Images/hatch.png</iconset>
    </property>
    <property name="text">
     <string>Hatch</string>
@@ -1609,7 +1691,7 @@ Middle Point Snap</string>
   <action name="actionCopy">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Copy.png</normaloff>:/Image/Images/Copy.png</iconset>
+     <normaloff>:/images/Images/Copy.png</normaloff>:/images/Images/Copy.png</iconset>
    </property>
    <property name="text">
     <string>Copy</string>
@@ -1618,7 +1700,7 @@ Middle Point Snap</string>
   <action name="actionRotate">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Rotate.png</normaloff>:/Image/Images/Rotate.png</iconset>
+     <normaloff>:/images/Images/Rotate.png</normaloff>:/images/Images/Rotate.png</iconset>
    </property>
    <property name="text">
     <string>Rotate</string>
@@ -1630,7 +1712,7 @@ Middle Point Snap</string>
   <action name="actionScale">
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Scale.png</normaloff>:/Image/Images/Scale.png</iconset>
+     <normaloff>:/images/Images/Scale.png</normaloff>:/images/Images/Scale.png</iconset>
    </property>
    <property name="text">
     <string>Scale</string>
@@ -1642,7 +1724,7 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Mirror.png</normaloff>:/Image/Images/Mirror.png</iconset>
+     <normaloff>:/images/Images/Mirror.png</normaloff>:/images/Images/Mirror.png</iconset>
    </property>
    <property name="text">
     <string>Mirror</string>
@@ -1654,7 +1736,7 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Explode.png</normaloff>:/Image/Images/Explode.png</iconset>
+     <normaloff>:/images/Images/Explode.png</normaloff>:/images/Images/Explode.png</iconset>
    </property>
    <property name="text">
     <string>Explode</string>
@@ -1666,7 +1748,7 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Join.png</normaloff>:/Image/Images/Join.png</iconset>
+     <normaloff>:/images/Images/Join.png</normaloff>:/images/Images/Join.png</iconset>
    </property>
    <property name="text">
     <string>Join</string>
@@ -1678,7 +1760,7 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/strech.png</normaloff>:/Image/Images/strech.png</iconset>
+     <normaloff>:/images/Images/strech.png</normaloff>:/images/Images/strech.png</iconset>
    </property>
    <property name="text">
     <string>Strech</string>
@@ -1690,8 +1772,8 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/CloseElementsImformation.png</normaloff>
-     <normalon>:/Image/Images/OpenElementsInformation.png</normalon>:/Image/Images/CloseElementsImformation.png</iconset>
+     <normaloff>:/images/Images/elementInfo.png</normaloff>
+     <normalon>:/images/Images/elementInfoopen.png</normalon>:/images/Images/elementInfo.png</iconset>
    </property>
    <property name="text">
     <string>Elements Information Box</string>
@@ -1706,8 +1788,8 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/CloseOrtho.png</normaloff>
-     <normalon>:/Image/Images/OpenOrtho.png</normalon>:/Image/Images/CloseOrtho.png</iconset>
+     <normaloff>:/images/Images/CloseOrtho.png</normaloff>
+     <normalon>:/images/Images/OpenOrtho.png</normalon>:/images/Images/CloseOrtho.png</iconset>
    </property>
    <property name="text">
     <string>Ortho Mode</string>
@@ -1722,8 +1804,8 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/ClosePain.png</normaloff>
-     <normalon>:/Image/Images/OpenPain.png</normalon>:/Image/Images/ClosePain.png</iconset>
+     <normaloff>:/images/Images/ClosePain.png</normaloff>
+     <normalon>:/images/Images/OpenPain.png</normalon>:/images/Images/ClosePain.png</iconset>
    </property>
    <property name="text">
     <string>Polat Mode</string>
@@ -1738,8 +1820,8 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/CloseCommandLine.png</normaloff>
-     <normalon>:/Image/Images/OpenCommandLine.png</normalon>:/Image/Images/CloseCommandLine.png</iconset>
+     <normaloff>:/images/Images/commandline.png</normaloff>
+     <normalon>:/images/Images/commandlineopen.png</normalon>:/images/Images/commandline.png</iconset>
    </property>
    <property name="text">
     <string>Command Box</string>
@@ -1759,7 +1841,7 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/Trim.png</normaloff>:/Image/Images/Trim.png</iconset>
+     <normaloff>:/images/Images/Trim.png</normaloff>:/images/Images/Trim.png</iconset>
    </property>
    <property name="text">
     <string>Trim</string>
@@ -1771,7 +1853,7 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/extend.png</normaloff>:/Image/Images/extend.png</iconset>
+     <normaloff>:/images/Images/extend.png</normaloff>:/images/Images/extend.png</iconset>
    </property>
    <property name="text">
     <string>Extend</string>
@@ -1783,7 +1865,7 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/offset.png</normaloff>:/Image/Images/offset.png</iconset>
+     <normaloff>:/images/Images/offset.png</normaloff>:/images/Images/offset.png</iconset>
    </property>
    <property name="text">
     <string>Offset</string>
@@ -1805,14 +1887,34 @@ Middle Point Snap</string>
    </property>
    <property name="icon">
     <iconset resource="../ImagesSrc.qrc">
-     <normaloff>:/Image/Images/linewidthBtnClose.png</normaloff>
-     <normalon>:/Image/Images/linewidthBtnOpen.png</normalon>:/Image/Images/linewidthBtnClose.png</iconset>
+     <normaloff>:/images/Images/linewidthBtnClose.png</normaloff>
+     <normalon>:/images/Images/linewidthBtnOpen.png</normalon>:/images/Images/linewidthBtnClose.png</iconset>
    </property>
    <property name="text">
     <string>Line Width</string>
    </property>
    <property name="toolTip">
     <string>Line Width</string>
+   </property>
+  </action>
+  <action name="actionSaveCloud">
+   <property name="icon">
+    <iconset resource="../ImagesSrc.qrc">
+     <normaloff>:/images/Images/saveCloud.png</normaloff>:/images/Images/saveCloud.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Cloud</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Cloud</string>
+   </property>
+  </action>
+  <action name="actionping">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Connection : Low</string>
    </property>
   </action>
  </widget>

@@ -4,6 +4,7 @@ from Service import DrawService
 from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtGui import QPixmap,QIcon
 from PyQt5.QtCore import QSize
+
 class DrawBoxEditButton(QPushButton):
     def __init__(self,drawBox:DrawBox,updateFunc):
         super().__init__()
@@ -12,7 +13,7 @@ class DrawBoxEditButton(QPushButton):
         self.clicked.connect(self.btnClick)
 
         icon1 = QIcon()
-        icon1.addPixmap(QPixmap(":/Image/Images/editBtn.png"),QIcon.Normal,QIcon.Off)
+        icon1.addPixmap(QPixmap(":/images/Images/editBtn.png"),QIcon.Normal,QIcon.Off)
         self.setIcon(icon1)
         self.setIconSize(QSize(27, 27))
         self.setFlat(True)

@@ -5,6 +5,9 @@ import copy
 from Helpers.GeoMath import GeoMath
 from Helpers.Snap import Snap
 from Elements import ElementObj
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+
+
 class MoveHandle(BaseHandle):
     __firstPosition:QPointF
     __firstPoints:list[Point]

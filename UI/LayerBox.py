@@ -8,8 +8,9 @@ from Model.PenStyle import PenStyle
 from UI import DrawView
 from UI.QtUI.LayerBoxUI import Ui_LayerBox
 from UI.DeleteLayerBox import DeleteLayerBox
+from CrossCuttingConcers.Handling.UIErrorHandle import UIErrorHandle
 
-
+# @UIErrorHandle.Error_Handler_Cls
 class LayerBox(QDialog):
     __commandPanel:CommandPanel
 
@@ -72,6 +73,8 @@ class LayerBox(QDialog):
 
     def closeEvent(self, a0) -> None:
         self.__parent.elementInfoView.refreshElementInfo()
+        self.__parent.getLayers()
+        self.__parent.ui.tbxCommandLine.setFocus()
         return super().closeEvent(a0)
 
 
@@ -191,8 +194,6 @@ class ThicknessEdit(QLineEdit):
                self.setStyleSheet(f"background-color: rgb(211,0,0);")
           else:
                self.setStyleSheet(f"background-color: rgb(255,255,255);")
-          finally:
-               print(self.__layer.thickness)
 
 class ColorButton(QPushButton):
     def __init__(self,commandPanel:CommandPanel,layer: Layer):
@@ -248,8 +249,8 @@ class VisibilityButton(QPushButton):
 
         self.setText("")
         icon = QIcon()
-        icon.addPixmap(QPixmap(":/Image/Images/OpenAppearance.png"), QIcon.Normal, QIcon.Off)
-        icon.addPixmap(QPixmap(":/Image/Images/CloseAppearance.png"), QIcon.Normal, QIcon.On)
+        icon.addPixmap(QPixmap(":/images/Images/OpenAppearance.png"), QIcon.Normal, QIcon.Off)
+        icon.addPixmap(QPixmap(":/images/Images/CloseAppearance.png"), QIcon.Normal, QIcon.On)
         self.setIcon(icon)
         self.setIconSize(QSize(16,16))
         self.setObjectName("visibilityButton")
@@ -264,10 +265,14 @@ class VisibilityButton(QPushButton):
     def click(self,ev):
         if ev:
             self.__layer.visibility=False
-            self.__layer.hideElements()
+            for i in self.__commandPanel.drawObjs.elementObjs:
+                if i.element.layer == self.__layer:
+                    i.hide()
         else:
             self.__layer.visibility=True
-            self.__layer.showElements()
+            for i in self.__commandPanel.drawObjs.elementObjs:
+                if i.element.layer == self.__layer:
+                    i.show()
         self.__commandPanel.updateScene()
 
 class LayerLock(QPushButton):
@@ -278,8 +283,8 @@ class LayerLock(QPushButton):
 
         self.setText("")
         icon = QIcon()
-        icon.addPixmap(QPixmap(":/Image/Images/OpenLock.png"), QIcon.Normal, QIcon.Off)
-        icon.addPixmap(QPixmap(":/Image/Images/CloseLock.png"),QIcon.Normal, QIcon.On)
+        icon.addPixmap(QPixmap(":/images/Images/OpenLock.png"), QIcon.Normal, QIcon.Off)
+        icon.addPixmap(QPixmap(":/images/Images/CloseLock.png"),QIcon.Normal, QIcon.On)
         self.setIcon(icon)
         self.setIconSize(QSize(16,16))
         self.setObjectName("lockButton")
@@ -292,10 +297,11 @@ class LayerLock(QPushButton):
         self.clicked.connect(self.click)
 
     def click(self,ev):
-        if ev==True:
+        if ev:
             self.__layer.lock=False
-            self.__layer.lockElements()
+            for i in self.__commandPanel.drawObjs.elementObjs:
+                if i.element.layer==self.__layer:
+                    i.elementSelectedOff()
         else:
             self.__layer.lock=True
-            self.__layer.unlockElements()
         self.__commandPanel.updateScene()

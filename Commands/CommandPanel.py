@@ -1,12 +1,12 @@
-from PyQt5.QtCore import QPointF, pyqtSignal, QObject
+from PyQt5.QtCore import QPointF, QObject
+from PyQt5.QtWidgets import QFileDialog
 from Elements import ElementObj
-from Model import DrawBox, Element, Layer, Pen, PenStyle
+from Model import DrawBox, Element, Layer, Pen
 from Service.DrawService import DrawService
-from Service.Model import Token,Response
+from Service.Model import Token
 from UI import DrawScene
-from Commands.CommandEnums import CommandEnums,CommandTypes
+from Commands.CommandEnums import CommandEnums, CommandTypes
 from Commands.CommandLine import CommandLine
-from Commands.CommandLog import CommandLog
 from Commands.DrawElement import DrawElement
 from Commands.DrawObjects import DrawObjects
 from Helpers.Preview import PreviewObject
@@ -15,14 +15,19 @@ from Model.DrawEnums import StateTypes
 from Helpers.Select.Select import Select
 from Helpers.GeoMath import GeoMath
 from Edit.EditContext import EditContext
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+from Core.Signal import DrawSignal
+from Core.Thread import CustomThreadManager
+
+
 
 class CommandPanel(QObject):
-    stopCommandSignal = pyqtSignal(bool)
-    saveDrawSignal = pyqtSignal(bool)
-    changeSelectObjectsSignal = pyqtSignal(list)
-    updateElement = pyqtSignal(object)
+    stopCommandSignal = DrawSignal(bool)
+    saveDrawSignal = DrawSignal(bool)
+    changeSelectObjectsSignal = DrawSignal(list)
+    updateElement = DrawSignal(object)
 
-    #region Property and Fields
+    # region Property and Fields
 
     __selectedLayer: Layer
     __selectedPen: Pen
@@ -35,17 +40,21 @@ class CommandPanel(QObject):
     __preview: PreviewObject
     __select: Select
     __isStartCommand: bool
-    __startCommand:CommandEnums or None=None
+    __startCommand: CommandEnums or None = None
     __commandLine: CommandLine
-    __mousePos:QPointF=QPointF()
+    __mousePos: QPointF = QPointF()
 
     @property
-    def drawObjs(self)->DrawObjects:return self.__drawObjs
+    def drawObjs(self) -> DrawObjects:
+        return self.__drawObjs
 
     @property
-    def startCommand(self)->CommandEnums:return self.__startCommand
+    def startCommand(self) -> CommandEnums:
+        return self.__startCommand
+
     @startCommand.setter
-    def startCommand(self,command:CommandEnums):self.__startCommand=command
+    def startCommand(self, command: CommandEnums):
+        self.__startCommand = command
 
     @property
     def commandLine(self) -> CommandLine:
@@ -56,7 +65,8 @@ class CommandPanel(QObject):
         return self.__isStartCommand
 
     @property
-    def snap(self)->Snap:return self.__snap
+    def snap(self) -> Snap:
+        return self.__snap
 
     @property
     def select(self) -> Select:
@@ -111,12 +121,16 @@ class CommandPanel(QObject):
     def drawBox(self) -> DrawBox:
         return self.__drawBox
 
+    @drawBox.setter
+    def drawBox(self,box:DrawBox):self.__drawBox=box
+
     @property
     def drawScene(self) -> DrawScene:
         return self.__drawScene
 
-    #endregion
+    # endregion
 
+    @ErrorHandle.Error_Handler
     def __init__(self, drawScene: DrawScene, token: Token, drawBox: DrawBox) -> None:
         super().__init__()
         self.__drawScene = drawScene
@@ -130,10 +144,10 @@ class CommandPanel(QObject):
 
         ##Select
         self.__select = Select(self)
-        self.__select.changeSelectObjectsSignal.connect(self.changeSelectObjectsSignal)
+        self.__select.changeSelectObjectsSignal.connect(lambda x:self.changeSelectObjectsSignal.emit(x))
 
         ##EditContext
-        self.__editContext=EditContext()
+        self.__editContext = EditContext()
 
         ##DrawScene
         self.__drawScene.EscOrEnterSignal.connect(self.finishCommand)
@@ -152,13 +166,18 @@ class CommandPanel(QObject):
         if len(drawBox.layers) == 0:
             layers = self.__drawService.getLayers(self.__drawBox.id)
             if len(layers) != 0 and layers != None:
-                self.__drawObjs.addLayers(layers)
+                self.__drawObjs.addLayers(layers, penStateAdd=False)
             else:
-                self.__drawObjs.addLayer(Layer.create0Layer())
+                self.__drawObjs.addLayer(Layer.create0Layer(self.drawBox.id),penStateAdd=True)
         else:
-            self.__drawObjs.addLayers(drawBox.layers)
+            self.__drawObjs.addLayers(drawBox.layers, penStateAdd=True, addElement=True)
 
-        self.__drawObjs.addElements(self.__drawService.getElements(self.__drawBox.id), isService=True)
+        self.selectedLayer = self.__drawObjs.layers[0]
+
+        if len(self.__drawObjs.elements)==0:
+            self.__drawObjs.addElements(self.__drawService.getElements(self.__drawBox.id), isService=True)
+
+
         self.__drawObjs.addPenStyles(self.__drawService.getPenStyles())
 
         self.__elementDraw.drawElements(self.__drawObjs.elementObjs)
@@ -171,9 +190,10 @@ class CommandPanel(QObject):
         self.setRadius()
         self.radius: float = 10
 
-        self.selectedLayer = self.__drawObjs.layers[0]
+
 
         self.__snap = self.__drawScene.snap
+
 
 
     def mouseMove(self, scenePos):
@@ -181,97 +201,127 @@ class CommandPanel(QObject):
             self.__preview.setMousePosition(self.__snap.snapPoint)
         else:
             self.__preview.setMousePosition(scenePos)
-        self.__mousePos=scenePos
+        self.__mousePos = scenePos
         self.__drawScene.updateScene()
 
+    # async def startDrawAsync(self,command,drawBoxId:int,layerId:int,penId:int):
+    #     task= asyncio.create_task(self.__drawService.startCommandAsync(command,drawBoxId,layerId,penId))
+    #     task.add_done_callback(lambda x:self.addElement(x.result()))
+    #     await task
+
+    @ErrorHandle.Error_Handler
     def startDrawCommand(self, command: CommandEnums):
         if not self.__isStartCommand:
             self.__drawObjs.lockElements()
-            self.startCommand=command
-            self.__drawService.startCommand(command, self.__drawBox.id, self.__selectedLayer.id, self.__selectedPen.id)
+            self.startCommand = command
+            CustomThreadManager.startThread(self.__drawService.startCommand, command, self.__drawBox.id, self.__selectedLayer.id, self.__selectedPen.id)
             self.__preview.setElementType(command.value[0])
             self.__isStartCommand = True
             self.commandLine.startCommand(command)
 
+    @ErrorHandle.Error_Handler
     def startEditCommand(self, command: CommandEnums):
         if not self.__isStartCommand:
-            if len(self.select.selectedObjects)>0:
+            if len(self.select.selectedObjects) > 0:
                 self.__drawObjs.lockElements()
                 self.startCommand = command
-                self.__editContext.setEditCommand(command.value[0],self)
+                self.__editContext.setEditCommand(command.value[0], self)
                 self.__isStartCommand = True
                 self.commandLine.startCommand(command)
             else:
                 self.commandLine.addCustomCommand("You must select the elements first!")
 
-
-
-    def stopCommand(self,view:bool=False):
+    @ErrorHandle.Error_Handler
+    def stopCommand(self, view: bool = False):
         if self.isStartCommand:
-            self.__drawService.stopCommand()
+            CustomThreadManager.startThread(self.__drawService.stopCommand)
             self.commandLine.stopCommand()
             self.__preview.stop()
             self.startCommand = None
-            cmd=self.__editContext.getEditCommand()
-            if cmd is not None : cmd.cancelEdit()
+            cmd = self.__editContext.getEditCommand()
+            if cmd is not None: cmd.cancelEdit()
         self.__isStartCommand = False
         self.__snap.clickPoint = None
-        if not view:self.stopCommandSignal.emit(False)
+        if not view: self.stopCommandSignal.emit(False)
         self.__drawObjs.unlockElements()
         self.drawScene.updateScene()
 
-    def finishCommand(self):
-        self.addElement(self.__drawService.isFinish())
+    @ErrorHandle.Error_Handler
+    def isThereNotUnChangeObject(self)->bool:
+        for i in self.drawObjs.pens:
+            if i.state!=StateTypes.unchanged:return True
+        for i in self.drawObjs.layers:
+            if i.state != StateTypes.unchanged: return True
+        for i in self.drawObjs.elements:
+            if i.state != StateTypes.unchanged: return True
+        return  False
 
-    def addCoordinateDistance(self,distance:float):
-        if self.__isStartCommand and self.__snap.clickPoint is not None:
-            if self.__snap.snapPoint is not None:
-                self.__snap.clickPoint=GeoMath.findPointToDistance(self.__snap.clickPoint,distance,self.__snap.snapPoint)
-            else:
-                self.__snap.clickPoint=GeoMath.findPointToDistance(self.__snap.clickPoint,distance,self.__mousePos)
+    @ErrorHandle.Error_Handler
+    def finishCommand(self):CustomThreadManager.startThread(self.addElement(self.__drawService.isFinish()))
 
-            element = self.__drawService.addCoordinate(round(self.__snap.clickPoint.x(), 4),
-                                                       round(self.__snap.clickPoint.y(), 4))
-            self.__preview.addPoint(self.__snap.clickPoint)
-            self.commandLine.addPoint(self.__snap.clickPoint)
-            self.addElement(element)
+    # async def addCoordinateAsync(self,x,y):
+    #     task= asyncio.create_task(self.__drawService.addCoordinateAsync(x,y))
+    #     task.add_done_callback(lambda x:self.addElement(x.result()))
+    #     await task
+    @ErrorHandle.Error_Handler
+    def addCoordinateThread(self, x, y):
+        element=self.__drawService.addCoordinate(x, y)
+        self.addElement(element)
 
-    def addCoordinate(self, coordinate: QPointF,snap:bool=True):
+    @ErrorHandle.Error_Handler
+    def addCoordinateDistance(self, distance: float):
         if self.__isStartCommand:
-            if self.startCommand.value[1]==CommandTypes.Draw:
-                self.__snap.clickPoint=self.__snap.snapPoint if self.__snap.snapPoint is not None and snap else coordinate
-                element = self.__drawService.addCoordinate(round(self.__snap.clickPoint.x(), 4),
-                                                           round(self.__snap.clickPoint.y(), 4))
+            if self.startCommand.value[1] == CommandTypes.Draw:
+                if self.__snap.snapPoint is not None:
+                    self.__snap.clickPoint = GeoMath.findPointToDistance(self.__snap.clickPoint, distance, self.__snap.snapPoint)
+                else:
+                    self.__snap.clickPoint = GeoMath.findPointToDistance(self.__snap.clickPoint, distance, self.__mousePos)
+
+                x=round(self.__snap.clickPoint.x(), 4)
+                y=round(self.__snap.clickPoint.y(), 4)
+                CustomThreadManager.startThread(self.addCoordinateThread, x, y)
                 self.__preview.addPoint(self.__snap.clickPoint)
                 self.commandLine.addPoint(self.__snap.clickPoint)
-                self.addElement(element)
 
-            elif self.startCommand.value[1]==CommandTypes.Edit:
+    @ErrorHandle.Error_Handler
+    def addCoordinate(self, coordinate: QPointF, snap: bool = True):
+        if self.__isStartCommand:
+            if self.startCommand.value[1] == CommandTypes.Draw:
+                self.__snap.clickPoint = self.__snap.snapPoint if self.__snap.snapPoint is not None and snap else coordinate
+                self.__preview.addPoint(self.__snap.clickPoint)
+                self.commandLine.addPoint(self.__snap.clickPoint)
+                x = round(self.__snap.clickPoint.x(), 4)
+                y = round(self.__snap.clickPoint.y(), 4)
+                CustomThreadManager.startThread(self.addCoordinateThread, x, y)
+
+            elif self.startCommand.value[1] == CommandTypes.Edit:
                 self.__snap.clickPoint = self.__snap.snapPoint if self.__snap.snapPoint is not None and snap else coordinate
                 self.__snap.clickPoint.setX(round(self.__snap.clickPoint.x(), 4))
                 self.__snap.clickPoint.setY(round(self.__snap.clickPoint.y(), 4))
-                cmd=self.__editContext.getEditCommand()
+                cmd = self.__editContext.getEditCommand()
                 self.drawScene.MovedMouse.connect(cmd.moveMouse)
-                result=cmd.addPoint(self.__snap.clickPoint)
-                if result:self.stopCommand()
+                result = cmd.addPoint(self.__snap.clickPoint)
+                if result: self.stopCommand()
 
+    @ErrorHandle.Error_Handler
     def changeSelectedLayer(self, layerName: str):
         for i in self.__drawObjs.layers:
             if i.name == layerName:
                 self.selectedLayer = i
-                self.selectedPen=self.selectedLayer.pen
+                self.selectedPen = self.selectedLayer.pen
                 self.commandLine.changeLayer(i)
 
+    @ErrorHandle.Error_Handler
     def removeSelectedElement(self):
         for element in self.select.selectedObjects:
             element.removeHandles()
-            self.__drawObjs.removeElement(element)
+            self.__drawObjs.removeElementObj(element)
         self.select.cancelSelect()
 
-
-
+    @ErrorHandle.Error_Handler
     def addElement(self, element: Element or None):
         if element != None:
+            if element.layerId==0:element.layerName=self.selectedLayer.name
             self.__drawObjs.addElement(element)
             self.__elementDraw.drawElement(self.__drawObjs.getLastElementObj())
             self.__preview.stop()
@@ -282,54 +332,128 @@ class CommandPanel(QObject):
             self.startCommand = None
             self.__drawObjs.unlockElements()
 
+    @ErrorHandle.Error_Handler
     def addLayer(self, layer: Layer):
         self.__drawObjs.addLayer(layer)
         self.saveDrawSignal.emit(False)
 
-
+    @ErrorHandle.Error_Handler
     def removeLayer(self, layer: Layer, deleteElements: bool = True):
-        self.__drawObjs.removeLayer(layer,deleteElements)
+        self.__drawObjs.removeLayer(layer, deleteElements)
 
     def updateScene(self):
         self.__drawScene.updateScene()
 
+    @ErrorHandle.Error_Handler
     def setRadius(self, radius: float = 50):
-        self.__drawService.setRadius(radius)
+        CustomThreadManager.startThread(self.__drawService.setRadius, radius)
         self.commandLine.setRadius(radius)
 
-    def lockElements(self):self.__drawObjs.lockElements()
-    def unLockElements(self):self.__drawObjs.unlockElements()
+    @ErrorHandle.Error_Handler
+    def lockElements(self):
+        self.__drawObjs.lockElements()
 
+    @ErrorHandle.Error_Handler
+    def unLockElements(self):
+        self.__drawObjs.unlockElements()
+
+    @ErrorHandle.Error_Handler
     def saveDraw(self):
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.Directory)
+        # dialog.setNameFilter("Draw File (*.df)")
+        dialog.setWindowTitle("Select Folder")
+        # dialog.selectFile(f"{self.drawBox.name}.df")
+        dialog.setOption(QFileDialog.ShowDirsOnly, True)
+        if dialog.exec_():
+            # selected_file = dialog.selectedFiles()[0]
+            selected_folder = dialog.selectedFiles()[0]
 
-        updatePens = list(filter(lambda e: e.state == StateTypes.update, self.__drawObjs.pens))
-        if len(updatePens) > 0: self.__drawService.updatePens(updatePens)
+            saveStr = self.__drawService.saveDraw(self.drawBox)
+            with open(f"{selected_folder}/{saveStr[0]}", "w") as f:
+                f.write(saveStr[1])
 
-        dltPens = list(filter(lambda e: e.state == StateTypes.delete, self.__drawObjs.pens))
-        if len(dltPens) > 0: self.__drawService.deletePens(dltPens)
+    @ErrorHandle.Error_Handler
+    def saveCloudDraw(self):
+        if self.drawBox.id == 0:
+            newDrawBox=self.__drawService.addDraw([self.drawBox])
+            self.drawBox=newDrawBox[0]
+            for i in self.layers:
+                i.drawBoxId=newDrawBox[0].id
+
 
         savePens = list(filter(lambda e: e.state == StateTypes.added, self.__drawObjs.pens))
-        if len(savePens) > 0: self.__drawService.savePens(savePens)
+        if len(savePens) > 0:
+            newPens = self.__drawService.savePens(savePens)
+            if newPens is not None:
+                for savePen in savePens:
+                    layer = next(l for l in self.drawObjs.layers if l.pen == savePen)
+                    pl= list(filter(lambda x: savePen.name == x.name ,newPens))
+                    layer.pen=pl[0]
+                    layer.penId=pl[0].id
 
 
-        updateElements = list(filter(lambda e: e.state == StateTypes.update, self.__drawObjs.elements))
-        if len(updateElements) > 0: self.__drawService.updateElements(updateElements)
-
-        dltElements=list(filter(lambda e:e.state==StateTypes.delete,self.__drawObjs.elements))
-        if len(dltElements)>0:self.__drawService.deleteElements(dltElements)
-
-        saveElements = list(filter(lambda e: e.state == StateTypes.added, self.__drawObjs.elements))
-        if len(saveElements) > 0: self.__drawService.saveElements(saveElements)
+        updatePens = list(filter(lambda e: e.state == StateTypes.update, self.__drawObjs.pens))
+        if len(updatePens) > 0:
+            self.__drawService.updatePens(updatePens)
+            for i in updatePens: i.state = StateTypes.unchanged
 
 
-        saveLayers=list(filter(lambda l:l.state==StateTypes.added,self.__drawObjs.layers))
-        if len(saveLayers) > 0: self.__drawService.saveLayers(saveLayers)
+
+        saveLayers = list(filter(lambda l: l.state == StateTypes.added, self.__drawObjs.layers))
+        # for i in saveLayers: print(i.to_dict(),"  ",i.state)
+        if len(saveLayers) > 0:
+            newLayers=self.__drawService.saveLayers(self.drawBox.id, saveLayers)
+            # newLayers.reverse()
+            # for i in newLayers: print("new",i.to_dict(), "  ", i.state)
+            [self.drawObjs.removeLayer(e,removeElements=False) for e in saveLayers]
+            self.drawObjs.addLayers(newLayers)
+            for newLayer in newLayers:
+                index = newLayers.index(newLayer)
+                newLayer.elements = saveLayers[index].elements
+                newLayer.state = StateTypes.unchanged
+                for i in newLayer.elements:
+                    i.layer=newLayer
+                    i.layerId=newLayer.id
+                    i.penId=newLayer.pen.id
 
         updateLayers = list(filter(lambda l: l.state == StateTypes.update, self.__drawObjs.layers))
-        if len(updateLayers) > 0: self.__drawService.updateLayers(updateLayers)
+        if len(updateLayers) > 0:
+            self.__drawService.updateLayers(self.drawBox.id, updateLayers)
+            for i in updateLayers:i.state=StateTypes.unchanged
 
         dltLayers = list(filter(lambda l: l.state == StateTypes.delete, self.__drawObjs.layers))
         if len(dltLayers) > 0: self.__drawService.deleteLayers(dltLayers)
 
+        saveElements = list(filter(lambda e: e.state == StateTypes.added, self.__drawObjs.elements))
+        if len(saveElements) > 0:
+            newElements = self.__drawService.saveElements(self.drawBox.id, saveElements)
+            [self.drawObjs.removeElement(e) for e in saveElements]
+            self.drawObjs.addElements(newElements)
+            for newElement in newElements:
+                index = newElements.index(newElement)
+                newElement.layer = saveElements[index].layer
+                newElement.state = StateTypes.unchanged
+
+        updateElements = list(filter(lambda e: e.state == StateTypes.update, self.__drawObjs.elements))
+        if len(updateElements) > 0:
+            self.__drawService.updateElements(updateElements)
+            for i in updateElements: i.state = StateTypes.unchanged
+
+        dltElements = list(filter(lambda e: e.state == StateTypes.delete, self.__drawObjs.elements))
+        if len(dltElements) > 0:
+            self.__drawService.deleteElements(dltElements)
+            self.__drawObjs.removeElements(dltElements, deleteId=True)
+
+        for element in self.__drawObjs.elements:
+
+            updatePoints = list(filter(lambda l: l.state == StateTypes.update, element.points))
+            if len(updatePoints) > 0: self.__drawService.updatePoints(updatePoints)
+
+            updateSSAngles = list(filter(lambda l: l.state == StateTypes.update, element.ssAngles))
+            if len(updateSSAngles) > 0: self.__drawService.updateSSAngles(updateSSAngles)
+
+            updateRadiuses = list(filter(lambda l: l.state == StateTypes.update, element.radiuses))
+            if len(updateRadiuses) > 0: self.__drawService.saveDraw(updateRadiuses)
 
         self.saveDrawSignal.emit(True)

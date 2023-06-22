@@ -4,6 +4,9 @@ from PyQt5.QtCore import QPointF
 from Helpers.GeoMath import GeoMath
 from Helpers.Snap import Snap
 from Elements import ElementObj
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+
+
 class PointMoveHandle(BaseHandle):
     def __init__(self, elementObj:ElementObj, elementType: ETypes, pointPos: int, snap:Snap):
         super().__init__(snap)

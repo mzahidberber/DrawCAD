@@ -1,6 +1,5 @@
-from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QSize,pyqtSignal,Qt
+from PyQt5.QtCore import QSize, Qt
 from Commands.CommandPanel import CommandPanel
 from Model import DrawBox
 from Model.DrawEnums import StateTypes
@@ -9,11 +8,11 @@ from Service.Model import Token
 from UI.GraphicsView import GraphicsView
 from UI.DrawScene import DrawScene
 from UI.Models import DrawBoxDeleteButton, DrawBoxEditButton
-
+from Core.Signal import DrawSignal
 
 class TabWidget(QWidget):
-    mousePositionSignal=pyqtSignal(object)
-    selectDrawSignal=pyqtSignal(object)
+    mousePositionSignal=DrawSignal(object)
+    selectDrawSignal=DrawSignal(object)
 
     __commandPanel:CommandPanel
 
@@ -40,7 +39,6 @@ class TabWidget(QWidget):
         self.btnSaveDraw.clicked.connect(self.saveDraws)
 
     def closeEvent(self, a0) -> None:
-        print("close")
         return super().closeEvent(a0)
 
     def settingGraphicsView(self):

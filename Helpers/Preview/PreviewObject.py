@@ -1,13 +1,13 @@
 from PyQt5.QtWidgets import QGraphicsObject
-from PyQt5.QtCore import QPointF, QRectF, pyqtSignal
+from PyQt5.QtCore import QPointF, QRectF
 from Helpers.Preview.PreviewContext import PreviewContext
 from Helpers.Preview.BasePreview import BasePreview
 from Helpers.Preview.DefaultPreview import DefaultPreview
-from datetime import datetime
 from Elements import ElementObj
+from Core.Signal import DrawSignal
 
 class PreviewObject(QGraphicsObject):
-    cancelSignal = pyqtSignal()
+    cancelSignal = DrawSignal()
     _preview: BasePreview
 
     def __init__(self, commandPanel, parent=None):

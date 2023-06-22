@@ -1,20 +1,18 @@
-from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QSize,pyqtSignal,Qt
 from Commands.CommandPanel import CommandPanel
 from Model import DrawBox
-from Model.DrawEnums import StateTypes
-from Service import DrawService
 from Service.Model import Token
 from UI.GraphicsView import GraphicsView
 from UI.DrawScene import DrawScene
-from UI.Models import DrawBoxDeleteButton, DrawBoxEditButton
+from CrossCuttingConcers.Handling.UIErrorHandle import UIErrorHandle
+from Core.Signal import DrawSignal
+
 class TabWidget2(QWidget):
-    mousePositionSignal=pyqtSignal(object)
-    stopCommanSignal=pyqtSignal()
-    changeSelectObjectsSignal=pyqtSignal(list)
-    updateElement=pyqtSignal(object)
-    clickMouse=pyqtSignal(object)
+    mousePositionSignal=DrawSignal(object)
+    stopCommanSignal=DrawSignal()
+    changeSelectObjectsSignal=DrawSignal(list)
+    updateElement=DrawSignal(object)
+    clickMouse=DrawSignal(object)
     __drawBox:DrawBox
     __commandPanel:CommandPanel
     __isSaved:bool=True
@@ -39,6 +37,7 @@ class TabWidget2(QWidget):
 
     @property
     def drawScene(self)->DrawScene:return self.__drawScene
+
     def __init__(self,drawBox:DrawBox,token:Token) -> None:
         super().__init__()
         self.__token=token
@@ -50,9 +49,8 @@ class TabWidget2(QWidget):
         self.__commandPanel = CommandPanel(self.__drawScene,self.__token,self.__drawBox)
         self.__commandPanel.stopCommandSignal.connect(self.runCommand)
         self.__commandPanel.saveDrawSignal.connect(self.saveDraw)
-        self.__commandPanel.changeSelectObjectsSignal.connect(self.changeSelectObjectsSignal)
-        self.__commandPanel.updateElement.connect(self.updateElement)
-
+        self.__commandPanel.changeSelectObjectsSignal.connect(lambda x:self.changeSelectObjectsSignal.emit(x))
+        self.__commandPanel.updateElement.connect(lambda x:self.updateElement.emit(x))
 
     def saveDraw(self,save:bool):self.isSaved=save
     def runCommand(self,run:bool):
@@ -60,6 +58,7 @@ class TabWidget2(QWidget):
         self.isStartCommand=run
 
     def mousePosition(self,pos):self.mousePositionSignal.emit(pos)
+
     def settingView(self):
         self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(3,3,3,3)
@@ -67,8 +66,8 @@ class TabWidget2(QWidget):
         self.gvGraphicsView.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.verticalLayout.addWidget(self.gvGraphicsView)
         self.__drawScene = DrawScene(self)
-        self.__drawScene.EscOrEnterSignal.connect(self.stopCommanSignal)
-        self.__drawScene.ClickedMouse.connect(self.clickMouse)
+        self.__drawScene.EscOrEnterSignal.connect(lambda x:self.stopCommanSignal.emit(x))
+        self.__drawScene.ClickedMouse.connect(lambda x:self.clickMouse.emit(x))
         self.gvGraphicsView.setMouseTracking(True)
         self.gvGraphicsView.setScene(self.__drawScene)
         self.__drawScene.MovedMouse.connect(self.mousePosition)

@@ -1,7 +1,7 @@
 from datetime import datetime
 import arrow
 from Service.Model.Token import Token
-
+from Core.Cyrptography import CustomCryptography
 class UserAndToken:
     __email:str
     __password:str
@@ -75,9 +75,9 @@ class UserAndToken:
         # self.__refreshTokenExpiration=arrow.get(self.__refreshTokenExpirationSTR).datetime
     
     
-    def to_Dict(self):
+    def to_Dict(self,crypto:CustomCryptography):
         return {
-            "email": self.__email,
-            "password": self.__password,
-            "token":self.__token.to_Dict()
+            "email": crypto.encrypt(self.__email),
+            "password": crypto.encrypt(self.__password),
+            "token":self.__token.to_Dict(crypto)
             }

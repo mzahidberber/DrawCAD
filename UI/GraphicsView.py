@@ -5,7 +5,7 @@ from Helpers.Settings import Setting
 from Helpers.GeoMath import GeoMath
 from Service.GeoService import GeoService
 import threading
-
+from CrossCuttingConcers.Handling.UIErrorHandle import UIErrorHandle
 
 class GraphicsView(QGraphicsView):
     def __init__(self, *args, **kwargs):

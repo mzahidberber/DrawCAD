@@ -1,32 +1,27 @@
-from typing import List
-
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsObject, QGraphicsItem
 from PyQt5.QtGui import QPainter
-from PyQt5.QtCore import Qt, pyqtSignal, QLineF, QPointF,QRectF
+from PyQt5.QtCore import Qt, QLineF, QPointF,QRectF
 
 from Elements import ElementObj
 from Helpers.Settings import Setting
 from Helpers.Snap.Snap import Snap
-from Helpers.Select import Select
-
+from Core.Signal import DrawSignal
 import math
 import  numpy as np
 
 class DrawScene(QGraphicsScene):
-    ClickedMouse = pyqtSignal(object)
-    RightClickMouse=pyqtSignal(object)
-    LeftClickMouse=pyqtSignal(object)
-    MiddleClickMouse=pyqtSignal(object)
-    MovedMouse = pyqtSignal(object)
-    EscOrEnterSignal=pyqtSignal()
+    ClickedMouse = DrawSignal(object)
+    RightClickMouse=DrawSignal(object)
+    LeftClickMouse=DrawSignal(object)
+    MiddleClickMouse=DrawSignal(object)
+    MovedMouse = DrawSignal(object)
+    EscOrEnterSignal=DrawSignal()
 
     __snap:Snap
 
 
     @property
     def snap(self)->Snap:return self.__snap
-
-    
 
     def __init__(self, view):
         super().__init__()

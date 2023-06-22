@@ -8,11 +8,15 @@ from Service.Model import UserAndToken
 from Service.UrlBuilder import UrlBuilder
 import json
 from datetime import datetime, timezone, timedelta
-
-
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+from Core.Url.Urls import Urls
+from Core.Cyrptography import CustomCryptography
+import os
+@ErrorHandle.Error_Handler_Cls
 class AuthService:
     __url:str
     __userAndToken:UserAndToken
+    __cryptoObj:CustomCryptography= CustomCryptography()
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
@@ -23,21 +27,11 @@ class AuthService:
     def userAndToken(self) -> UserAndToken or None:return self.__userAndToken
     
     def __init__(self) -> None:
-        self.getUrl()
+        self.__url=Urls.drawauth.value
         self.__userAndToken= self.readToken()
         if self.__userAndToken!=None:
             self.loggin(self.__userAndToken.email,self.__userAndToken.password)
-        
-        
 
-    def getUrl(self):
-        f=open("urls.json")
-        data=json.load(f)
-        self.__url=data["drawauth"]
-        print(self.__url)
-
-    def setUrl(self, url):
-        self.__url = url
 
 
     def createUser(self, username: str, email: str, password: str) -> User or None:
@@ -98,22 +92,24 @@ class AuthService:
         return False if self.__userAndToken==None else True
 
     def writeToken(self, tokenAndUser: UserAndToken) -> None:
-        with open("user.json", "w") as json_file:
-            json.dump(tokenAndUser.to_Dict(), json_file)
+        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawProgram")
+        with open(folderPath + "\\user.json", "w") as json_file:
+            json.dump(tokenAndUser.to_Dict(self.__cryptoObj), json_file)
 
 
     def readToken(self) -> UserAndToken or None:
-        with open("user.json") as f:
+        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawProgram")
+        with open(folderPath + "\\user.json") as f:
             try:
                 data = json.load(f)
                 return UserAndToken(
-                    data["email"],
-                    data["password"],
+                    self.__cryptoObj.decrypt(data["email"]),
+                    self.__cryptoObj.decrypt(data["password"]),
                     Token(
-                        data["token"]["accessToken"],
-                        data["token"]["accessTokenExpiration"],
-                        data["token"]["refreshToken"],
-                        data["token"]["refreshTokenExpiration"],
+                        self.__cryptoObj.decrypt(data["token"]["accessToken"]),
+                        self.__cryptoObj.decrypt(data["token"]["accessTokenExpiration"]),
+                        self.__cryptoObj.decrypt(data["token"]["refreshToken"]),
+                        self.__cryptoObj.decrypt(data["token"]["refreshTokenExpiration"]),
                     ),
                 )
             except:

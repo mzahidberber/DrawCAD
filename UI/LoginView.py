@@ -4,7 +4,10 @@ from Service import DrawService, AuthService
 from UI import DrawView
 from CrossCuttingConcers.Logging import Log
 import re
+from CrossCuttingConcers.Handling.UIErrorHandle import UIErrorHandle
+import requests
 
+@UIErrorHandle.Error_Handler_Cls
 class LoginView(QMainWindow):
 
     registerInfo:bool=False
@@ -24,8 +27,13 @@ class LoginView(QMainWindow):
 
         self.__auth=auth
 
+
+
+
+
+
     
-    def getInfo(self):
+    def getInfo(self,ev):
         email=self.ui.leEmail.text()
         username=self.ui.leUsername.text()
         password=self.ui.lePassword.text()
@@ -88,7 +96,7 @@ class LoginView(QMainWindow):
             self.ui.lblUsernameError.setText("Username Error!!")
             return False
     
-    def register(self):
+    def register(self,ev):
         if self.registerInfo==False:
             self.ui.leUsername.show()
             self.ui.lblUsername.show()

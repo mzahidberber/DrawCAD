@@ -4,4 +4,3 @@ from UI.GraphicsView import GraphicsView
 from UI.LoginView import LoginView
 from UI.LayerBox import LayerBox
 from UI.DeleteLayerBox import DeleteLayerBox
-from UI.TabWidgetBox import TabWidgetBox

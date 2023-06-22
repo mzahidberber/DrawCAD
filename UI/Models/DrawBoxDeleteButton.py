@@ -5,6 +5,7 @@ from Model import DrawBox
 from Model.DrawEnums import StateTypes
 from Service import DrawService
 
+
 class DrawBoxDeleteButton(QPushButton):
     def __init__(self,drawBox:DrawBox,updateFunc):
         super().__init__()
@@ -12,7 +13,7 @@ class DrawBoxDeleteButton(QPushButton):
         self.__updateFunc=updateFunc
 
         icon1 = QIcon()
-        icon1.addPixmap(QPixmap(":/Image/Images/deleteBtn.png"), QIcon.Normal, QIcon.Off)
+        icon1.addPixmap(QPixmap(":/images/Images/deleteBtn.png"), QIcon.Normal, QIcon.Off)
         self.setIcon(icon1)
         self.setIconSize(QSize(27,27))
         self.setFlat(True)

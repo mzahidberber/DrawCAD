@@ -9,8 +9,9 @@ from Helpers.Snap.SnapPoint import SnapPoint
 from Helpers.GeoMath.GeoMath import GeoMath
 from Elements import ElementObj
 import time
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
 
-
+# @ErrorHandle.Error_Handler_Cls
 class Snap:
     # region Property
     __snapPoint: QPointF or None

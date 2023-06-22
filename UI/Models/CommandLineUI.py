@@ -1,16 +1,17 @@
-from PyQt5.QtCore import QObject,Qt,pyqtSignal,QPointF
+from PyQt5.QtCore import QObject,Qt, QPointF
 from PyQt5.QtWidgets import QListWidget,QLineEdit,QCompleter
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.Qt import QRegExp
 from Commands.CommandLine import CommandLine
-from Commands.CommandLog import CommandLog
 from Commands.CommandEnums import CommandEnums
+from Core.Signal import DrawSignal
 class CommandLineUI(QObject):
-    commandSignal = pyqtSignal(CommandEnums)
-    coordinateSignal = pyqtSignal(object)
-    distanceSignal = pyqtSignal(object)
-    escapeSignal=pyqtSignal()
-    deleteSignal=pyqtSignal()
+    commandSignal= DrawSignal(CommandEnums)
+    coordinateSignal = DrawSignal(object)
+    distanceSignal= DrawSignal(object)
+    escapeSignal= DrawSignal()
+    deleteSignal= DrawSignal()
+    deleteSpaceEnterSignal= DrawSignal()
 
     __commandLine:CommandLine=None
     __lastCommand:CommandEnums
@@ -33,6 +34,8 @@ class CommandLineUI(QObject):
         self.__listWidget=listWidget
         self.__lineEdit=lineEdit
 
+
+
         self.__lineEdit.setValidator(QRegExpValidator(QRegExp("^[A-Za-z0-9.,-]+$")))
         commands=list(map(lambda x:x.name,CommandEnums))
         commands.insert(0,"")
@@ -48,6 +51,7 @@ class CommandLineUI(QObject):
     def lineEditKeyPress(self,ev):
         QLineEdit.keyPressEvent(self.__lineEdit, ev)
         if ev.key() == Qt.Key_Space or ev.key() == Qt.Key_Return or ev.key() == Qt.Key_Enter:
+            self.deleteSpaceEnterSignal.emit()
             self.__lineEdit.selectAll()
             try:
                 distance = float(self.__lineEdit.selectedText())
@@ -63,6 +67,7 @@ class CommandLineUI(QObject):
                         if i.name.lower()==self.__lineEdit.selectedText().lower():
                             self.commandSignal.emit(i)
                             self.__lastCommand=i
+                            break
                 else:
                     self.coordinateSignal.emit(QPointF(coordinateX, coordinateY))
             else:
@@ -70,6 +75,7 @@ class CommandLineUI(QObject):
 
             finally:
                 self.__lineEdit.clear()
+
         elif ev.key()==Qt.Key_Escape:self.escapeSignal.emit()
         elif ev.key()==Qt.Key_Delete:self.deleteSignal.emit()
 

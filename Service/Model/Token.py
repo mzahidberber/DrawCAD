@@ -1,6 +1,6 @@
 from datetime import datetime
 import arrow
-
+from Core.Cyrptography import CustomCryptography
 class Token:
     __accessToken:str
     __accessTokenExpiration:datetime
@@ -53,10 +53,10 @@ class Token:
         self.__refreshTokenExpiration=arrow.get(self.__refreshTokenExpirationSTR).datetime
     
     
-    def to_Dict(self):
+    def to_Dict(self,crypto:CustomCryptography):
         return {
-            "accessToken": self.__accessToken,
-            "accessTokenExpiration": self.__accessTokenExpirationSTR,
-            "refreshToken": self.__refreshToken,
-            "refreshTokenExpiration": self.__refreshTokenExpirationSTR
+            "accessToken": crypto.encrypt(self.__accessToken),
+            "accessTokenExpiration": crypto.encrypt(self.__accessTokenExpirationSTR),
+            "refreshToken": crypto.encrypt(self.__refreshToken),
+            "refreshTokenExpiration": crypto.encrypt(self.__refreshTokenExpirationSTR)
             }

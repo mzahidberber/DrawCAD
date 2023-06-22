@@ -1,12 +1,13 @@
 import requests
-import json
 from enum import Enum
 from Service.UrlBuilder import UrlBuilder
 from Model import PointGeo, Point, DrawEnums
 from multipledispatch import dispatch
 from PyQt5.QtCore import QPointF
 from Service.Model import Response
-
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+from Core.Url.Urls import Urls
+@ErrorHandle.Error_Handler_Cls
 class GeoService(object):
     __url:str
 
@@ -24,12 +25,7 @@ class GeoService(object):
         return cls.instance
     
     def __init__(self):
-        self.getUrl()
-
-    def getUrl(self):
-        f=open("urls.json")
-        data=json.load(f)
-        self.__url=data["drawgeo"]
+        self.__url=Urls.drawgeo.value
 
     @dispatch(Point, Point)
     def findTwoPointsLength(self, p1: Point, p2: Point) -> float:
@@ -353,4 +349,3 @@ if __name__ == "__main__":
             }
         ),
     )
-    print(result)

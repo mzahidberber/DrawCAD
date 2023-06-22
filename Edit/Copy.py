@@ -12,22 +12,22 @@ class Copy(BaseEdit):
         super().__init__(commandPanel)
 
     def cancelEdit(self):
-        for elementObj in self.editElementObjs:
+        for elementObj in self.firstElementObjs:
             for point in elementObj.element.points:
-                objIndex = self.editElementObjs.index(elementObj)
+                objIndex = self.firstElementObjs.index(elementObj)
                 pointIndex = elementObj.element.points.index(point)
-                point.x = self.firstElementObjs[objIndex].element.points[pointIndex].x
-                point.y = self.firstElementObjs[objIndex].element.points[pointIndex].y
+                point.x = self.editElementObjs[objIndex].element.points[pointIndex].x
+                point.y = self.editElementObjs[objIndex].element.points[pointIndex].y
         for i in self.firstElementObjs: i.isEdit = False
         self.finishEdit()
 
     def editPoints(self, difference: float):
-        for elementObj in self.editElementObjs:
+        for elementObj in self.firstElementObjs:
             for point in elementObj.element.points:
-                objIndex = self.editElementObjs.index(elementObj)
+                objIndex = self.firstElementObjs.index(elementObj)
                 pointIndex = elementObj.element.points.index(point)
-                point.x = self.firstElementObjs[objIndex].element.points[pointIndex].x - difference.x()
-                point.y = self.firstElementObjs[objIndex].element.points[pointIndex].y - difference.y()
+                point.x = self.editElementObjs[objIndex].element.points[pointIndex].x - difference.x()
+                point.y = self.editElementObjs[objIndex].element.points[pointIndex].y - difference.y()
 
     def editElements(self) -> bool:
         self.editPoints(GeoMath.differanceTwoPoint(self.points[0], self.points[1]))

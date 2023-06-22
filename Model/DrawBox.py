@@ -29,6 +29,8 @@ class DrawBox(BaseModel):
 
     @property
     def layers(self):return self.__layers
+    @layers.setter
+    def layers(self,layers:list[Layer]):self.__layers=layers
     
     @property
     def createTime(self):
@@ -43,7 +45,7 @@ class DrawBox(BaseModel):
     @isStart.setter
     def isStart(self,start:bool):self.__isStart=start
 
-    def __init__(self, drawBoxInfo: dict=None,drawId:int=None,name: str=None,userId: str=None) -> None:
+    def __init__(self, drawBoxInfo: dict=None,drawId:int=0,name: str=None,userId: str=None) -> None:
         self.__drawBoxInfo = drawBoxInfo
         
         if drawBoxInfo!=None:
@@ -53,7 +55,10 @@ class DrawBox(BaseModel):
             self.__createTime=arrow.get(self.__drawBoxInfo[DBInfo.createTime.value]).datetime
             self.__editTime=arrow.get(self.__drawBoxInfo[DBInfo.editTime.value]).datetime
 
-            self.state=StateTypes.unchanged
+            if self.__drawBoxInfo[DBInfo.layers.value] is not None:
+                self.layers=list(map(lambda x:Layer(x),self.__drawBoxInfo[DBInfo.layers.value]))
+
+
         else:
             self._id=drawId
             self.__name=name
@@ -61,10 +66,22 @@ class DrawBox(BaseModel):
             self.__createTime=datetime.now().replace(tzinfo=timezone(offset=timedelta()))
             self.__editTime=datetime.now().replace(tzinfo=timezone(offset=timedelta()))
 
-            self.layers.append(Layer.create0Layer())
+            # self.layers.append(Layer.create0Layer(self.id))
 
-            self.state=StateTypes.added
+        if self.id != 0:
+            self.state = StateTypes.unchanged
+        else:
+            self.state = StateTypes.added
 
+    def to_dict_save(self) -> dict:
+        return {
+            DBInfo.id.value: self._id,
+            DBInfo.dname.value: self.__name,
+            DBInfo.userId.value: self.__userId,
+            DBInfo.layers.value:MappingModel.mapClassToDictSave(self.layers),
+            DBInfo.createTime.value:self.__createTime.isoformat(),
+            DBInfo.editTime.value:self.__editTime.isoformat()
+        }
 
     def to_dict(self) -> dict:
         return {

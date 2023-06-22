@@ -12,3 +12,9 @@ class MappingModel:
         return (
             list(map(lambda x: x.to_dict(), listItems)) if listItems != None else None
         )
+
+    @staticmethod
+    def mapClassToDictSave(listItems: list[BaseModel] or None) -> list[dict] or None:
+        return (
+            list(map(lambda x: x.to_dict_save(), listItems)) if listItems != None else None
+        )

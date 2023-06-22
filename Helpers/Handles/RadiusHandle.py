@@ -3,6 +3,9 @@ from Helpers.Handles import  BaseHandle
 from Model import  Element,ETypes
 from Helpers.Snap import Snap
 from Elements import ElementObj
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+
+
 class RadiusHandle(BaseHandle):
     def __init__(self, elementObj:ElementObj, pointPos:int, elementType:ETypes, snap:Snap):
         super().__init__(snap)

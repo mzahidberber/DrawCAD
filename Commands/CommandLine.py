@@ -1,12 +1,11 @@
-from PyQt5.QtCore import QObject, pyqtSignal, QPointF
+from PyQt5.QtCore import QObject, QPointF
 from Commands.CommandLog import CommandLog
 from Commands.CommandEnums import CommandEnums
-from Model import Layer, Element
+from Model import Layer
 from Helpers.Settings import Setting
-from datetime import datetime
-
+from Core.Signal import DrawSignal
 class CommandLine(QObject):
-    updateSignal = pyqtSignal()
+    updateSignal = DrawSignal()
 
     __commandList: list[CommandLog]
     __selectedCommand: CommandEnums

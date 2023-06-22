@@ -1,2 +1,1 @@
 from CrossCuttingConcers.Logging.Logging import Log
-from CrossCuttingConcers.Logging.LogAspect import LogAspect

@@ -1,6 +1,6 @@
 from Commands import CommandPanel
 from Elements import ElementObj
-from Model import Layer
+from Model import Layer,Element
 from UI.QtUI.DeleteElementBoxUI import Ui_DeleteElementBox
 from PyQt5.QtWidgets import QDialog,QDialogButtonBox
 
@@ -61,16 +61,16 @@ class DeleteLayerBox(QDialog):
                         self.selectedLayer=i
                         break
                          
-                itemList:list[ElementObj]=[]
+                itemList:list[Element]=[]
                 for i in self.__deleteLayers:
                     itemList.extend(i.elements)
                     self.__commandPanel.removeLayer(i,False)
                 for i in itemList:
-                    i.element.layer=self.selectedLayer
+                    i.layer=self.selectedLayer
                     self.selectedLayer.elements.append(i)
 
             elif self.selectInfo=="Delete":
-                itemList:list[ElementObj]=[]
+                itemList:list[Element]=[]
                 for i in self.__deleteLayers:
                     itemList.extend(i.elements)
                     self.__commandPanel.removeLayer(i)

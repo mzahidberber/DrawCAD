@@ -54,7 +54,7 @@ class Scale(BaseEdit):
     def removePreviewObjects(self):
         for i in self.firstElementObjs:
             i.isEdit=False
-            self.commandPanel.drawObjs.removeElement(i)
+            self.commandPanel.drawObjs.removeElementObj(i)
 
     def moveMouse(self,pos:QPointF):
         if len(self.points)==2:

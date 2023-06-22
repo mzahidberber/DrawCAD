@@ -1,8 +1,5 @@
-import copy
-
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem
-from PyQt5.QtGui import QPainter, QPen, QColor
-from PyQt5.QtCore import Qt, QPointF, pyqtSignal
+from PyQt5.QtWidgets import QGraphicsObject
+from PyQt5.QtGui import QPainter, QPen
 
 from Model import Element
 from Helpers.Handles import HandleBuilder, BaseHandle
@@ -12,12 +9,10 @@ from Elements.ElementBuilder import ElementBuilder
 from UI import DrawScene
 from Helpers.Settings import Setting
 from Model.DrawEnums import ETypes
-from Helpers.GeoMath import GeoMath
-from Helpers.Snap import Snap
-
+from Core.Signal import DrawSignal
 
 class ElementObj(QGraphicsObject):
-    elementUpdate = pyqtSignal(object)
+    elementUpdate = DrawSignal(object)
 
     # region Property
     __element: Element
@@ -28,16 +23,8 @@ class ElementObj(QGraphicsObject):
     __handles: list[BaseHandle]
     __pen: QPen
     __type: ETypes
-    __lock: bool = False
     __isEdit:bool=False
 
-    @property
-    def lock(self) -> bool:
-        return self.__lock
-
-    @lock.setter
-    def lock(self, lock: bool):
-        self.__lock = lock
 
     @property
     def type(self) -> ETypes:
@@ -66,6 +53,8 @@ class ElementObj(QGraphicsObject):
     @property
     def element(self) -> Element:
         return self.__element
+    @element.setter
+    def element(self,element:Element):self.__element=element
 
     @property
     def drawScene(self) -> DrawScene:
@@ -109,11 +98,9 @@ class ElementObj(QGraphicsObject):
 
     def elementSelectedOff(self):
         self.isSelected = False
-        self.lock = True
         self.removeHandles()
 
-    def elementSelectedOn(self):
-        self.lock = False
+    def elementSelectedOn(self):pass
 
     def select(self):
         self.isSelected = True
@@ -126,8 +113,8 @@ class ElementObj(QGraphicsObject):
 
     def mousePressEvent(self, event) -> None:
         if event.isAccepted():
-            if not self.lock and not self.__select.isSelect:
-                if not self.isSelected:
+            if not self.__select.isSelect:
+                if not self.isSelected and self.element.layer.lock:
                     self.select()
                     self.__select.addObject(self)
                     if self.__select.selectedObjectsLen <= 5:

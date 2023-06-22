@@ -7,10 +7,31 @@ class ErrorHandle:
             try:
                 return func(*args, **kwargs)
             except Exception as ex:
-                Log.log(Log.FATAL,f"func: {func.__name__} error:{ex}")
+                if type(func) != staticmethod:
+                    Log.log(Log.FATAL,f"ERROR class: {func.__qualname__.split('.<locals>.')[0]} func: {func.__name__} error:{ex}")
+                else:
+                    Log.log(Log.FATAL,
+                            f"ERROR class: staticmethod func: {func.__func__.__name__} error:{ex}")
             else:
-                Log.log(Log.WARN, f"func: {func.__name__} error:error else")
+                if type(func) != staticmethod:
+                    Log.log(Log.WARN, f"WARNING class: {func.__qualname__.split('.<locals>.')[0]} func: {func.__name__} error:error else")
+                else:
+                    Log.log(Log.WARN,
+                            f"WARNING class: staticmethod func: {func.__func__.__name__} error:error else")
             finally:
-                Log.log(Log.INFO, f"func: {func.__name__} handle complete...")
+                if type(func) != staticmethod:
+                    Log.log(Log.INFO, f"INFO class: {func.__qualname__.split('.<locals>.')[0]} func: {func.__name__} handle complete...")
+                else:
+                    Log.log(Log.INFO,
+                            f"INFO class: staticmethod func: {func.__func__.__name__} handle complete...")
 
         return Inner_Function
+
+
+
+    @staticmethod
+    def Error_Handler_Cls(cls):
+        for attr_name, attr_value in vars(cls).items():
+            if callable(attr_value):
+                setattr(cls, attr_name, ErrorHandle.Error_Handler(attr_value))
+        return cls

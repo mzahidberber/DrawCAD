@@ -1,8 +1,9 @@
 from UI import DrawScene
 from Elements import ElementObj
 from Model import Element
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
 
-
+@ErrorHandle.Error_Handler_Cls
 class DrawElement:
 
     def __init__(self, drawScene: DrawScene) -> None:

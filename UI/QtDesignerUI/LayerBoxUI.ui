@@ -29,7 +29,7 @@
        </property>
        <property name="icon">
         <iconset resource="../ImagesSrc.qrc">
-         <normaloff>:/Image/Images/addBtn.png</normaloff>:/Image/Images/addBtn.png</iconset>
+         <normaloff>:/images/Images/addBtn.png</normaloff>:/images/Images/addBtn.png</iconset>
        </property>
       </widget>
      </item>
@@ -40,7 +40,7 @@
        </property>
        <property name="icon">
         <iconset resource="../ImagesSrc.qrc">
-         <normaloff>:/Image/Images/deleteBtn.png</normaloff>:/Image/Images/deleteBtn.png</iconset>
+         <normaloff>:/images/Images/deleteBtn.png</normaloff>:/images/Images/deleteBtn.png</iconset>
        </property>
       </widget>
      </item>

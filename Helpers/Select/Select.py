@@ -1,11 +1,13 @@
 from Helpers.Select.SelectObj import SelectObj
-from PyQt5.QtCore import QPointF,QRectF,Qt,QObject,pyqtSignal
+from PyQt5.QtCore import QPointF,QRectF,Qt
 from Helpers.Settings import Setting
 from Elements.ElementObj import ElementObj
-class Select(QObject):
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+from Core.Signal import DrawSignal
 
-    changeSelectObjectsSignal=pyqtSignal(list)
-
+# @ErrorHandle.Error_Handler_Cls
+class Select:
+    changeSelectObjectsSignal = DrawSignal(list)
     __selectObj:SelectObj
     __firstPoint:QPointF or None
     __selectedObjects:list[ElementObj]
@@ -96,7 +98,7 @@ class Select(QObject):
                 else:
                     items = self.__drawScene.scanFieldObjects(QRectF(self.__firstPoint, scenePos), mode=Qt.IntersectsItemShape)
 
-                self.__selectedObjects=list(filter(lambda x:type(x)==ElementObj and x.lock==False,items))
+                self.__selectedObjects=list(filter(lambda x:type(x)==ElementObj and x.element.layer.lock,items))
                 self.__selectedObjectsLen = len(self.__selectedObjects)
 
                 self.changeSelectObjectsSignal.emit(self.__selectedObjects)
