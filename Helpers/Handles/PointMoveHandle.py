@@ -5,9 +5,11 @@ from Helpers.GeoMath import GeoMath
 from Helpers.Snap import Snap
 from Elements import ElementObj
 from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+from Core.Signal import DrawSignal
 
 
 class PointMoveHandle(BaseHandle):
+    changeSignal=DrawSignal(object)
     def __init__(self, elementObj:ElementObj, elementType: ETypes, pointPos: int, snap:Snap):
         super().__init__(snap)
         self.elementObj=elementObj
@@ -83,3 +85,4 @@ class PointMoveHandle(BaseHandle):
         else:
             self.__setPoint(event.scenePos())
         self.position = event.scenePos()
+

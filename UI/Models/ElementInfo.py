@@ -7,6 +7,7 @@ from Helpers.Select.Select import Select
 from Model import Layer, Point, SSAngle, Radius, Element, ETypes
 from Helpers.GeoMath import GeoMath
 import sys
+from CrossCuttingConcers.Handling import ErrorHandle
 
 class CustomDoubleSpinBox(QDoubleSpinBox):
     def __init__(self):
@@ -21,6 +22,7 @@ class ElementInfo:
     __commandPanel: CommandPanel or None
     __select: Select or None
     __spinBoxes:list[CustomDoubleSpinBox]
+    __isWrite:bool=False
 
     @property
     def spinBoxes(self)->list[CustomDoubleSpinBox]:return self.__spinBoxes
@@ -51,10 +53,14 @@ class ElementInfo:
 
     def changeSelectObjects(self, elements: list[ElementObj]):
         if len(elements) == 0:
-            self.clearElementInfo()
+            if self.__isWrite:
+                self.clearElementInfo()
+                self.__isWrite = False
         elif len(elements) == 1:
+            self.__isWrite = True
             self.setElement(elements[0])
         else:
+            self.__isWrite = True
             self.clearElementInfo()
             self.info = QTreeWidgetItem()
             self.info.setText(0, "Elements")
@@ -98,7 +104,7 @@ class ElementInfo:
     def __setElementState(self, state: str):
         self.state.setText(1, str(state))
 
-
+    @ErrorHandle.Error_Handler
     def __setElementLayer(self, layer: Layer):
         self.layerBox = QComboBox()
         for i in self.commandPanel.layers: self.layerBox.addItem(i.name)

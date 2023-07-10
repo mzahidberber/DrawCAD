@@ -5,7 +5,7 @@ from UI import DrawScene
 from Helpers.Select.Select import Select
 from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
 
-
+@ErrorHandle.Error_Handler_Cls
 class DrawObjects:
     __layers:list[Layer]
     __elementObjs:list[ElementObj]
@@ -62,8 +62,8 @@ class DrawObjects:
         else:element.state = StateTypes.added
         if not hasattr(element,"layer"):element.layer=self.__commandPanel.selectedLayer
         self.elements.append(element)
-        elementObj=ElementObj(element,self.__drawScene,self.__select)
-        elementObj.elementUpdate.connect(self.__commandPanel.updateElement)
+        elementObj=ElementObj(element,self.__drawScene,self.__select,self.__commandPanel)
+        elementObj.elementUpdate.connect(lambda x:self.__commandPanel.updateElement.emit(x))
         self.__drawScene.addItem(elementObj)
         self.__elementObjs.append(elementObj)
         element.layer.addElement(element)
@@ -91,8 +91,8 @@ class DrawObjects:
         if isService:element.state = StateTypes.unchanged
         else:element.state = StateTypes.added
         if not hasattr(element,"layer"):element.layer=self.__commandPanel.selectedLayer
-        elementObj=ElementObj(element,self.__drawScene,self.__select)
-        elementObj.elementUpdate.connect(self.__commandPanel.updateElement)
+        elementObj=ElementObj(element,self.__drawScene,self.__select,self.__commandPanel)
+        elementObj.elementUpdate.connect(lambda x:self.__commandPanel.updateElement.emit(x))
         self.__drawScene.addItem(elementObj)
         self.__elementObjs.append(elementObj)
         return elementObj
@@ -106,7 +106,7 @@ class DrawObjects:
         [self.__elements.append(e.element) for e in self.elementObjs]
     def removeElement(self, element:Element, deleteId:bool=False):
         eObj=next(e for e in self.elementObjs if e.element==element)
-        element.layer.elements.remove(element)
+        # element.layer.elements.remove(element)
         if element.id != 0 and not deleteId:
             element.state = StateTypes.delete
         else:
@@ -118,7 +118,7 @@ class DrawObjects:
     def removeElements(self,elements:list[Element], deleteId:bool=False):
         for element in elements:
             eObj=next(e for e in self.elementObjs if e.element==element)
-            element.layer.elements.remove(element)
+            # element.layer.elements.remove(element)
             if element.id != 0 and not deleteId:
                 element.state = StateTypes.delete
             else:
@@ -190,7 +190,9 @@ class DrawObjects:
     
     
     
-    def addPenStyles(self,penStyles: list[PenStyle])->None:self.__penStyles.extend(penStyles)
+    def addPenStyles(self,penStyles: list[PenStyle])->None:
+        if penStyles is not None:
+            self.__penStyles.extend(penStyles)
 
     def lockElements(self):[l.elementSelectedOff() for l in self.elementObjs]
     def unlockElements(self):[l.elementSelectedOn() for l in self.elementObjs]

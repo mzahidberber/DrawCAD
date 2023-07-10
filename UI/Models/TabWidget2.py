@@ -9,7 +9,7 @@ from Core.Signal import DrawSignal
 
 class TabWidget2(QWidget):
     mousePositionSignal=DrawSignal(object)
-    stopCommanSignal=DrawSignal()
+    stopCommandSignal=DrawSignal()
     changeSelectObjectsSignal=DrawSignal(list)
     updateElement=DrawSignal(object)
     clickMouse=DrawSignal(object)
@@ -54,7 +54,7 @@ class TabWidget2(QWidget):
 
     def saveDraw(self,save:bool):self.isSaved=save
     def runCommand(self,run:bool):
-        self.stopCommanSignal.emit()
+        self.stopCommandSignal.emit()
         self.isStartCommand=run
 
     def mousePosition(self,pos):self.mousePositionSignal.emit(pos)
@@ -65,8 +65,8 @@ class TabWidget2(QWidget):
         self.gvGraphicsView = GraphicsView(self)
         self.gvGraphicsView.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.verticalLayout.addWidget(self.gvGraphicsView)
-        self.__drawScene = DrawScene(self)
-        self.__drawScene.EscOrEnterSignal.connect(lambda x:self.stopCommanSignal.emit(x))
+        self.__drawScene = DrawScene(self,self.gvGraphicsView)
+        self.__drawScene.EscOrEnterSignal.connect(lambda:self.stopCommandSignal.emit())
         self.__drawScene.ClickedMouse.connect(lambda x:self.clickMouse.emit(x))
         self.gvGraphicsView.setMouseTracking(True)
         self.gvGraphicsView.setScene(self.__drawScene)

@@ -22,12 +22,12 @@ class Copy(BaseEdit):
         self.finishEdit()
 
     def editPoints(self, difference: float):
-        for elementObj in self.firstElementObjs:
+        for elementObj in self.editElementObjs:
             for point in elementObj.element.points:
-                objIndex = self.firstElementObjs.index(elementObj)
+                objIndex = self.editElementObjs.index(elementObj)
                 pointIndex = elementObj.element.points.index(point)
-                point.x = self.editElementObjs[objIndex].element.points[pointIndex].x - difference.x()
-                point.y = self.editElementObjs[objIndex].element.points[pointIndex].y - difference.y()
+                point.x = self.firstElementObjs[objIndex].element.points[pointIndex].x - difference.x()
+                point.y = self.firstElementObjs[objIndex].element.points[pointIndex].y - difference.y()
 
     def editElements(self) -> bool:
         self.editPoints(GeoMath.differanceTwoPoint(self.points[0], self.points[1]))
@@ -40,7 +40,7 @@ class Copy(BaseEdit):
             self.snapObj.continueSnapElements = list(map(lambda x: x.element, self.editElementObjs))
             mousePos = self.snapObj.snapPoint if self.snapObj.snapPoint is not None else pos
             self.editPoints(GeoMath.differanceTwoPoint(self.points[0], mousePos))
-
+            self.commandPanel.updateScene()
     def addPoint(self, point: QPointF) -> bool:
         self.points.append(point)
         if len(self.points) == 1:

@@ -17,3 +17,9 @@ class DrawSignal(object):
 
     def connect(self, listener):
         self.listeners.append(listener)
+
+    def disconnect(self, listener):
+        self.listeners.remove(listener)
+
+    def clearConnect(self):
+        self.listeners.clear()

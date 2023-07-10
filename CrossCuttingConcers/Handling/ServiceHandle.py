@@ -1,8 +1,8 @@
 from CrossCuttingConcers.Logging import Log
 from collections.abc import Iterable
+import requests
+from Core.UI.ErrorMessageBox import ErrorMessageBox
 from Core.Internet import CheckInternet
-
-
 class ServiceHandle:
     @staticmethod
     def serviceHandle_func(func):
@@ -26,10 +26,13 @@ class ServiceHandle:
                 Log.log(Log.INFO,
                         f"INFO Class: {func.__qualname__.split('.<locals>.')[0]} Func: {func.__name__} Return {returnValue}")
                 return result
+            except requests.exceptions.RequestException:
+                Log.log(Log.CRITICAL,f"CRITICAL You do not have an internet connection")
+                CheckInternet.isConnect=False
 
             except Exception as ex:
                 Log.log(Log.ERROR,
-                        f"ERROR Class: {func.__qualname__.split('.<locals>.')[0]} Func: {func.__name__} error: {ex.message}")
+                        f"ERROR Class: {func.__qualname__.split('.<locals>.')[0]} Func: {func.__name__} error: {ex}")
             else:pass
                 # Log.log(Log.ERROR,
                 #         f"ERROR Class: {func.__qualname__.split('.<locals>.')[0]} Func: {func.__name__} error: You do not have an internet connection")

@@ -3,8 +3,20 @@ from CrossCuttingConcers.Logging.Logging import Log
 from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
 import time
 import requests
+
+
+
+
 @ErrorHandle.Error_Handler_Cls
 class CheckInternet:
+
+    __isConnect:bool
+
+    @property
+    def isConnect(self)->bool:return  self.__isConnect
+    @isConnect.setter
+    def isConnect(self,connect:bool):self.__isConnect=connect
+
     @staticmethod
     def checkConnectInternet() ->(bool,float):
         try:
@@ -13,9 +25,11 @@ class CheckInternet:
             end_time = time.time()
             response_time = end_time - start_time
             response.raise_for_status()
+            CheckInternet.__isConnect = True
             return (True,response_time)
         except requests.exceptions.RequestException:
             Log.log(Log.CRITICAL,f"CRITICAL You do not have an internet connection")
+            CheckInternet.__isConnect=False
             return (False,0)
 
     @staticmethod

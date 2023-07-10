@@ -77,7 +77,8 @@ class AuthService:
         
     def logout(self):
         self.revokeToken(self.userAndToken.token)
-        open('user.json', 'w').close()
+        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD")
+        open(folderPath + "\\user.json", 'w').close()
 
 
     def loggin(self,email: str,password: str) -> bool:
@@ -92,13 +93,13 @@ class AuthService:
         return False if self.__userAndToken==None else True
 
     def writeToken(self, tokenAndUser: UserAndToken) -> None:
-        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawProgram")
+        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD")
         with open(folderPath + "\\user.json", "w") as json_file:
             json.dump(tokenAndUser.to_Dict(self.__cryptoObj), json_file)
 
 
     def readToken(self) -> UserAndToken or None:
-        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawProgram")
+        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD")
         with open(folderPath + "\\user.json") as f:
             try:
                 data = json.load(f)

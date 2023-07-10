@@ -835,7 +835,6 @@ class Ui_DrawView(object):
         self.toolBar_7.addAction(self.actionHatch)
         self.toolBar_9.addAction(self.actionLogout)
         self.toolBar_9.addAction(self.actionUserEmail)
-        self.toolBar_9.addAction(self.actionping)
 
         self.retranslateUi(DrawView)
         self.twDrawTabs.setCurrentIndex(0)
@@ -843,7 +842,7 @@ class Ui_DrawView(object):
 
     def retranslateUi(self, DrawView):
         _translate = QtCore.QCoreApplication.translate
-        DrawView.setWindowTitle(_translate("DrawView", "Draw Program"))
+        DrawView.setWindowTitle(_translate("DrawView", "DrawCAD - 1.0.0"))
         self.lblXCoordinate.setText(_translate("DrawView", "0000.0000"))
         self.label.setText(_translate("DrawView", "-"))
         self.lblYcoordinate.setText(_translate("DrawView", "0000.0000"))

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsObject, QGraphicsItem
 from PyQt5.QtGui import QPainter
-from PyQt5.QtCore import Qt, QLineF, QPointF,QRectF
+from PyQt5.QtCore import Qt, QLineF, QPointF,QRectF,QRect
 
 from Elements import ElementObj
 from Helpers.Settings import Setting
@@ -23,16 +23,19 @@ class DrawScene(QGraphicsScene):
     @property
     def snap(self)->Snap:return self.__snap
 
-    def __init__(self, view):
+    def __init__(self, view,graphicsView):
         super().__init__()
         self.__view = view
+        self.__graphicsView=graphicsView
         self.setSceneRect(-100000, -100000, 200000, 200000)
 
         self.setItemIndexMethod(QGraphicsScene.ItemIndexMethod.NoIndex)
 
-        self.__croos=CrossObj()
-        self.addItem(self.__croos)
-        self.MovedMouse.connect(self.__croos.setPoint)
+
+
+        # self.__croos=CrossObj()
+        # self.addItem(self.__croos)
+        # self.MovedMouse.connect(self.__croos.setPoint)
 
         self.__snap = Snap(self)
 
@@ -56,12 +59,14 @@ class DrawScene(QGraphicsScene):
             self.EscOrEnterSignal.emit()
 
     def updateScene(self):
-        # print("sceneUpdate")
         self.update()
 
     def mouseMoveEvent(self, event) -> None:
         QGraphicsScene.mouseMoveEvent(self, event)
         self.MovedMouse.emit(event.scenePos())
+
+    def mouseReleaseEvent(self, event) -> None:
+        self.updateScene()
 
     def mousePressEvent(self, event):
         QGraphicsScene.mousePressEvent(self, event)

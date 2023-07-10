@@ -15,6 +15,9 @@ class BasePreview(ABC):
     _commandPanel: CommandPanel = None
     _editManyElements:list[ElementObj] =None
 
+    @property
+    def points(self)->list[QPointF]:return self._pointList
+
     def setCommandPanel(self, commandPanel: CommandPanel):
         self._commandPanel = commandPanel
 

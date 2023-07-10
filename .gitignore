@@ -17,4 +17,5 @@ drawProject.egg-info/
 
 *dist
 
-Urls.py
+
+*.spec

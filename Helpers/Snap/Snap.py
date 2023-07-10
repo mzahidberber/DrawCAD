@@ -168,10 +168,17 @@ class Snap:
         self.snapAngle = Setting.snapAngle
         self.gridDistance = Setting.gridDistance
 
+    update:bool=False
     def moveMouse(self, scenePos):
         # if time.time() - self.__time >= 0.01:
         self.__setSetting()
         self.__snapPoints(scenePos)
+        if self.snapPoint is not None:
+            self.update=True
+        if self.snapPoint is None:
+            if self.update:
+                self.__drawScene.updateScene()
+                self.update=False
         self.__time = time.time()
 
     # region Intersection
@@ -303,9 +310,9 @@ class Snap:
                     self.__snapPoint = GeoMath.findNearestPoint(scenePos, lst)
 
         self.__snapObject.setSnapPoint(self.__snapPoint)
-        self.__drawScene.updateScene()
         self.pointList.clear()
 
+        if self.snapPoint is not None:self.__drawScene.updateScene()
         self.__continueSnapElements = None
 
     def __addPoints(self, elementObj: ElementObj, scenePos: QPointF):

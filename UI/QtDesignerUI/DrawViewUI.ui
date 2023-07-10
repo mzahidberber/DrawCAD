@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Draw Program</string>
+   <string>DrawCAD - 1.0.0</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../ImagesSrc.qrc">
@@ -1389,7 +1389,6 @@
    </attribute>
    <addaction name="actionLogout"/>
    <addaction name="actionUserEmail"/>
-   <addaction name="actionping"/>
   </widget>
   <action name="actionImport">
    <property name="text">

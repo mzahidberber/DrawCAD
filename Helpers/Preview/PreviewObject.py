@@ -10,6 +10,9 @@ class PreviewObject(QGraphicsObject):
     cancelSignal = DrawSignal()
     _preview: BasePreview
 
+    @property
+    def points(self)->list[QPointF]:return self._preview.points
+
     def __init__(self, commandPanel, parent=None):
         QGraphicsObject.__init__(self, parent)
         self.__commandPanel = commandPanel

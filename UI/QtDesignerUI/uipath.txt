@@ -19,7 +19,9 @@ pyrcc5 UI/ImagesSrc.qrc -o UI/ImagesSrc.py
 
 
 ------Exe Yapma
-pyinstaller Run.py --onefile --noconsole  
+pyinstaller Run.py --onefile --noconsole
+
+pyinstaller --noconsole --onefile --icon=icon.ico Run.py
 
 from Commands.CommandLine import CommandLine
 from UI.GraphicsView import GraphicsView

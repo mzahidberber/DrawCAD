@@ -11,7 +11,7 @@ class SnapSquare(QGraphicsObject):
     
     def mouseMove(self,scenePos):
         self.__mousePosition=scenePos
-        self.__drawScene.updateScene()
+        # self.__drawScene.updateScene()
     
     def paint(self, painter, option, widget):
         painter.setPen(Setting.handlePen)

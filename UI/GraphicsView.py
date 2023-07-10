@@ -12,15 +12,14 @@ class GraphicsView(QGraphicsView):
         super().__init__(*args, **kwargs)
 
         self.scale(Setting.zoom, -Setting.zoom)
-
-        self.zoomInFactor = 1.05
-        self.zoomOutFactor = 0.95
+        self.zoomInFactor = 1.15
+        self.zoomOutFactor = 0.85
 
         self.panX: float
         self.panY: float
         self.pan: bool = False
 
-        self.setCursor(Qt.BlankCursor)
+        self.setCursor(Qt.CrossCursor)
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -31,7 +30,12 @@ class GraphicsView(QGraphicsView):
     def findPixelSize(self):
         Setting.pixelSize = GeoMath.findLengthLine(self.mapToScene(QPoint(0, 0)),self.mapToScene(QPoint(1, 0)))
         Setting.refreshValues()
-        self.scene().update()
+        # self.scene().update()
+
+    def findRectScreen(self)->QRectF:
+        p1=QPoint(self.rect().x(),self.rect().y())
+        p2=QPoint(self.rect().width(),self.rect().height())
+        return QRectF(self.mapToScene(p1),self.mapToScene(p2))
 
     def wheelEvent(self, event):
         if event.angleDelta().y() > 0:

@@ -1,20 +1,17 @@
-from PyQt5.QtWidgets import QMessageBox
 from CrossCuttingConcers.Logging import Log
+from Core.UI.ErrorMessageBox import ErrorMessageBox
 class UIErrorHandle:
     @staticmethod
     def Error_Handler_Func(func):
         def Inner_Function(*args, **kwargs):
             try:
-                return func(*args, **kwargs)
+                from Core.Internet.CheckInternet import CheckInternet
+                if CheckInternet.isConnect:
+                    return func(*args, **kwargs)
+                else:CheckInternet.checkConnectInternet()
             except Exception as ex:
-
                 Log.log(Log.FATAL, f"ERROR class: {func.__qualname__.split('.<locals>.')[0]} func: {func.__name__} error:{ex}")
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Information)
-                msg.setWindowTitle("Error!")
-                msg.setText("An unexpected error has occurred, please try again.")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.exec_()
+                ErrorMessageBox("An unexpected error has occurred, please try again.")
             else:
                 Log.log(Log.WARN, f"WARNING class: {func.__qualname__.split('.<locals>.')[0]} func: {func.__name__} error:error else")
             finally:

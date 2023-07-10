@@ -77,12 +77,13 @@ class ElementObj(QGraphicsObject):
 
     # endregion
 
-    def __init__(self, element: Element, drawScene: DrawScene, select: 'Select', parent=None):
+    def __init__(self, element: Element, drawScene: DrawScene, select: 'Select',commandPanel, parent=None):
         QGraphicsObject.__init__(self, parent)
         self.__element: Element = element
         self.__drawScene = drawScene
         self.__snap = drawScene.snap
         self.__select = select
+        self.__commandPanel=commandPanel
         self.__elementContext = BuilderContext()
         self.__elementBuilder = self.elementContext.setElementBuilder(self.element.elementTypeId)
         self.elementBuilder.setElementInformation(self.element)
@@ -90,6 +91,8 @@ class ElementObj(QGraphicsObject):
         self.setFlag(QGraphicsObject.ItemSendsGeometryChanges)
         self.setFlag(QGraphicsObject.ItemIsFocusable)
         self.setFlag(QGraphicsObject.ItemIsSelectable)
+
+
 
         self.__handles = []
 
@@ -113,7 +116,7 @@ class ElementObj(QGraphicsObject):
 
     def mousePressEvent(self, event) -> None:
         if event.isAccepted():
-            if not self.__select.isSelect:
+            if not self.__select.isSelect and not self.__commandPanel.isStartCommand:
                 if not self.isSelected and self.element.layer.lock:
                     self.select()
                     self.__select.addObject(self)

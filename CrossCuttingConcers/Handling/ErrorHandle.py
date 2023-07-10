@@ -1,11 +1,13 @@
 from CrossCuttingConcers.Logging import Log
-
+from Core.UI.ErrorMessageBox import ErrorMessageBox
 class ErrorHandle:
     @staticmethod
     def Error_Handler(func):
         def Inner_Function(*args, **kwargs):
             try:
-                return func(*args, **kwargs)
+                from Core.Internet.CheckInternet import CheckInternet
+                if CheckInternet.isConnect:return func(*args, **kwargs)
+                else:CheckInternet.checkConnectInternet()
             except Exception as ex:
                 if type(func) != staticmethod:
                     Log.log(Log.FATAL,f"ERROR class: {func.__qualname__.split('.<locals>.')[0]} func: {func.__name__} error:{ex}")

@@ -11,7 +11,7 @@ class DrawElement:
 
     def drawElement(self, elementObj: ElementObj) -> None:
         self.__drawScene.addItem(elementObj)
-        elementObj.elementUpdate.connect(self.__drawScene.updateScene)
+        elementObj.elementUpdate.connect(lambda x:self.__drawScene.updateScene())
     
     def drawElements(self,elementObjs:list[ElementObj]) -> None:
         for element in elementObjs:self.drawElement(element)

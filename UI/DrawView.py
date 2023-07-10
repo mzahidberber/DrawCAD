@@ -1,24 +1,23 @@
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QInputDialog, QTabBar, QMessageBox,QFileDialog
 from PyQt5.QtGui import QPixmap, QIcon, QColor
 from PyQt5.QtCore import Qt
-from Model.DrawEnums import StateTypes
-from Service import DrawService, AuthService
-
-from UI.QtUI import Ui_DrawView
-from UI.LayerBox import LayerBox
-from UI.Models.DrawBoxEditButton import DrawBoxEditButton
-from UI.Models.DrawBoxDeleteButton import DrawBoxDeleteButton
-from UI.Models.CommandLineUI import CommandLineUI
-from Commands import CommandPanel, CommandEnums, CommandTypes
-from Model import DrawBox
-from UI.Models import TabWidget2, ElementInfo,ErrorMessageBox
-from Helpers.Settings import Setting
 import json
 import time
-from CrossCuttingConcers.Handling import  UIErrorHandle
+import os
+from UI.QtUI import Ui_DrawView
+from UI.LayerBox import LayerBox
+from UI.Models import TabWidget2, ElementInfo,CommandLineUI,DrawBoxDeleteButton,DrawBoxEditButton
+from Model.DrawEnums import StateTypes
+from Model import DrawBox
+from Service import DrawService, AuthService
+from Commands import CommandPanel, CommandEnums, CommandTypes
+from Core.UI import ErrorMessageBox
 from Core.Thread import CustomThreadManager
 from Core.Internet import CheckInternet
-import os
+from CrossCuttingConcers.Handling import  UIErrorHandle
+from Helpers.Settings import Setting
+import Version
+
 
 class DrawView(QMainWindow):
     # region Propery and Field
@@ -98,6 +97,8 @@ class DrawView(QMainWindow):
 
         self.closeEvent=self.closeEventt
 
+        self.setWindowTitle("DrawCAD - "+Version.VERSION)
+
     def closeEventt(self, a0) -> None:
         save=False
         for i in self.__drawBoxes:
@@ -112,7 +113,7 @@ class DrawView(QMainWindow):
                 self.saveDrawBoxes()
                 [i.commandPanel.saveCloudDraw() for i in self.drawLayers]
             elif result==3:a0.ignore()
-        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawProgram")
+        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD")
         with open(folderPath + "\\setting.json", "w") as jsonFile:
             json.dump({
                 "snap": {
@@ -139,7 +140,7 @@ class DrawView(QMainWindow):
     #region SaveSettingFile
 
     def getSettings(self):
-        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawProgram")
+        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD")
         try:
             f = open(folderPath + "\\setting.json")
             settings = json.load(f)
@@ -202,11 +203,12 @@ class DrawView(QMainWindow):
         text, ok = QInputDialog.getText(self, 'Draw Name', 'Draw Name?')
         if ok:
             if text != "":
-                row = self.ui.twDrawBoxes.rowCount() + 1
-                drawBox = DrawBox(name=text)
-                self.__drawBoxes.append(drawBox)
-                self.__drawBoxes.sort(key=lambda x:x.editTime,reverse=True)
-                if drawBox != None: self.getDrawBoxItems()
+                if self.__drawBoxes is not None:
+                    row = self.ui.twDrawBoxes.rowCount() + 1
+                    drawBox = DrawBox(name=text)
+                    self.__drawBoxes.append(drawBox)
+                    self.__drawBoxes.sort(key=lambda x:x.editTime,reverse=True)
+                    if drawBox != None: self.getDrawBoxItems()
 
     def saveDrawBox(self, drawBox: DrawBox, listIndex: int):
         if drawBox.state == StateTypes.added:
@@ -217,22 +219,23 @@ class DrawView(QMainWindow):
 
     @UIErrorHandle.Error_Handler_Func
     def saveDrawBoxes(self,ev):
-        addList = list(filter(lambda d: d.state == StateTypes.added, self.__drawBoxes))
-        deleteList = list(filter(lambda d: d.state == StateTypes.delete, self.__drawBoxes))
-        updatelist = list(filter(lambda d: d.state == StateTypes.update, self.__drawBoxes))
-        deleteListIds = list(map(lambda d: d.id, deleteList))
-        list(filter(lambda d: self.__drawBoxes.remove(d), deleteList))
-        newDrawBoxes = self.__drawService.addDraw(addList)
-        self.__drawService.updateDrawBoxes(updatelist)
-        self.__drawService.deleteDrawBoxes(deleteListIds)
+        if self.__drawBoxes is not None:
+            addList = list(filter(lambda d: d.state == StateTypes.added, self.__drawBoxes))
+            deleteList = list(filter(lambda d: d.state == StateTypes.delete, self.__drawBoxes))
+            updatelist = list(filter(lambda d: d.state == StateTypes.update, self.__drawBoxes))
+            deleteListIds = list(map(lambda d: d.id, deleteList))
+            list(filter(lambda d: self.__drawBoxes.remove(d), deleteList))
+            newDrawBoxes = self.__drawService.addDraw(addList)
+            self.__drawService.updateDrawBoxes(updatelist)
+            self.__drawService.deleteDrawBoxes(deleteListIds)
 
 
-        for i in addList: self.__drawBoxes.remove(i)
-        if newDrawBoxes != None:
-            for i in newDrawBoxes: self.__drawBoxes.append(i)
-        for i in updatelist: i.state = StateTypes.unchanged
+            for i in addList: self.__drawBoxes.remove(i)
+            if newDrawBoxes != None:
+                for i in newDrawBoxes: self.__drawBoxes.append(i)
+            for i in updatelist: i.state = StateTypes.unchanged
 
-        self.getDrawBoxItems()
+            self.getDrawBoxItems()
 
     def settingTabWidget(self):
 
@@ -255,7 +258,6 @@ class DrawView(QMainWindow):
 
     def getDrawBoxes(self,ev):
         self.__drawBoxes = self.__drawService.getDrawBoxes()
-
         self.getDrawBoxItems()
 
     @UIErrorHandle.Error_Handler_Func
@@ -341,8 +343,8 @@ class DrawView(QMainWindow):
         drawLayer = TabWidget2(selectedDrawBox, self.__token)
         drawLayer.changeSelectObjectsSignal.connect(self.elementInfoView.changeSelectObjects)
         drawLayer.mousePositionSignal.connect(self.mousePosition)
-        drawLayer.stopCommanSignal.connect(self.stopCommand)
-        drawLayer.updateElement.connect(self.elementInfoView.refreshElementInfo)
+        drawLayer.stopCommandSignal.connect(self.stopCommand)
+        drawLayer.updateElement.connect(lambda x:self.elementInfoView.refreshElementInfo())
         drawLayer.clickMouse.connect(self.mouseClick)
         tabId = self.ui.twDrawTabs.addTab(drawLayer, drawLayer.commandPanel.drawBox.name)
         self.drawLayers.append(drawLayer)
@@ -364,12 +366,14 @@ class DrawView(QMainWindow):
             item = self.ui.twDrawBoxes.item(row, column)
             if item != None: item.setFlags(Qt.ItemIsEnabled)
 
+    @UIErrorHandle.Error_Handler_Func
     def getDrawBoxItems(self):
-        self.__drawBoxes.sort(key=lambda x: x.editTime, reverse=True)
-        self.ui.twDrawBoxes.setRowCount(0)
-        for drawBox in self.__drawBoxes:
-            self.addDrawBoxItems(drawBox, self.__drawBoxes.index(drawBox))
-            if drawBox.isStart == True: self.disableDrawBoxRow(self.__drawBoxes.index(drawBox))
+        if self.__drawBoxes is not None:
+            self.__drawBoxes.sort(key=lambda x: x.editTime, reverse=True)
+            self.ui.twDrawBoxes.setRowCount(0)
+            for drawBox in self.__drawBoxes:
+                self.addDrawBoxItems(drawBox, self.__drawBoxes.index(drawBox))
+                if drawBox.isStart == True: self.disableDrawBoxRow(self.__drawBoxes.index(drawBox))
 
     def enableDrawBoxRow(self, row):
         for column in range(0, self.ui.twDrawBoxes.columnCount()):
@@ -424,7 +428,8 @@ class DrawView(QMainWindow):
             self.selectedCommandP.startEditCommand(command)
 
     def finishCommand(self):
-        self.selectedCommandP.finishCommand()
+        if self.selectedCommandP is not None and self.selectedCommandP.isStartCommand:
+            self.selectedCommandP.finishCommand()
 
     def stopCommand(self):
         self.enableTabs(True, self.ui.twDrawTabs.currentIndex())
@@ -463,25 +468,21 @@ class DrawView(QMainWindow):
         self.ui.actionUserEmail.setText(self.__userAndToken.email)
         CustomThreadManager.startDelayThread(target=self.settingConnection,delay=10)
 
-    def settingConnection(self):
-        result=CheckInternet.getResponseTime()
-        match result:
-            case 0:
-                self.ui.actionping.setText("connection : High")
-                self.ui.centralwidget.setDisabled(False)
-                self.setButtonsDisable(False)
-            case 1:
-                self.ui.actionping.setText("connection : Normal")
-                self.ui.centralwidget.setDisabled(False)
-                self.setButtonsDisable(False)
-            case 2:
-                self.ui.actionping.setText("connection : Low")
-                self.ui.centralwidget.setDisabled(False)
-                self.setButtonsDisable(False)
-            case 3:
-                self.ui.actionping.setText("connection : No Connection")
-                self.ui.centralwidget.setDisabled(True)
-                self.setButtonsDisable(True)
+    def settingConnection(self):pass
+        # result=CheckInternet.getResponseTime()
+        # match result:
+        #     case 0:
+        #         self.ui.actionping.setText("connection : High")
+        #         self.setDisabled(False)
+        #     case 1:
+        #         self.ui.actionping.setText("connection : Normal")
+        #         self.setDisabled(False)
+        #     case 2:
+        #         self.ui.actionping.setText("connection : Low")
+        #         self.setDisabled(False)
+        #     case 3:
+        #         self.ui.actionping.setText("connection : No Connection")
+        #         self.setDisabled(True)
 
 
     # endregion

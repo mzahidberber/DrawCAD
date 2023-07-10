@@ -5,6 +5,7 @@ from PyQt5.Qt import QRegExp
 from Commands.CommandLine import CommandLine
 from Commands.CommandEnums import CommandEnums
 from Core.Signal import DrawSignal
+from Core.Command import CommandCache
 class CommandLineUI(QObject):
     commandSignal= DrawSignal(CommandEnums)
     coordinateSignal = DrawSignal(object)
@@ -46,27 +47,27 @@ class CommandLineUI(QObject):
 
         self.__lineEdit.keyPressEvent=self.lineEditKeyPress
 
-        self.__lastCommand=CommandEnums.Line
 
     def lineEditKeyPress(self,ev):
         QLineEdit.keyPressEvent(self.__lineEdit, ev)
         if ev.key() == Qt.Key_Space or ev.key() == Qt.Key_Return or ev.key() == Qt.Key_Enter:
-            self.deleteSpaceEnterSignal.emit()
+            if self.__lineEdit.text()=="":
+                self.deleteSpaceEnterSignal.emit()
             self.__lineEdit.selectAll()
             try:
-                distance = float(self.__lineEdit.selectedText())
+                distance = float(self.__lineEdit.text())
             except Exception as ex:
                 try:
-                    coordinate = self.__lineEdit.selectedText().split(",")
+                    coordinate = self.__lineEdit.text().split(",")
                     coordinateX,coordinateY=float(coordinate[0]),float(coordinate[1])
                 except Exception as ex:
                     if self.__lineEdit.selectedText()=="":
-                        self.commandSignal.emit(self.__lastCommand)
+                        self.commandSignal.emit(CommandCache.LastCommand)
                         return
                     for i in CommandEnums:
                         if i.name.lower()==self.__lineEdit.selectedText().lower():
                             self.commandSignal.emit(i)
-                            self.__lastCommand=i
+                            CommandCache.LastCommand=i
                             break
                 else:
                     self.coordinateSignal.emit(QPointF(coordinateX, coordinateY))

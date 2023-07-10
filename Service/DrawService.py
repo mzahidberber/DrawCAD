@@ -4,10 +4,13 @@ import asyncio
 import aiohttp
 from Service.Model import Token, Response
 from Service.UrlBuilder import UrlBuilder
+from Service.Model.VersionModel import VersionModel
 from Model import Element, DrawBox, Layer,Pen, PenStyle,Point,Radius,SSAngle
 from Core.Url.Urls import Urls
 from enum import Enum
 from CrossCuttingConcers.Handling.ServiceHandle import ServiceHandle
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
+from CrossCuttingConcers.Handling.UIErrorHandle import UIErrorHandle
 class RequestType(Enum):
     get = 1
     post = 2
@@ -42,6 +45,30 @@ class DrawService:
 
     def getAuthorize(self) -> dict:
         return {"Authorization": f"Bearer {self.__token.accessToken}"}
+
+    #region Exe
+    def checkVersion(self, version:str) -> VersionModel:
+        connectionString = (
+            UrlBuilder().urlBuild(self.__url).urlBuild("Exe").urlBuild("checkVersion")
+        ).build()
+        response = Response(
+            requests.post(connectionString, json=version, headers=self.getAuthorize()).json()
+        )
+        return VersionModel(response.data) if response.statusCode==200 else None
+
+    # def downloadExe(self,path:str) -> None:
+    #     connectionString = (
+    #         UrlBuilder().urlBuild(self.__url).urlBuild("Exe").urlBuild("downloadExe")
+    #     ).build()
+    #     response=requests.get(connectionString, headers=self.getAuthorize())
+    #
+    #     if response.status_code == 200:
+    #         with open(path, "wb") as file:
+    #             file.write(response.content)
+
+
+
+    #endregion
 
     #region Save
     def getFilename_fromCd(self,cd):
@@ -375,7 +402,6 @@ class DrawService:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("startCommand")
         ).build()
-
         body = {
             "command": command.value[0],
             "drawId": userDrawBoxId,
@@ -386,6 +412,7 @@ class DrawService:
             connectionString, json=body, headers=self.getAuthorize()
         ).json()
         response = Response(result)
+
 
 
     async def startCommandAsync(

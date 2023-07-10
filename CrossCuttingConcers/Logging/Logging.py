@@ -54,7 +54,7 @@ class Log:
 
     @staticmethod
     def log(logType:int,message:str):
-        path = os.path.join(os.path.expanduser('~'), "Documents","DrawProgram","Logs")
+        path = os.path.join(os.path.expanduser('~'), "Documents","DrawCAD","Logs")
         filename = path + datetime.now().strftime('\\%d-%m-%Y.log')
         logging.basicConfig(
             filename=filename,

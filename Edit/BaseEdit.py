@@ -9,6 +9,13 @@ class BaseEdit(ABC):
     _points:list[QPointF]=[]
     _editElementObjs:list[ElementObj]=[]
     _firstElementObjs:list[ElementObj] =[]
+    _isConnectMouse:bool=False
+
+
+    @property
+    def isConnectMouse(self)->bool:return self._isConnectMouse
+    @isConnectMouse.setter
+    def isConnectMouse(self,connect:bool):self._isConnectMouse=connect
 
     @property
     def points(self)->list[QPointF]:return self._points

@@ -60,6 +60,7 @@ class Rotate(BaseEdit):
             self.snapObj.continueSnapElements = list(map(lambda x: x.element, self.editElementObjs))
             mousePos=self.snapObj.snapPoint if self.snapObj.snapPoint is not None else pos
             self.editPoints(mousePos)
+            self.commandPanel.updateScene()
 
     def addPoint(self,point:QPointF)->bool:
         self.points.append(point)

@@ -27,4 +27,6 @@ class EditContext:
         self.__editCommand=self.__editCommandType(commandPanel)
         return self.__editCommand
 
+    def stopEditCommand(self):self.__editCommandType=None
+
     def getEditCommand(self)-> BaseEdit:return self.__editCommand if self.__editCommandType is not None else None
