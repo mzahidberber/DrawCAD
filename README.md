@@ -19,12 +19,13 @@ Teknik çizim programı olan DrawCAD ile temel seviyede teknik çizimler gerçek
 Arayüz dört adet hizmeti kullanarak çalışmaktadır.Hizmetler varsayılan olarak
 <a href="https://github.com/mzahidberber/Draw-UI-Python">drawprogram.org</a> adresinde çalışmaktadır ama kendiniz localde test etmek isterseniz docker compose ile kullanabilirsiniz.Hizmetleri localde kullabilmek için Core/Url/Urls.py dosyasındaki local için olan adresleri etkinleştirmelisiniz.
 </p>
+
 ```
 class Urls(enum.Enum):
     drawgeo="http://localhost:5001/geo"
     drawapi= "http://localhost:5000"
     drawauth= "http://localhost:5002"
-    server="https://drawprogram.org"
+    server="https://localhost"
 ```
 
 <h3>Başlangıç</h3>
@@ -42,17 +43,21 @@ numpy 1.23.3
 
 
 <p>Paketlerin yüklü olduğundan emin olduktan sonra kullanmak için Run.py dosyasını çalıştırmalısınız.</p>
+
 ```
 python Run.py
 ```
 
 <h3>Hizmetler</h3>
-<img src="drawcad.png">
+<div align="center">
+  <img src="drawcad.png"  style="width:70%;">
+</div>
 <p>
 DrawCAD yazılımı arka uçta dört adet servis ön uçta bir adet clientten oluşan modüler bir yapıya sahiptir. Arka uçtaki servislerin üç tanesi restapi tipinde olup json veri tipiyle birbirleriyle haberleşmekte dördünce serviste mysql servis bu servistede datalar tutulmaktadır.Api ve auth hizmetleri C# ile geo ve client python diliyle yazılmıştır.Hizmetler serverda docker ile sanallaştırılmış ve birbirleriyle iletişime geçirilmiştir.
 </p>
 <h3>Başlangıç</h3>
 <p>Kullanmak için docker compose kullanabilirsiniz.Hizmetlerin imagelerini dockerhubtan indirir ve çalıştırır.</p>
+
 ```
 docker-compose up -d
 ```

@@ -11,4 +11,4 @@ class Urls(enum.Enum):
 #     drawgeo="http://localhost:5001/geo"
 #     drawapi= "http://localhost:5000"
 #     drawauth= "http://localhost:5002"
-#     server="https://drawprogram.org"
+#     server="https://localhost"
