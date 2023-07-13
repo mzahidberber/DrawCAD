@@ -13,12 +13,12 @@ class StateTypes(Enum):
 
 class ETypes(Enum):
     "ElementTypes"
-    line = 0
-    circle = 1
-    rectangle = 3
-    arc = 4
-    ellips = 5
-    spline = 6
+    Line = 1
+    Circle = 2
+    Rectangle = 3
+    Arc = 4
+    Ellipse = 5
+    Polyline = 6
 
 
 class DBInfo(Enum):

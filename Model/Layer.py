@@ -1,9 +1,8 @@
-
-from Elements import ElementObj
 from Model.BaseModel import BaseModel
 from Model.Pen import Pen
 from Model.DrawEnums import LInfo,StateTypes
-
+from Model.MappingModel import MappingModel
+from Model.Element import Element
 
 
 class Layer(BaseModel):
@@ -14,7 +13,7 @@ class Layer(BaseModel):
     __drawBoxId: int
     __penId: int
     __pen: Pen
-    __elements:list[ElementObj] or None
+    __elements:list[Element] or None
     
 
 
@@ -23,7 +22,8 @@ class Layer(BaseModel):
         return self.__name
     @name.setter
     def name(self,name:str):
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
         self.__name=name
 
     @property
@@ -31,7 +31,8 @@ class Layer(BaseModel):
         return self.__lock
     @lock.setter
     def lock(self,lock:bool):
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
         self.__lock=lock
 
     @property
@@ -39,7 +40,8 @@ class Layer(BaseModel):
         return self.__visibility
     @visibility.setter
     def visibility(self,visibility:bool):
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
         self.__visibility=visibility
 
     @property
@@ -47,33 +49,42 @@ class Layer(BaseModel):
         return self.__thickness
     @thickness.setter
     def thickness(self,thickness:float):
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
         self.__thickness=thickness
 
     @property
     def drawBoxId(self):
         return self.__drawBoxId
+    @drawBoxId.setter
+    def drawBoxId(self,id:int):self.__drawBoxId=id
 
     @property
     def penId(self):
         return self.__penId
 
+    @penId.setter
+    def penId(self,id:int):self.__penId=id
+
     @property
     def pen(self):
         return self.__pen
+    @pen.setter
+    def pen(self,pen:Pen):self.__pen=pen
 
     @property
-    def elements(self) -> list[ElementObj]:return self.__elements
+    def elements(self) -> list[Element]:return self.__elements
     @elements.setter
-    def elements(self,elements:list[ElementObj]):
-        self.state=StateTypes.update
+    def elements(self,elements:list[Element]):
+        if self.state!=StateTypes.added:
+            self.state=StateTypes.update
         self.__elements=elements
 
     
 
     def __init__(self, layerInfo: dict=None,
-                id:int=None,name: str=None,
-                lock:bool=False,thickness: float=1,
+                id:int=0,name: str=None,
+                lock:bool=True,thickness: float=1,
                 visibility: bool=True,drawBoxId: int=None,
                 pen:Pen=None) -> None:
         
@@ -88,6 +99,17 @@ class Layer(BaseModel):
             self.__penId = self.__layerInfo[LInfo.penId.value]
             self.__pen = Pen(self.__layerInfo[LInfo.pen.value])
 
+            if self.__layerInfo[LInfo.elements.value] is not None:
+                self.elements=list(map(lambda x:Element(x),self.__layerInfo[LInfo.elements.value]))
+                for e in self.elements:e.layerName=self.name
+
+                if self.id != 0:
+                    self.state = StateTypes.unchanged
+                else:
+                    self.state = StateTypes.added
+            else:
+                self.__elements = []
+
         else:
             self._id = id
             self.__name = name
@@ -98,29 +120,44 @@ class Layer(BaseModel):
             self.__penId = pen.id
             self.__pen = pen
 
+            self.__elements = []
+
+            self.state = StateTypes.added
 
 
-        self.state=StateTypes.unchanged
-        self.__elements=[]
 
-    def addElement(self,element:ElementObj):self.__elements.append(element)
+
+
+    def addElement(self,element:Element):self.__elements.append(element)
 
     def copy(self):return Layer(
-        id=None,name=self.name,
+        id=0,name=self.name,
         lock=self.lock,thickness=self.thickness,visibility=self.visibility,
         drawBoxId=self.drawBoxId,pen=self.pen.copy())
 
-    def lockElements(self):
-        for e in self.__elements:e.elementSelectedOff()
 
-    def unlockElements(self):
-        for e in self.__elements:e.elementSelectedOn()
 
-    def hideElements(self):
-        for e in self.__elements:e.elementHide()
+    @staticmethod
+    def create0Layer(drawBoxId:int):
+        pen=Pen(penStyleId=1,red=150,blue=150,green=150)
+        pen.state=StateTypes.added
+        return Layer(name="0",pen=pen,drawBoxId=drawBoxId)
 
-    def showElements(self):
-        for e in self.__elements:e.elementShow()
+
+    def to_dict_save(self):
+        return {
+            LInfo.id.value: self._id,
+            LInfo.lname.value: self.__name,
+            LInfo.lock.value: self.__lock,
+            LInfo.visibility.value: self.__visibility,
+            LInfo.thickness.value: self.__thickness,
+            LInfo.drawBoxId.value: self.__drawBoxId,
+            LInfo.penId.value: self.__penId,
+            LInfo.pen.value:self.pen.to_dict_save(),
+            LInfo.elements.value:MappingModel.mapClassToDictSave(list(map(lambda x:x,self.elements)))
+            # LInfo.pen.value: self.__pen.to_dict(),
+            # LInfo.elements.value:MappingModel.mapClassToDict(self.__layerElements),
+        }
 
     def to_dict(self) -> dict:
         return {
@@ -131,6 +168,6 @@ class Layer(BaseModel):
             LInfo.thickness.value: self.__thickness,
             LInfo.drawBoxId.value: self.__drawBoxId,
             LInfo.penId.value: self.__penId,
-            LInfo.pen.value: self.__pen.to_dict(),
+            # LInfo.pen.value: self.__pen.to_dict(),
             # LInfo.elements.value:MappingModel.mapClassToDict(self.__layerElements),
         }

@@ -11,8 +11,8 @@ class SPLineBuilder(ElementBuilder):
         self.__pointList=list(map(lambda p:QPointF(p.x,p.y),self.element.points))
 
     def paint(self, painter):
-        painter.drawRect(self.shape().boundingRect())
-        painter.drawPath(self.shape())
+        # painter.drawRect(self.shape().boundingRect())
+        # painter.drawPath(self.shape())
 
         lineList=[]
         if(len(self.__pointList)>1):

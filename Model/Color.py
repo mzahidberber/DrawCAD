@@ -56,3 +56,12 @@ class Color(BaseModel):
             CInfo.blue.value: self.__blue,
             CInfo.green.value: self.__green,
         }
+
+    def to_dict_save(self) -> dict:
+        return {
+            CInfo.id.value: self._id,
+            CInfo.cname.value: self.__name,
+            CInfo.red.value: self.__red,
+            CInfo.blue.value: self.__blue,
+            CInfo.green.value: self.__green,
+        }

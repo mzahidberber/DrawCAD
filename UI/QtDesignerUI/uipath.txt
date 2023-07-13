@@ -15,11 +15,13 @@ pyuic5 UI/QtDesignerUI/DrawBox.ui -o UI/QtUI/DrawBoxUI.py
 pyuic5 UI/QtDesignerUI/tabWidget.ui -o UI/QtUI/TabWidgetUI.py
 
 ------Kaynak Cevirme
-pyrcc5 UI/ImagesSrc/ImagesSrc.qrc -o QtUI/ImagesSrc/ImagesSrc.py
+pyrcc5 UI/ImagesSrc.qrc -o UI/ImagesSrc.py
 
 
 ------Exe Yapma
-pyinstaller Run.py --onefile --noconsole  
+pyinstaller Run.py --onefile --noconsole
+
+pyinstaller --noconsole --onefile --icon=icon.ico Run.py
 
 from Commands.CommandLine import CommandLine
 from UI.GraphicsView import GraphicsView

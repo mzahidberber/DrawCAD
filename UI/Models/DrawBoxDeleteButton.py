@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import QPushButton,QMessageBox
 from PyQt5.QtGui import QPixmap,QIcon,QColor
+from PyQt5.QtCore import QSize
 from Model import DrawBox
 from Model.DrawEnums import StateTypes
 from Service import DrawService
+
 
 class DrawBoxDeleteButton(QPushButton):
     def __init__(self,drawBox:DrawBox,updateFunc):
@@ -10,11 +12,11 @@ class DrawBoxDeleteButton(QPushButton):
         self.__drawBox=drawBox
         self.__updateFunc=updateFunc
 
-        # dltBtn.setStyleSheet(f"background-color:rgba(155, 250, 15, 1);")
-        # pixmap=QPixmap(15,15)
-        # pixmap.fill(QColor(255,15,154))
-        # self.setMaximumSize(15,15)
-        # self.setIcon(QIcon(pixmap))
+        icon1 = QIcon()
+        icon1.addPixmap(QPixmap(":/images/Images/deleteBtn.png"), QIcon.Normal, QIcon.Off)
+        self.setIcon(icon1)
+        self.setIconSize(QSize(27,27))
+        self.setFlat(True)
 
         self.clicked.connect(self.btnClick)
 

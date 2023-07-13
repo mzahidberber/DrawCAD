@@ -14,10 +14,20 @@ class PenStyle(BaseModel):
     def name(self, name: str):
         self.__name = name
 
-    def __init__(self, penStyleInformation: dict):
+    def __init__(self, penStyleInformation: dict=None,id:int=0,name:str=None):
         self.__penStyleInfo = penStyleInformation
-        self._id = self.__penStyleInfo[PSInfo.id.value]
-        self.__name = self.__penStyleInfo[PSInfo.psname.value]
+        if self.__penStyleInfo is not None:
+            self._id = self.__penStyleInfo[PSInfo.id.value]
+            self.__name = self.__penStyleInfo[PSInfo.psname.value]
+        else:
+            self._id=id
+            self.__name=name
+
+    def to_dict_save(self) -> dict:
+        return {
+            PSInfo.id.value: self._id,
+            PSInfo.psname.value: self.__name,
+        }
 
     def to_dict(self) -> dict:
         return {

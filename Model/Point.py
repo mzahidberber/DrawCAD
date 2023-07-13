@@ -45,18 +45,39 @@ class Point(BaseModel):
     def pointTypeId(self) -> int:
         return self.__pointTypeId
 
-    def __init__(self, pInfo: dict) -> None:
-        self.__pInfo = pInfo
-        self._id = self.__pInfo[PInfo.id.value]
-        self.__X = self.__pInfo[PInfo.x.value]
-        self.__Y = self.__pInfo[PInfo.y.value]
-        self.__elementId = self.__pInfo[PInfo.elementId.value]
-        self.__pointTypeId = self.__pInfo[PInfo.pointTypeId.value]
+    def __init__(self, pInfo: dict=None,id:int=0,x:float=None,y:float=None,elementId:int=None,pointTypeId:int=None) -> None:
+        if pInfo is not None:
+            self.__pInfo = pInfo
+            self._id = self.__pInfo[PInfo.id.value]
+            self.__X = self.__pInfo[PInfo.x.value]
+            self.__Y = self.__pInfo[PInfo.y.value]
+            self.__elementId = self.__pInfo[PInfo.elementId.value]
+            self.__pointTypeId = self.__pInfo[PInfo.pointTypeId.value]
+        else:
+            self._id=id
+            self.__X=x
+            self.__Y=y
+            self.__elementId=elementId
+            self.__pointTypeId=pointTypeId
 
-        self.state=StateTypes.unchanged
+        if self.id!=0:
+            self.state=StateTypes.unchanged
+        else:
+            self.state=StateTypes.added
+
+    def copy(self):return Point(x=self.x,y=self.y,elementId=self.elementId,pointTypeId=self.pointTypeId)
 
     def to_dict_geo(self) -> dict:
         return {"X": self.__X, "Y": self.__Y, "Z": self.__Z}
+
+    def to_dict_save(self) -> dict:
+        return {
+            PInfo.id.value: self._id,
+            PInfo.x.value: self.x,
+            PInfo.y.value: self.y,
+            PInfo.elementId.value: self.__elementId,
+            PInfo.pointTypeId.value: self.__pointTypeId,
+        }
 
     def to_dict(self) -> dict:
         return {

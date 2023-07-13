@@ -2,12 +2,10 @@ from Model.BaseModel import BaseModel
 from Model.Color import Color
 from Model.PenStyle import PenStyle
 from Model.DrawEnums import PenInfo,StateTypes
-
+import uuid
 
 class Pen(BaseModel):
     __name: str
-    # __penColorId: int
-    # __penColor: Color or None
     __red: int
     __blue: int
     __green: int
@@ -22,7 +20,8 @@ class Pen(BaseModel):
     @name.setter
     def name(self, name: str):
         self.__name = name
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
         
     @property
     def red(self):
@@ -31,7 +30,8 @@ class Pen(BaseModel):
     @red.setter
     def red(self, rCode: int):
         self.__red = rCode
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
 
     @property
     def blue(self):
@@ -39,7 +39,8 @@ class Pen(BaseModel):
 
     @blue.setter
     def blue(self, bCode: int):
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
         self.__blue = bCode
 
     @property
@@ -47,23 +48,17 @@ class Pen(BaseModel):
         return self.__green
     @green.setter
     def green(self, gCode: int):
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
         self.__green = gCode
-
-    # @property
-    # def penColorId(self):
-    #     return self.__penColorId
-
-    # @property
-    # def penColor(self):
-    #     return self.__penColor if self.__penColor != None else None
 
     @property
     def penStyleId(self):
         return self.__penStyleId
     @penStyleId.setter
     def penStyleId(self,id:int):
-        self.state=StateTypes.update
+        if self.state != StateTypes.added:
+            self.state = StateTypes.update
         self.__penStyleId=id
 
     @property
@@ -71,56 +66,63 @@ class Pen(BaseModel):
         return self.__penStyle if self.__penStyle != None else None
     @penStyle.setter
     def penStyle(self,style:PenStyle):
-        self.state=StateTypes.update
+        if self.state!=StateTypes.added:
+            self.state=StateTypes.update
         self.__penStyle=style
 
     
 
 
-    def __init__(self, penInfo: dict=None,id:int=None,name: str=None,penStyleId:int=None,
+    def __init__(self, penInfo: dict=None,id:int=0,name: str=None,penStyleId:int=None,
                  red:int=None,blue:int=None,green:int=None) -> None:
-        if(penInfo!=None):
+        if penInfo is not None:
             self.__penInfo = penInfo
             self._id = self.__penInfo[PenInfo.id.value]
             self.__name = self.__penInfo[PenInfo.pname.value]
-            # self.__penColorId = self.__penInfo[PenInfo.penColorId.value]
             self.__penStyleId = self.__penInfo[PenInfo.penStyleId.value]
             self.__red=self.__penInfo[PenInfo.red.value]
             self.__blue=self.__penInfo[PenInfo.blue.value]
             self.__green=self.__penInfo[PenInfo.green.value]
 
-            if self.__penInfo[PenInfo.penStyle.value] != None:
+            if self.__penInfo[PenInfo.penStyle.value] is not None:
                 self.__penStyle = PenStyle(self.__penInfo[PenInfo.penStyle.value])
             else:
                 self.__penStyle = None
 
+
         else:
             self._id = id
-            self.__name = name
+            self.__name = str(uuid.uuid4())
             self.__penStyleId = penStyleId
             self.__red=red
             self.__blue=blue
             self.__green=green
 
-            self.__penStyle=None
-            
-        self.state=StateTypes.unchanged
+            self.__penStyle=PenStyle(name="solid")
 
-    def copy(self):return Pen(id=None,name=self.name,penStyleId=self.penStyleId,red=self.red,blue=self.blue,green=self.green)
+        if self.id != 0:
+            self.state = StateTypes.unchanged
+        else:
+            self.state = StateTypes.added
 
+    def copy(self):return Pen(id=0,name=str(uuid.uuid4()),penStyleId=self.penStyleId,red=self.red,blue=self.blue,green=self.green)
+
+    def to_dict_save(self) -> dict:
+        return {
+            PenInfo.id.value: self._id,
+            PenInfo.pname.value: self.__name,
+            PenInfo.penStyleId.value: self.__penStyleId,
+            PenInfo.red.value:self.__red,
+            PenInfo.blue.value:self.__blue,
+            PenInfo.green.value:self.__green,
+            PenInfo.penStyle.value:self.penStyle.to_dict()
+        }
     def to_dict(self) -> dict:
         return {
             PenInfo.id.value: self._id,
             PenInfo.pname.value: self.__name,
-            # PenInfo.penColorId.value: self.__penColorId,
-            # PenInfo.penColor.value: self.__penColor.to_dict()
-            # if self.__penColor != None
-            # else None,
             PenInfo.red.value:self.__red,
             PenInfo.green.value:self.__green,
             PenInfo.blue.value:self.__blue,
-            PenInfo.penStyleId.value: self.__penStyleId,
-            PenInfo.penStyle.value: self.__penStyle.to_dict()
-            if self.penStyle != None
-            else None,
+            PenInfo.penStyleId.value: self.__penStyleId
         }

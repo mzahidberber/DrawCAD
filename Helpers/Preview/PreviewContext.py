@@ -10,7 +10,8 @@ from Helpers.Preview.CircleCenterRadiusPreview import CircleCenterRadiusPreview
 from Helpers.Preview.CircleTreePointPreivew import CircleTreePointPreivew
 from Helpers.Preview.DefaultPreview import DefaultPreview
 from Helpers.Preview.ArcCenterTwoPointPreview import ArcCenterTwoPointPreview
-
+from Helpers.Preview.MovePreview import MovePreview
+from CrossCuttingConcers.Handling.ErrorHandle import ErrorHandle
 
 
 class PreviewContext:
@@ -24,14 +25,15 @@ class PreviewContext:
         5: RectanglePreview,
         6: ArcThreePointPreview,
         7: SplinePreview,
+        8: MovePreview,
         10: EllipsPreview,
         11: ArcCenterTwoPointPreview
     }
 
-    def __new__(self):
-        if not hasattr(self, "instance"):
-            self.instance = super(PreviewContext, self).__new__(self)
-        return self.instance
+    def __new__(cls):
+        if not hasattr(cls, "instance"):
+            cls.instance = super(PreviewContext, cls).__new__(cls)
+        return cls.instance
 
     def setPreviewBuilder(self, previewType: int) -> BasePreview:
         self.__preview = self.__preivewTypes[previewType]

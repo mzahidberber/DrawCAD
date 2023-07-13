@@ -18,11 +18,20 @@ class RectangleBuilder(ElementBuilder):
             self.element.points[1].x,
             self.element.points[1].y,
         )
+        self.__p3 = QPointF(
+            self.element.points[2].x,
+            self.element.points[2].y,
+        )
+        self.__p4 = QPointF(
+            self.element.points[3].x,
+            self.element.points[3].y,
+        )
 
     def paint(self, painter):
         # painter.drawRect(self.shape().boundingRect())
-        
-        painter.drawRect(QRectF(self.__p1, self.__p2))
+        # painter.drawPath(self.shape())
+
+        painter.drawRect(QRectF(self.__p1, self.__p3))
 
     def shape(self) -> QPainterPath:
         painterStrock = QPainterPathStroker()
@@ -31,6 +40,9 @@ class RectangleBuilder(ElementBuilder):
 
         p.moveTo(self.__p1)
         p.lineTo(self.__p2)
+        p.lineTo(self.__p3)
+        p.lineTo(self.__p4)
+        p.lineTo(self.__p1)
 
         path1 = painterStrock.createStroke(p)
         return path1

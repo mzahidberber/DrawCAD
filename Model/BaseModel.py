@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 from Model.DrawEnums import StateTypes
-
+import copy
 class BaseModel(ABC):
-    _state:StateTypes
+    _state:StateTypes=StateTypes.unchanged
     _id:int
+
+    def __copy__(self):return copy.deepcopy(self)
 
     @property
     def id(self) -> int:
@@ -19,4 +21,8 @@ class BaseModel(ABC):
 
     @abstractmethod
     def to_dict(self) -> dict:
+        pass
+
+    @abstractmethod
+    def to_dict_save(self) -> dict:
         pass

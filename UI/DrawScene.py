@@ -1,37 +1,56 @@
-from PyQt5.QtWidgets import QGraphicsScene,QGraphicsObject
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsObject, QGraphicsItem
 from PyQt5.QtGui import QPainter
-from PyQt5.QtCore import Qt, pyqtSignal, QLineF, QPointF,QRectF
+from PyQt5.QtCore import Qt, QLineF, QPointF,QRectF,QRect
 
 from Elements import ElementObj
 from Helpers.Settings import Setting
-
+from Helpers.Snap.Snap import Snap
+from Core.Signal import DrawSignal
 import math
-
-
+import  numpy as np
+from CrossCuttingConcers.Handling import ErrorHandle
 
 class DrawScene(QGraphicsScene):
-    ClickedMouse = pyqtSignal(object, object)
-    MovedMouse = pyqtSignal(object)
-    EscOrEnterSignal=pyqtSignal()
+    ClickedMouse = DrawSignal(object)
+    RightClickMouse=DrawSignal(object)
+    LeftClickMouse=DrawSignal(object)
+    MiddleClickMouse=DrawSignal(object)
+    MovedMouse = DrawSignal(object)
+    EscOrEnterSignal=DrawSignal()
 
-    def __init__(self, view):
+    __snap:Snap
+
+
+    @property
+    def snap(self)->Snap:return self.__snap
+
+    def __init__(self, view,graphicsView):
         super().__init__()
         self.__view = view
-        self.setSceneRect(-10000, -10000, 20000, 20000)
+        self.__graphicsView=graphicsView
+        self.setSceneRect(-100000, -100000, 200000, 200000)
 
         self.setItemIndexMethod(QGraphicsScene.ItemIndexMethod.NoIndex)
 
-    
-    def scanFieldObjects(self,field:QRectF) -> list[ElementObj]:return self.items(field,mode=Qt.IntersectsItemBoundingRect)
 
-    def changed(self, region) -> None:
-        print("regionnn")
-        print(region)
+
+        # self.__croos=CrossObj()
+        # self.addItem(self.__croos)
+        # self.MovedMouse.connect(self.__croos.setPoint)
+
+        self.__snap = Snap(self)
+
+
+    def scanFieldObjects(self,field:QRectF,mode=Qt.IntersectsItemShape) -> list[QGraphicsItem]:
+        if mode==Qt.IntersectsItemShape:return self.items(field, mode=Qt.IntersectsItemShape)
+        elif mode==Qt.ContainsItemShape:return self.items(field,mode=Qt.ContainsItemShape)
+
+
 
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_Escape:
             self.EscOrEnterSignal.emit()
-            print("esc")
+            # print("esc")
             for i in self.items():
                 i.setSelected(False)
                 if type(i) == ElementObj:
@@ -40,87 +59,62 @@ class DrawScene(QGraphicsScene):
             self.EscOrEnterSignal.emit()
 
     def updateScene(self):
-        # print("sceneUpdate")
         self.update()
 
     def mouseMoveEvent(self, event) -> None:
         QGraphicsScene.mouseMoveEvent(self, event)
         self.MovedMouse.emit(event.scenePos())
 
+    def mouseReleaseEvent(self, event) -> None:
+        self.updateScene()
+
     def mousePressEvent(self, event):
         QGraphicsScene.mousePressEvent(self, event)
-        # print(self.selectionArea().boundingRect().getCoords(),"-----------")
-        # print(self.activePanel())
-        # print(len(self.items()))
-        # print("mousepreesDrawScenee")
+        self.ClickedMouse.emit(event.scenePos())
         self.updateScene()
         if event.button() == Qt.LeftButton:
-            if event.modifiers() == Qt.ControlModifier:
-                pass
-            #  self.taramaAlani(event.scenePos())
-            #  self.secimObjesi.listedenElemanCikar(self.selectedItems())
+            self.LeftClickMouse.emit(event.scenePos())
+            if event.modifiers() == Qt.ControlModifier:pass
+            elif event.modifiers() == Qt.ShiftModifier:pass
+        elif event.button() == Qt.MidButton: pass
+        elif event.button() == Qt.RightButton:pass
 
-            elif event.modifiers() == Qt.ShiftModifier:
-                pass
-            # self.secikutusu=SecimKutusuCizim(self)
-            else:
-                #  self.taramaAlani(event.scenePos())
-                #  self.secimObjesi.listeyeElemanEkle(self.selectedItems())
 
-                self.ClickedMouse.emit(event.scenePos(), self.__view.selectedCommandP.selectedLayer)
-        elif event.button() == Qt.MidButton:
-            pass
-        elif event.button() == Qt.RightButton:
-            pass
+    def drawBackgroundGrid(self, p1:QPointF, p2:QPointF,painter:QPainter):
+        horizontalLength=p2.x() - p1.x()
+        verticalLength=p2.y() -p1.y()
 
-    def arkaplanGrid(self, p1, p2):
-        ekranYatayUzunluk = p2.x() - p1.x()
-        logYU = math.log10(ekranYatayUzunluk)
-        x1, y1, x2, y2 = p1.x(), p1.y(), p2.x(), p2.y()
-        deger, deger1, deger2 = (
-            10 ** (int(logYU) + 1),
-            10 ** (int(logYU)),
-            10 ** (int(logYU) - 1),
-        )
+        logHL=math.log10(horizontalLength)
+        logVL=math.log10(verticalLength)
 
-        ax1 = (int(x1 / deger1) - deger2) * deger1
-        ax2 = (int(x2 / deger1) + deger2) * deger1
-        ay1 = (int(y1 / deger1) - deger2) * deger1
-        ay2 = (int(y2 / deger1) + deger2) * deger1
+        z1,z2,z3=10**(int(logHL)+1),10**int(logHL),10**(int(logHL)-1)
 
-        xListesi, yListesi, x1Listesi, y1Listesi = [], [], [], []
+        for i in np.arange(math.ceil(p1.x() / z2) * z2,math.ceil(p2.x() / z2) * z2,z2):
+            painter.drawLine(QLineF(i,p1.y(),i,p2.y()))
 
-        if deger1 > 1:
-            if ekranYatayUzunluk <= deger:
-                for i in range(ax1, ax2, deger1):
-                    xListesi.append(QLineF(x1, i, x2, i))
-                for i in range(ay1, ay2, deger1):
-                    yListesi.append(QLineF(i, y1, i, y2))
-                if deger2 >= 1:
-                    for i in range(ax1, ax2, deger2):
-                        x1Listesi.append(QLineF(x1, i, x2, i))
-                    for i in range(ay1, ay2, deger2):
-                        y1Listesi.append(QLineF(i, y1, i, y2))
-        return (xListesi, yListesi, x1Listesi, y1Listesi)
+        for i in np.arange(math.ceil(p1.x() / z3) * z3,math.ceil(p2.x() / z3) * z2,z3):
+            painter.drawLine(QLineF(i,p1.y(),i,p2.y()))
+
+        for i in np.arange(math.ceil(p1.y() / z2) * z2, math.ceil(p2.y() / z2) * z2, z2):
+            painter.drawLine(QLineF(p1.x(),i,p2.x(),i))
+
+        for i in np.arange(math.ceil(p1.y() / z3) * z3, math.ceil(p2.y() / z3) * z3, z3):
+            painter.drawLine(QLineF(p1.x(),i,p2.x(),i))
 
     def drawBackground(self, painter, rect):
         painter.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing)
         painter.fillRect(rect, Setting.gridHatch)
         painter.setPen(Setting.gridPen)
-        painter.setOpacity(0.25)
 
-        koordinat = rect.getCoords()
-        x1, y1, x2, y2 = koordinat[0], koordinat[1], koordinat[2], koordinat[3]
-        p1 = QPointF(x1, y1)
-        p2 = QPointF(x2, y2)
-        listeler = self.arkaplanGrid(p1, p2)
-        for i in listeler:
-            painter.drawLines(i)
+        coords = rect.getCoords()
+        x1, y1, x2, y2 = coords[0], coords[1], coords[2], coords[3]
+        self.drawBackgroundGrid(QPointF(x1, y1), QPointF(x2, y2),painter)
+
         # xveyAksları
-        painter.setOpacity(0.5)
         painter.setPen(Setting.XYAxlePen)
         painter.drawLine(0, int(y1), 0, int(y2))
         painter.drawLine(int(x1), 0, int(x2), 0)
+
 
     def wheelEvent(self, event) -> None:
         QGraphicsScene.wheelEvent(self, event)
@@ -134,4 +128,21 @@ class DrawScene(QGraphicsScene):
             pixelboyut = self.pixelBoyutBul()
         self.scale(zoomFactor, zoomFactor)
 
+class CrossObj(QGraphicsObject):
 
+    __point:QPointF
+    def __init__(self):
+        super().__init__()
+        self.__point=QPointF()
+        self.setZValue(999999999)
+    def setPoint(self,point:QPointF):self.__point=point
+
+    def rect(self)->QRectF:return QRectF(
+            QPointF(self.__point.x()-Setting.snapSize,self.__point.y()-Setting.snapSize),
+            QPointF(self.__point.x()+Setting.snapSize,self.__point.y()+Setting.snapSize))
+
+    def paint(self, painter:QPainter, option, widget) -> None:
+        painter.setPen(Setting.croosPen)
+        painter.drawRect(self.rect())
+
+    def boundingRect(self) -> QRectF:return self.rect()

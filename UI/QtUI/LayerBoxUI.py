@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UI/QtDesignerUI/LayerBox.ui'
+# Form implementation generated from reading ui file 'UI\QtDesignerUI\LayerBoxUI.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -12,23 +12,33 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_LayerBox(object):
-    def setupUi(self, EditLayer):
-        EditLayer.setObjectName("EditLayer")
-        EditLayer.resize(550, 300)
-        EditLayer.setSizeGripEnabled(False)
-        EditLayer.setModal(True)
-        self.verticalLayout = QtWidgets.QVBoxLayout(EditLayer)
+    def setupUi(self, LayerBox):
+        LayerBox.setObjectName("LayerBox")
+        LayerBox.resize(700, 300)
+        LayerBox.setSizeGripEnabled(False)
+        LayerBox.setModal(True)
+        self.verticalLayout = QtWidgets.QVBoxLayout(LayerBox)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.AddLayer = QtWidgets.QPushButton(EditLayer)
+        self.AddLayer = QtWidgets.QPushButton(LayerBox)
+        self.AddLayer.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/images/Images/addBtn.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.AddLayer.setIcon(icon)
         self.AddLayer.setObjectName("AddLayer")
         self.horizontalLayout_2.addWidget(self.AddLayer)
-        self.RemoveLayer = QtWidgets.QPushButton(EditLayer)
+        self.RemoveLayer = QtWidgets.QPushButton(LayerBox)
+        self.RemoveLayer.setText("")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/images/Images/deleteBtn.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.RemoveLayer.setIcon(icon1)
         self.RemoveLayer.setObjectName("RemoveLayer")
         self.horizontalLayout_2.addWidget(self.RemoveLayer)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.LayerList = QtWidgets.QTableWidget(EditLayer)
+        self.LayerList = QtWidgets.QTableWidget(LayerBox)
         self.LayerList.setAutoScrollMargin(16)
         self.LayerList.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.LayerList.setAlternatingRowColors(False)
@@ -43,7 +53,7 @@ class Ui_LayerBox(object):
         self.LayerList.setColumnCount(7)
         self.LayerList.setObjectName("LayerList")
         item = QtWidgets.QTableWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignVCenter)
+        item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
         self.LayerList.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         self.LayerList.setHorizontalHeaderItem(1, item)
@@ -54,10 +64,10 @@ class Ui_LayerBox(object):
         item = QtWidgets.QTableWidgetItem()
         self.LayerList.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignVCenter)
+        item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
         self.LayerList.setHorizontalHeaderItem(5, item)
         item = QtWidgets.QTableWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignVCenter)
+        item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
         self.LayerList.setHorizontalHeaderItem(6, item)
         self.LayerList.horizontalHeader().setVisible(True)
         self.LayerList.horizontalHeader().setCascadingSectionResizes(False)
@@ -71,26 +81,25 @@ class Ui_LayerBox(object):
         self.LayerList.verticalHeader().setMinimumSectionSize(20)
         self.verticalLayout.addWidget(self.LayerList)
 
-        self.retranslateUi(EditLayer)
-        QtCore.QMetaObject.connectSlotsByName(EditLayer)
+        self.retranslateUi(LayerBox)
+        QtCore.QMetaObject.connectSlotsByName(LayerBox)
 
-    def retranslateUi(self, EditLayer):
+    def retranslateUi(self, LayerBox):
         _translate = QtCore.QCoreApplication.translate
-        EditLayer.setWindowTitle(_translate("EditLayer", "Edit Layer"))
-        self.AddLayer.setText(_translate("EditLayer", "Add"))
-        self.RemoveLayer.setText(_translate("EditLayer", "Remove"))
+        LayerBox.setWindowTitle(_translate("LayerBox", "Edit Layer"))
         self.LayerList.setSortingEnabled(True)
         item = self.LayerList.horizontalHeaderItem(0)
-        item.setText(_translate("EditLayer", "Name"))
+        item.setText(_translate("LayerBox", "Name"))
         item = self.LayerList.horizontalHeaderItem(1)
-        item.setText(_translate("EditLayer", "Lock"))
+        item.setText(_translate("LayerBox", "Lock"))
         item = self.LayerList.horizontalHeaderItem(2)
-        item.setText(_translate("EditLayer", "Visibility"))
+        item.setText(_translate("LayerBox", "Visibility"))
         item = self.LayerList.horizontalHeaderItem(3)
-        item.setText(_translate("EditLayer", "Thickness"))
+        item.setText(_translate("LayerBox", "Thickness"))
         item = self.LayerList.horizontalHeaderItem(4)
-        item.setText(_translate("EditLayer", "Color"))
+        item.setText(_translate("LayerBox", "Color"))
         item = self.LayerList.horizontalHeaderItem(5)
-        item.setText(_translate("EditLayer", "Type"))
+        item.setText(_translate("LayerBox", "Type"))
         item = self.LayerList.horizontalHeaderItem(6)
-        item.setText(_translate("EditLayer", "Elements "))
+        item.setText(_translate("LayerBox", "Elements "))
+from UI import ImagesSrc

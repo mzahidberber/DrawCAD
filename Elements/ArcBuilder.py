@@ -7,8 +7,8 @@ from PyQt5.QtGui import QPainterPathStroker, QPainterPath
 from Helpers.Settings import Setting
 class ArcBuilder(ElementBuilder):
     def setPointsInformation(self):
-        self.__firstPoint=self.element.points[0]
-        self.__centerPoint=self.element.points[1]
+        self.__firstPoint=self.element.points[1]
+        self.__centerPoint=self.element.points[0]
         self.__radius=self.element.radiuses[0].value
         self.__startAngle=self.element.ssAngles[0].value
         self.__stopAngle=self.element.ssAngles[1].value
@@ -28,7 +28,7 @@ class ArcBuilder(ElementBuilder):
         p = QPainterPath()
 
         p.moveTo(QPointF(self.__firstPoint.x,self.__firstPoint.y))
-        p.arcTo(self.__square,int(self.__startAngle),int(self.__stopAngle))
+        p.arcTo(self.__square,int(self.__startAngle/16),int(self.__stopAngle/16))
 
         path1 = painterStrock.createStroke(p)
         return path1

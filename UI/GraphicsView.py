@@ -5,46 +5,47 @@ from Helpers.Settings import Setting
 from Helpers.GeoMath import GeoMath
 from Service.GeoService import GeoService
 import threading
-
+from CrossCuttingConcers.Handling.UIErrorHandle import UIErrorHandle
+from CrossCuttingConcers.Handling import ErrorHandle
 
 class GraphicsView(QGraphicsView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.scale(1.0, -1.0)
-
-        self.zoomInFactor = 1.05
-        self.zoomOutFactor = 0.95
+        self.scale(Setting.zoom, -Setting.zoom)
+        self.zoomInFactor = 1.15
+        self.zoomOutFactor = 0.85
 
         self.panX: float
         self.panY: float
         self.pan: bool = False
 
+        self.setCursor(Qt.CrossCursor)
+
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         # self.setMouseTracking(True)
 
-    def setSettinInfo(self, pixelSize: float):
-        Setting.pixelSize = pixelSize
-        Setting.lineBoundDistance = int(pixelSize * Setting.lineBoundDistanceSetting)
-        Setting.handleSize = int(pixelSize * Setting.handleSizeSetting)
-        Setting.snapSize = int(pixelSize * Setting.snapSizeSetting)
-        self.scene().update()
 
-    def findPixelSize(self) -> float:
-        pos1 = QPoint(0, 0)
-        pos2 = QPoint(1, 0)
-        p1 = self.mapToScene(pos1)
-        p2 = self.mapToScene(pos2)
-        pixelSize = GeoMath.findLengthLine(p1,p2)
-        self.setSettinInfo(pixelSize)
+    def findPixelSize(self):
+        Setting.pixelSize = GeoMath.findLengthLine(self.mapToScene(QPoint(0, 0)),self.mapToScene(QPoint(1, 0)))
+        Setting.refreshValues()
+        # self.scene().update()
+
+    def findRectScreen(self)->QRectF:
+        p1=QPoint(self.rect().x(),self.rect().y())
+        p2=QPoint(self.rect().width(),self.rect().height())
+        return QRectF(self.mapToScene(p1),self.mapToScene(p2))
 
     def wheelEvent(self, event):
         if event.angleDelta().y() > 0:
             zoomFactor = self.zoomInFactor
         else:
             zoomFactor = self.zoomOutFactor
-        self.t1 = threading.Thread(target=self.findPixelSize)
-        self.t1.start()
-        self.scale(zoomFactor, zoomFactor)
+        Setting.zoom=Setting.zoom*zoomFactor
+        self.findPixelSize()
+        self.scale(zoomFactor , zoomFactor)
 
     def mousePressEvent(self, event):
         QGraphicsView.mousePressEvent(self, event)

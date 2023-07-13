@@ -25,7 +25,7 @@ class ElementBuilder(ABC):
         pass
 
     @abstractmethod
-    def shape(self, painterPath: QPainterPath):
+    def shape(self) -> QPainterPath:
         pass
 
     @abstractmethod

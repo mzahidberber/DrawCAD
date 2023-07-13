@@ -1,37 +1,25 @@
 from enum import Enum
 
+class CommandTypes(Enum):
+    Draw=0
+    Edit=1
 
 class CommandEnums(Enum):
-    line = 0
-    circleTwoPoint = 1
-    circleCenterPoint = 2
-    circleCenterRadius = 3
-    circleTreePoint = 4
-    rectangle = 5
-    arcThreePoint = 6
-    spline = 7
-    move = 8
-    copy = 9
-    ellipse=10
-    arcCenterTwoPoint = 11
+    Line = 0,CommandTypes.Draw
+    CircleCenterPoint = 2,CommandTypes.Draw
+    CircleTwoPoint = 1,CommandTypes.Draw
+    CircleCenterRadius = 3,CommandTypes.Draw
+    CircleTreePoint = 4,CommandTypes.Draw
+    Rectangle = 5,CommandTypes.Draw
+    ArcThreePoint = 6,CommandTypes.Draw
+    Polyline = 7,CommandTypes.Draw
+    Move = 8,CommandTypes.Edit
+    Copy = 9,CommandTypes.Edit
+    Ellipse=10,CommandTypes.Draw
+    ArcCenterTwoPoint = 11,CommandTypes.Draw
+    Rotate=12,CommandTypes.Edit
+    Scale=13,CommandTypes.Edit
+    Mirror=14,CommandTypes.Edit
 
 
 
-class CommandTypes(Enum):
-    line=0
-    circle=1
-    rectangle=2
-    arc=3
-    ellips=4
-    spline=5
-
-getType={
-    CommandEnums.line:CommandTypes.line,
-    CommandEnums.circleTwoPoint:CommandTypes.circle,
-    CommandEnums.circleCenterPoint:CommandTypes.circle,
-    CommandEnums.circleCenterRadius:CommandTypes.circle,
-    CommandEnums.circleTreePoint:CommandTypes.circle,
-    CommandEnums.rectangle:CommandTypes.rectangle,
-    CommandEnums.arcThreePoint:CommandTypes.arc,
-    CommandEnums.spline:CommandTypes.spline
-    }

@@ -7,20 +7,14 @@ from Model import Layer
 class CreatePen:
     penStyles: dict = {1: Qt.SolidLine, 2: Qt.DotLine}
     penHatches: dict = {1: Qt.SolidPattern}
+    @staticmethod
+    def createPen(r: int, g: int, b: int, width: float, penStyleId: int, alpha: float = 1) -> QPen:
+        color = QColor(r, g, b)
+        color.setAlphaF(alpha)
+        return QPen(color, width, CreatePen.penStyles[penStyleId])
 
     @staticmethod
-    def createPenAtLayer(layer:Layer):
-        return QPen(QColor(
-            layer.pen.red,
-            layer.pen.green,
-            layer.pen.blue),
-            layer.thickness,
-            CreatePen.penStyles[layer.pen.penStyleId])
-
-    @staticmethod
-    def createPen(r: int, g: int, b: int, width: float, penStyleId: int) -> QPen:
-        return QPen(QColor(r, g, b), width, CreatePen.penStyles[penStyleId])
-
-    @staticmethod
-    def createHatch(r: int, g: int, b: int, penPattern: int) -> QBrush:
-        return QBrush(QColor(r, g, b), style=CreatePen.penHatches[penPattern])
+    def createHatch(r: int, g: int, b: int, penPattern: int, alpha: float = 1) -> QBrush:
+        color = QColor(r, g, b)
+        color.setAlphaF(alpha)
+        return QBrush(color, style=CreatePen.penHatches[penPattern])

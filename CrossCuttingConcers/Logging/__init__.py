@@ -1,1 +1,1 @@
-from CrossCuttingConcers.Logging.Logging import log
+from CrossCuttingConcers.Logging.Logging import Log
