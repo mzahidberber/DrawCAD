@@ -88,6 +88,7 @@ class DrawService:
 
         return name,response.text
 
+
     def readDraw(self, drawFile:str) -> DrawBox:
         connectionString = (
             UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("readDraw")
@@ -415,41 +416,41 @@ class DrawService:
 
 
 
-    async def startCommandAsync(
-        self,
-        command,
-        userDrawBoxId: int,
-        userLayerId: int,
-        userPenId: int,
-    ):
-        connectionString = (
-            UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("startCommand")
-        ).build()
-
-        body = {
-            "command": command.value[0],
-            "drawId": userDrawBoxId,
-            "layerId": userLayerId,
-            "penId": userPenId,
-        }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(connectionString,json=body,headers=self.getAuthorize()) as response:
-                result=await response.json()
-                responseObj = Response(result)
-    async def addCoordinateAsync(self, x, y) -> Element or None:
-        connectionString = (
-            UrlBuilder()
-            .urlBuild(self.__url)
-            .urlBuild("draw")
-            .urlBuild("addcoordinate")
-            .build()
-        )
-        body = {"x": x, "y": y, "z": 1}
-        async with aiohttp.ClientSession() as session:
-            async with session.post(connectionString,json=body,headers=self.getAuthorize()) as response:
-                result=await response.json()
-                responseObj = Response(result)
-                return  responseObj.data if responseObj.data is None else Element(responseObj.data)
+    # async def startCommandAsync(
+    #     self,
+    #     command,
+    #     userDrawBoxId: int,
+    #     userLayerId: int,
+    #     userPenId: int,
+    # ):
+    #     connectionString = (
+    #         UrlBuilder().urlBuild(self.__url).urlBuild("Draw").urlBuild("startCommand")
+    #     ).build()
+    #
+    #     body = {
+    #         "command": command.value[0],
+    #         "drawId": userDrawBoxId,
+    #         "layerId": userLayerId,
+    #         "penId": userPenId,
+    #     }
+    #     async with aiohttp.ClientSession() as session:
+    #         async with session.post(connectionString,json=body,headers=self.getAuthorize()) as response:
+    #             result=await response.json()
+    #             responseObj = Response(result)
+    # async def addCoordinateAsync(self, x, y) -> Element or None:
+    #     connectionString = (
+    #         UrlBuilder()
+    #         .urlBuild(self.__url)
+    #         .urlBuild("draw")
+    #         .urlBuild("addcoordinate")
+    #         .build()
+    #     )
+    #     body = {"x": x, "y": y, "z": 1}
+    #     async with aiohttp.ClientSession() as session:
+    #         async with session.post(connectionString,json=body,headers=self.getAuthorize()) as response:
+    #             result=await response.json()
+    #             responseObj = Response(result)
+    #             return  responseObj.data if responseObj.data is None else Element(responseObj.data)
 
     def addCoordinate(self, x, y) -> Element or None:
         connectionString = (

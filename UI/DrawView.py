@@ -18,7 +18,6 @@ from CrossCuttingConcers.Handling import  UIErrorHandle
 from Helpers.Settings import Setting
 import Version
 
-
 class DrawView(QMainWindow):
     # region Propery and Field
     __selectedCommandP: CommandPanel = None
@@ -199,7 +198,7 @@ class DrawView(QMainWindow):
                 msg.setStandardButtons(QMessageBox.Ok)
                 returnValue = msg.exec_()
 
-    def addDraw(self):
+    def addDraw(self,ev):
         text, ok = QInputDialog.getText(self, 'Draw Name', 'Draw Name?')
         if ok:
             if text != "":
@@ -319,7 +318,7 @@ class DrawView(QMainWindow):
             self.ui.actionSave.setDisabled(True)
             self.ui.actionSaveCloud.setDisabled(True)
 
-        self.ui.tbxCommandLine.setFocus()
+        # self.ui.tbxCommandLine.setFocus()
 
     def enableTabs(self, enable: bool, index: int):
         for i in range(0, len(self.drawLayers) + 1):

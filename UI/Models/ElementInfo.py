@@ -9,6 +9,7 @@ from Helpers.GeoMath import GeoMath
 import sys
 from CrossCuttingConcers.Handling import ErrorHandle
 
+
 class CustomDoubleSpinBox(QDoubleSpinBox):
     def __init__(self):
         super().__init__()
@@ -17,6 +18,8 @@ class CustomDoubleSpinBox(QDoubleSpinBox):
         self.setDecimals(5)
 
     def updateBox(self):pass
+
+
 class ElementInfo:
     __element: ElementObj or None
     __commandPanel: CommandPanel or None

@@ -8,6 +8,7 @@ from Helpers.Snap.Snap import Snap
 from Core.Signal import DrawSignal
 import math
 import  numpy as np
+from CrossCuttingConcers.Handling import ErrorHandle
 
 class DrawScene(QGraphicsScene):
     ClickedMouse = DrawSignal(object)
@@ -40,7 +41,6 @@ class DrawScene(QGraphicsScene):
         self.__snap = Snap(self)
 
 
-    
     def scanFieldObjects(self,field:QRectF,mode=Qt.IntersectsItemShape) -> list[QGraphicsItem]:
         if mode==Qt.IntersectsItemShape:return self.items(field, mode=Qt.IntersectsItemShape)
         elif mode==Qt.ContainsItemShape:return self.items(field,mode=Qt.ContainsItemShape)

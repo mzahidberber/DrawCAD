@@ -1,4 +1,3 @@
-import pytz
 from Model.Pen import Pen
 from Model.Layer import Layer
 from Model.BaseModel import BaseModel
