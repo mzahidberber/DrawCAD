@@ -29,24 +29,13 @@ class Urls(enum.Enum):
 ```
 
 <h3>Başlangıç</h3>
-<p>Kullanmak için .exe dosyasını veya kaynak kodunu başlatabilirsiniz.Kaynak kodunu kullancak iseniz başlatmadan önce bazı python kütüphanelerinin yüklü olması gereklidir.</p>
+<p>Kullanmak için kaynak kodunu başlatabilirsiniz.Başlatmadan önce bazı python kütüphanelerinin yüklü olması gereklidir.</p>
 
 ```
-PyQt5 5.15.7
-cryptography 41.0.1
-arrow 1.2.3
-shapely 2.0.1
-multipledispatch 0.6.0
-numpy 1.23.3
-```
-
-
-
-<p>Paketlerin yüklü olduğundan emin olduktan sonra kullanmak için Run.py dosyasını çalıştırmalısınız.</p>
-
-```
+pip install -r requirements.txt
 python Run.py
 ```
+
 
 <h3>Hizmetler</h3>
 <div align="center">

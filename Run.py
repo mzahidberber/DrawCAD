@@ -17,6 +17,7 @@ import Version
 class Run:
     @staticmethod
     def run():
+        Run.checkFolders()
         Log.log(Log.INFO, "Run App")
         app = QApplication(sys.argv)
         Run.checkInternet()
@@ -40,21 +41,20 @@ class Run:
             ErrorMessageBox("You do not have an internet connection")
             sys.exit()
 
-
-def checkFolders():
-    folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD")
-    logFolderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD", "Logs")
-    if not os.path.exists(folderPath):
-        os.mkdir(os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD"))
-    if not os.path.exists(logFolderPath):
-        os.mkdir(os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD", "Logs"))
-    settingFilePath = folderPath + "\\setting.json"
-    if not os.path.exists(settingFilePath): open(settingFilePath, "w").close()
-    userFilePath = folderPath + "\\user.json"
-    if not os.path.exists(userFilePath): open(userFilePath, "w").close()
+    @staticmethod
+    def checkFolders():
+        folderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD")
+        logFolderPath = os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD", "Logs")
+        if not os.path.exists(folderPath):
+            os.mkdir(os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD"))
+        if not os.path.exists(logFolderPath):
+            os.mkdir(os.path.join(os.path.expanduser('~'), "Documents", "DrawCAD", "Logs"))
+        settingFilePath = folderPath + "\\setting.json"
+        if not os.path.exists(settingFilePath): open(settingFilePath, "w").close()
+        userFilePath = folderPath + "\\user.json"
+        if not os.path.exists(userFilePath): open(userFilePath, "w").close()
 
 if __name__ == "__main__":
-    checkFolders()
     Run.run()
 
 

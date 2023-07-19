@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StartBox</class>
+ <widget class="QWidget" name="StartBox">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>300</width>
+    <height>100</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>300</width>
+    <height>100</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>300</width>
+    <height>100</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>DrawCAD</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>10</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>15</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>DrawCAD</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblText">
+   <property name="geometry">
+    <rect>
+     <x>14</x>
+     <y>70</y>
+     <width>271</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>control</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

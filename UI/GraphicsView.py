@@ -13,8 +13,8 @@ class GraphicsView(QGraphicsView):
         super().__init__(*args, **kwargs)
 
         self.scale(Setting.zoom, -Setting.zoom)
-        self.zoomInFactor = 1.15
-        self.zoomOutFactor = 0.85
+        self.zoomInFactor = 1.05
+        self.zoomOutFactor = 0.95
 
         self.panX: float
         self.panY: float
