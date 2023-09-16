@@ -2,11 +2,11 @@
 <img src="cad.png">
 <hr>
 <h6 align="center">
-  <a href="https://drawprogram.org/">DrawCAD |</a>
-  <a href="https://drawprogram.org/Home/DrawCAD">Doc |</a>
-  <a href="https://drawprogram.org/Home/DrawApi">Api |</a>
-  <a href="https://drawprogram.org/Home/DrawGeo">Geo |</a>
-  <a href="https://drawprogram.org/Home/DrawAuth">Auth</a>
+  <a href="https://docs.drawprogram.org">DrawCAD |</a>
+  <a href="https://docs.drawprogram.org/doc">Doc |</a>
+  <a href="https://docs.drawprogram.org/api">Api |</a>
+  <a href="https://docs.drawprogram.org/geo">Geo |</a>
+  <a href="https://docs.drawprogram.org/auth">Auth</a>
 </h6>
 
 <hr>

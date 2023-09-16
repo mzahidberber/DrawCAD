@@ -12,7 +12,6 @@ from Service.DrawService import DrawService
 import os
 import Version
 
-
 @ErrorHandle.Error_Handler_Cls
 class Run:
     @staticmethod
