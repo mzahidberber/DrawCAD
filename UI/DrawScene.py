@@ -106,6 +106,8 @@ class DrawScene(QGraphicsScene):
         painter.fillRect(rect, Setting.gridHatch)
         painter.setPen(Setting.gridPen)
 
+
+
         coords = rect.getCoords()
         x1, y1, x2, y2 = coords[0], coords[1], coords[2], coords[3]
         self.drawBackgroundGrid(QPointF(x1, y1), QPointF(x2, y2),painter)

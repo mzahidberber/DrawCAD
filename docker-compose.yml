@@ -22,6 +22,7 @@ services:
     command: python manage.py runserver 0.0.0.0:5001
     environment:
       - SECRET_KEY='djang12312o-insecure-h@&*123kas123dasdibx-123s=pa^+l=3asduzfe6mpuuo9(em(f&uv9xzveazwz4'
+      - cors=* # http://127.0.0.1:50;http://127.0.0.1:51 gibi ';' ile cors yetkisi verilecek url eklenebilir * her istegi kabul etmesi içindir
       # - ALLOWED_HOSTS=<ip> #Zorunlu degil local haricinde bir yerde çalıştırılırsa ip numarası eklenmeli
       # - DEBUG=False #Zorunlu degil varsayılan olarak False
     ports:
@@ -41,6 +42,7 @@ services:
       - dbPort=3306
       - dbName=drawdb
       - dbPassword=<password>
+      - cors=* # http://127.0.0.1:50;http://127.0.0.1:51 gibi ';' ile cors yetkisi verilecek url eklenebilir * her istegi kabul etmesi içindir
       # - exeVersion=1.0.1 #Zorunlu degil clientin exe versionunu kontrolu için veriliyor
     networks:
       - draw
@@ -56,6 +58,7 @@ services:
       - dbPort=3306
       - dbName=drawdb
       - dbPassword=<password>
+      - cors=* # http://127.0.0.1:50;http://127.0.0.1:51 gibi ';' ile cors yetkisi verilecek url eklenebilir * her istegi kabul etmesi içindir
     networks:
       - draw
 

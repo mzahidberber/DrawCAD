@@ -16,6 +16,8 @@ class GraphicsView(QGraphicsView):
         self.zoomInFactor = 1.05
         self.zoomOutFactor = 0.95
 
+
+
         self.panX: float
         self.panY: float
         self.pan: bool = False
