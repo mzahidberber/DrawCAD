@@ -32,6 +32,7 @@ class Urls(enum.Enum):
 <p>You can start the source code to use it. Before starting, some Python libraries must be installed.</p>
 
 ```
+# Python 3.10.11
 pip install -r requirements.txt
 python Run.py
 ```
